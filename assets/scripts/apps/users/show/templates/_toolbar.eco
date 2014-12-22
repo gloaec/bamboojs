@@ -1,0 +1,21 @@
+<button class="btn btn-fit-height grey-salt" type="button"
+      data-toggle="tooltip"
+      data-placement="top"
+      title="Print">
+  <i class="fa fa-print"></i>
+  <!--span class="hidden-xs hidden-sm hidden-md">Print</span-->
+</button>
+<button class="btn btn-fit-height grey-salt" type="button"
+  data-toggle="tooltip"
+  data-placement="top"
+  title="Edit">
+  <i class="fa fa-edit"></i>
+  <!--span class="hidden-xs hidden-sm hidden-md">Edit</span-->
+</button>
+<button class="btn btn-fit-height grey-salt" type="button"
+  data-toggle="tooltip"
+  data-placement="top"
+  title="Delete">
+  <i class="fa fa-times"></i>
+  <!--span class="hidden-xs hidden-sm hidden-md">Delete</span-->
+</button>

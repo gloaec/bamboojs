@@ -1,0 +1,35 @@
+<!--h3 class="page-title">
+  <span class="name"></span>
+  <span class="pull-right">
+    <div class="dropdown">
+      <a href="#" class="text-muted"><i class="fa fa-print"></i></a>
+      <a href="#" class="text-muted dropdown-toggle" data-toggle="dropdown"><i class="fa fa-download"></i></a>
+      <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownMenu1">
+        <li><a role="menuitem" tabindex="-1" href="#"><i class="fa fa-<%= @icon %>"></i> Download original (<%= @attachment_file_type %>) </a></li>
+        <li><a role="menuitem" tabindex="-1" href="#"><i class="fa fa-file-text"></i> Download plain text</a></li>
+        <li><a role="menuitem" tabindex="-1" href="#"><i class="fa fa-file-pdf-o"></i> Download PDF</a></li>
+        <li><a role="menuitem" tabindex="-1" href="#"><i class="fa fa-globe"></i> Download HTML</a></li>
+        <li class="divider"></li>
+        <li><a role="menuitem" tabindex="-1" href="#"><i class="fa fa-code"></i> Embed user</a></li>
+      </ul>
+      <a href="#" class="text-muted"><i class="fa fa-edit"></i></a>
+      <a href="#" class="text-muted"><i class="fa fa-times"></i></a>
+    </div>
+  </span>
+</h3-->
+<dl class="dl-horizontal">
+  <dt>Username</dt>
+  <dd><i class="fa fa-tag"></i> <span class="name"></span></dd>
+  <dt>Email</dt>
+  <dd><i class="fa fa-envelope"></i> <span class="email"></span></dd>
+  <dt>Password</dt>
+  <dd><i class="fa fa-key"></i> <span class="password">********</span></dd>
+  <dt>Member of these groups</dt>
+  <dd id="user-groups-region">
+    <ul class="fa-ul">
+      <% for group in @groups: %>
+        <li><i class="fa-li fa fa-group"></i> <%= group.name %></li>
+      <% end %>
+    </ul>
+  </dd>
+</dl>

@@ -29,7 +29,12 @@ module.exports = function (grunt) {
    */
 
   var cssFilesToInject = [
-    'linker/**/*.css'
+
+    // Vendors
+    'styles/vendor/**/*.css',
+
+    // All of the rest of your app styles imported here
+    'styles/**/*.css'
   ];
 
 
@@ -47,19 +52,29 @@ module.exports = function (grunt) {
     // linked in the proper order order
 
     // Bring in the socket.io client
-    'linker/js/socket.io.js',
+    'scripts/vendor/socket.io.js',
 
     // then beef it up with some convenience logic for talking to Sails.js
-    'linker/js/sails.io.js',
+    'scripts/vendor/sails.io.js',
 
     // A simpler boilerplate library for getting you up and running w/ an
     // automatic listener for incoming messages from Socket.io.
-    'linker/js/app.js',
+    'scripts/vendor/app.js',
 
-    // *->    put other dependencies here   <-*
+    // Vendors
+    'scripts/vendor/**/*.js',
+
+    // Marionnette Application
+    'scripts/config/**/*.js',
+    'scripts/app.js',
+    'scripts/controllers/**/*.js',
+    'scripts/entities/**/*.js',
+    'scripts/views/**/*.js',
+    'scripts/components/**/*.js',
+    'scripts/apps/**/*.js',
 
     // All of the rest of your app scripts imported here
-    'linker/**/*.js'
+    'scripts/**/*.js'
   ];
 
 
@@ -74,10 +89,14 @@ module.exports = function (grunt) {
    */
 
   var templateFilesToInject = [
-    'linker/**/*.html'
+    'templates/**/*.html',
   ];
 
-
+  var ecoFilesToInject = [
+    'templates/**/*.eco',
+    'scripts/**/*.eco',
+    'scripts/apps/**/**/templates/*.eco'
+  ];
 
   /////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////
@@ -120,6 +139,10 @@ module.exports = function (grunt) {
     return 'assets/' + path;
   });
 
+  ecoFilesToInject = ecoFilesToInject.map(function (path) {
+    return 'assets/' + path;
+  });
+
 
   // Get path to core grunt dependencies from Sails
   var depsPath = grunt.option('gdsrc') || 'node_modules/sails/node_modules';
@@ -133,6 +156,7 @@ module.exports = function (grunt) {
   grunt.loadTasks(depsPath + '/grunt-contrib-cssmin/tasks');
   grunt.loadTasks(depsPath + '/grunt-contrib-less/tasks');
   grunt.loadTasks(depsPath + '/grunt-contrib-coffee/tasks');
+  grunt.loadNpmTasks('grunt-eco');
 
   // Project configuration.
   grunt.initConfig({
@@ -177,7 +201,15 @@ module.exports = function (grunt) {
         // },
 
         files: {
-          '.tmp/public/jst.js': templateFilesToInject
+        //  '.tmp/public/jst.js': templateFilesToInject
+        }
+      }
+    },
+
+    eco: {
+      dev: {
+        files: {
+          '.tmp/public/jst.js': ecoFilesToInject
         }
       }
     },
@@ -186,18 +218,12 @@ module.exports = function (grunt) {
       dev: {
         files: [
           {
-          expand: true,
-          cwd: 'assets/styles/',
-          src: ['*.less'],
-          dest: '.tmp/public/styles/',
-          ext: '.css'
-        }, {
-          expand: true,
-          cwd: 'assets/linker/styles/',
-          src: ['*.less'],
-          dest: '.tmp/public/linker/styles/',
-          ext: '.css'
-        }
+            expand: true,
+            cwd: 'assets/styles/',
+            src: ['*.less'],
+            dest: '.tmp/public/styles/',
+            ext: '.css'
+          }
         ]
       }
     },
@@ -210,15 +236,9 @@ module.exports = function (grunt) {
         files: [
           {
             expand: true,
-            cwd: 'assets/js/',
+            cwd: 'assets/scripts/',
             src: ['**/*.coffee'],
-            dest: '.tmp/public/js/',
-            ext: '.js'
-          }, {
-            expand: true,
-            cwd: 'assets/linker/js/',
-            src: ['**/*.coffee'],
-            dest: '.tmp/public/linker/js/',
+            dest: '.tmp/public/scripts/',
             ext: '.js'
           }
         ]
@@ -422,6 +442,7 @@ module.exports = function (grunt) {
   grunt.registerTask('compileAssets', [
     'clean:dev',
     'jst:dev',
+    'eco:dev',
     'less:dev',
     'copy:dev',    
     'coffee:dev'

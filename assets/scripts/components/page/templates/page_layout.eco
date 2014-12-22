@@ -1,0 +1,10 @@
+<div id="page-title-region"></div>
+
+<div class="page-bar">
+    <div id="page-breadcrumbs-region" class="pull-left"></div>
+    <div id="page-toolbar-region" class="pull-right"></div>
+</div>
+
+<!--div class="flash-region"></div-->
+
+<div id="page-content-region"></div>
