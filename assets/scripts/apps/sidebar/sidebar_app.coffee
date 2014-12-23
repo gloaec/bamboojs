@@ -1,7 +1,7 @@
 @Bamboo.module "SidebarApp", (SidebarApp, App, Backbone, Marionette, $, _) ->
     
   API =
-    show: () ->
+    show: ->
       new SidebarApp.Show.Controller
         region: App.sidebarRegion
 

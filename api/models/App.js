@@ -11,7 +11,10 @@ module.exports = {
   attributes: {
     name: 'string',
     icon: 'string',
-    route: 'string'
+    route: 'string',
+    count: 'string',
+    count_label: 'string',
+    color: 'string'
   }
 
 };

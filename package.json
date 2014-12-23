@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "description": "a Sails application",
   "dependencies": {
-    "sails": "0.9.8",
+    "sails": "0.10.5",
     "grunt": "0.4.1",
     "sails-disk": "~0.9.0",
     "ejs": "0.8.4",
@@ -19,6 +19,8 @@
   "author": "",
   "license": "",
   "devDependencies": {
-    "grunt-eco": "~0.1.2"
+    "grunt-eco": "~0.1.2",
+    "sails-disk": "~0.10.5",
+    "sails-memory": "~0.10.3"
   }
 }

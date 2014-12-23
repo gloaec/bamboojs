@@ -1,0 +1,4 @@
+<h3 class="page-header">
+    Widgets <small>overview</small>
+</h3>
+<div id="widgets" class="row"></div>

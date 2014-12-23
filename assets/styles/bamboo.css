@@ -1,0 +1,50 @@
+body {
+    font-family: 'arsenalregular';
+    font-size: 1.5em;
+}
+h1, 
+h2, 
+h3, 
+h4, 
+h5, 
+h6, 
+.h1, 
+.h2, 
+.h3, 
+.h4, 
+.h5, 
+.h6 {
+    font-family: "titilliumbold";
+}
+h1 small, 
+h2 small, 
+h3 small, 
+h4 small, 
+h5 small, 
+h6 small, 
+.h1 small, 
+.h2 small, 
+.h3 small, 
+.h4 small, 
+.h5 small, 
+.h6 small {
+    font-family: "titilliumlight";
+}
+h3.page-header,
+.h3.page-header {
+    margin-top: 26px;
+}
+.icon-widget {
+    margin-bottom: 20px;
+}
+#page-wrapper.not-found {
+    background: #FFF url(/images/panda.png) bottom left no-repeat;
+}
+
+/*.navbar-brand { font-size: 1.5em; letter-spacing: -3px; }*/
+.logo-start { font-family: "titilliumlight"; font-size: 19px; }
+.logo-end { font-family: "hanaleiregular"; font-size: 23px; }
+.error-template {padding: 40px 15px;text-align: center;}
+.error-actions {margin-top:15px;margin-bottom:15px;}
+.error-actions .btn { margin-right:10px; }
+.navbar-collapse.in {max-height: none;}

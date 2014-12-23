@@ -1,15 +1,15 @@
-    <div class="empty text-center text-muted">
+    <div class="error-template text-center">
       <h1>Oops!</h1>
-      <h2>404 Not Found</h2>
+      <h2 class="text-danger">404 Not Found</h2>
       <div class="error-details">
         Sorry, an error has occured, Requested page not found!
       </div>
       <div class="error-actions">
-        <a href="/dashboard" class="btn btn-primary btn-lg">
+        <a href="/dashboard" class="btn btn-outline btn-primary btn-lg">
           <i class="fa fa-home"></i>
           Take Me Home 
         </a>
-        <a href="mailto:support@antikobpae.com" class="btn btn-default btn-lg">
+        <a href="mailto:support@antikobpae.com" class="btn btn-outline btn-info btn-lg">
           <i class="fa fa-envelope"></i>
           Contact Support
         </a>

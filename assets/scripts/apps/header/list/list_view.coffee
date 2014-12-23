@@ -5,7 +5,7 @@
 
     regions:
       #headerScansRegion: Marionette.Region.Nowrap.extend el: "#header-scans-region"
-      sidebarRegion:     "#sidebar-region"
+      sidebarRegion: Marionette.Region.Nowrap.extend el: "#sidebar-region"
 
     events:
       "click a[href=#header-scans-region]" : -> @trigger 'show:scans:clicked', @model

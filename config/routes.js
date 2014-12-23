@@ -34,8 +34,14 @@ module.exports.routes = {
   // (This would also work if you had a file at: `/views/home.ejs`)
   '/': {
     view: 'static/index'
-  }
+  },
 
+  // All leftover routes to Marionette
+  '/*' : {
+    view: 'static/index', 
+    skipAssets: true, 
+    skipRegex: /^\/api\/.*$/
+  }
 
   /*
   // But what if you want your home page to display

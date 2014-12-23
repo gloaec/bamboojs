@@ -1,3 +1,4 @@
+<div class="sidebar-nav navbar-collapse collapse">
 <ul class="nav" id="side-menu">
     <li class="sidebar-search">
         <div class="input-group custom-search-form">
@@ -14,22 +15,60 @@
         <a class="active" href="/dashboard"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
     </li>
     <li>
-        <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Charts<span class="fa arrow"></span></a>
+        <a href="#"><i class="fa fa-book fa-fw"></i> Documentation<span class="fa arrow"></span></a>
         <ul class="nav nav-second-level">
             <li>
-                <a href="flot.html">Flot Charts</a>
+                <a href="/docs/bamboo"><i class="fa icon-bamboo"></i> Bamboo</a>
             </li>
             <li>
-                <a href="morris.html">Morris.js Charts</a>
+                <a href="/docs/sails">Sails</a>
             </li>
+            <li>
+                <a href="/docs/bootstrap">Bootstrap</a>
+            </li>
+            <li>
+                <a href="#">Backbone / Marionette<span class="fa arrow"></span></a>
+                <ul class="nav nav-third-level">
+                    <li>
+                        <a href="#">Underscore</a>
+                    </li>
+                    <li>
+                        <a href="#">Underscore String</a>
+                    </li>
+                    <li>
+                        <a href="#">Backbone</a>
+                    </li>
+                    <li>
+                        <a href="#">Backbone Validation</a>
+                    </li>
+                    <li>
+                        <a href="#">Backbone Associations</a>
+                    </li>
+                    <li>
+                        <a href="#">Backbone Stickit</a>
+                    </li>
+                    <li>
+                        <a href="#">Backbone Memento</a>
+                    </li>
+                    <li>
+                        <a href="#">Backbone Picky</a>
+                    </li>
+                    <li>
+                        <a href="#">Marionette</a>
+                    </li>
+                    <li>
+                        <a href="#">Marionette Subrouter</a>
+                    </li>
+                </ul>
+                <!-- /.nav-third-level -->
         </ul>
         <!-- /.nav-second-level -->
     </li>
     <li>
-        <a href="tables.html"><i class="fa fa-table fa-fw"></i> Tables</a>
+        <a href="/apps"><i class="fa fa-cubes fa-fw"></i> Applications</a>
     </li>
     <li>
-        <a href="forms.html"><i class="fa fa-edit fa-fw"></i> Forms</a>
+        <a href="/widgets"><i class="fa fa-puzzle-piece fa-fw"></i> Widgets</a>
     </li>
     <li>
         <a href="#"><i class="fa fa-wrench fa-fw"></i> UI Elements<span class="fa arrow"></span></a>
@@ -98,3 +137,4 @@
         <!-- /.nav-second-level -->
     </li>
 </ul>
+</div>

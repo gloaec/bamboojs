@@ -1,0 +1,20 @@
+<% if @type is "panel": %>
+  <div class="panel panel-<%= @color %>">
+    <div class="panel-heading">
+      <h3 class="panel-title">
+        <i class="fa <%= @icon %>"></i> <%= @name %></h3>
+    </div>
+    <div class="panel-body widget-region">
+    </div>
+  </div>
+<% else if @type is 'icon': %>
+  <div class="btn-group btn-group-justified icon-widget" role="group">
+      <a href="#" class="btn btn-group-justified btn-lg btn-<%= @color %>" data-toggle="tooltip"
+          data-placement="bottom" title="<%= @name %>">
+        <i class="fa <%= @icon %>"></i>
+        <span class="visible-xs"><%= @name %></span>
+      </a>
+  </div>
+<% else: %>
+  <div class="widget-region"></div>
+<% end %>

@@ -5,13 +5,10 @@
     initialize: ->
       apps = App.request "app:entities"
       
-      App.execute 'when:fetched', apps, ->
-
       appsView = @getAppsView apps
       
       @show appsView,
-        loading:
-          entities: apps
+        loading: true
 
     getAppsView: (apps) ->
       new List.Apps

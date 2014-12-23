@@ -2,13 +2,13 @@
 
   class Entities.App extends Entities.Model
       
-    urlRoot: -> "/app"
+    urlRoot: -> "/api/app"
 
     relations: []
 
     defaults:
       name: '[Untitled Application]'
-      icon: 'fa-puzzle-piece'
+      icon: 'fa-cube'
       route: null
       color: 'default'
       count: ' '
@@ -27,7 +27,7 @@
 
     model: Entities.App
 
-    url: -> "/app"
+    url: -> "/api/app"
 
     comparator: (m) ->
       -m.get "created_at"
