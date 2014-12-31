@@ -1,6 +1,7 @@
-body {
+/*body {
     font-family: 'arsenalregular';
     font-size: 1.5em;
+    line-height: 1.3;
 }
 h1, 
 h2, 
@@ -29,6 +30,10 @@ h6 small,
 .h5 small, 
 .h6 small {
     font-family: "titilliumlight";
+}*/
+body {
+  background-color: #93c54b;
+  background-color: #3e3f3a;
 }
 h3.page-header,
 .h3.page-header {
@@ -48,3 +53,76 @@ h3.page-header,
 .error-actions {margin-top:15px;margin-bottom:15px;}
 .error-actions .btn { margin-right:10px; }
 .navbar-collapse.in {max-height: none;}
+.navbar {
+    min-height: 50px;
+}
+.navbar-brand {
+    font-size: 20px;
+    line-height: 0;
+    padding: 15px;
+    height: 50px;
+}
+.navbar-nav > li > .dropdown-menu {
+    margin-top: 1px;
+    border: 1px solid #f9f1e4;
+}
+.form-control {
+    height: 36px;
+}
+.btn,
+.form-control {
+    padding: 7px 16px;
+}
+.navbar-default .navbar-top-links > li > a {
+  color: #98978b;
+}
+.navbar-default .navbar-top-links > li > a:hover,
+.navbar-default .navbar-top-links > li > a:focus {
+  color: #ffffff;
+  background-color: transparent;
+}
+.navbar-default .navbar-top-links > .active > a,
+.navbar-default .navbar-top-links > .active > a:hover,
+.navbar-default .navbar-top-links > .active > a:focus {
+  color: #ffffff;
+  background-color: #393a35;
+}
+.navbar-default .navbar-top-links > .disabled > a,
+.navbar-default .navbar-top-links > .disabled > a:hover,
+.navbar-default .navbar-top-links > .disabled > a:focus {
+  color: #cccccc;
+  background-color: transparent;
+}
+.navbar-toggle {
+    margin-bottom: 9px;
+    margin-right: 10px;
+    margin-top: 9px;
+}
+.sidebar-nav ul > li > ul {
+  background-color: #93c54b;
+  border-color: #93c54b;
+}
+.sidebar-nav ul > li > a {
+  color: #6b9430;
+}
+.sidebar-nav ul > li > a:hover,
+.sidebar-nav ul > li > a:focus {
+  color: #ffffff;
+  background-color: transparent;
+}
+.sidebar-nav ul > .active > a,
+.sidebar-nav ul > .active > a:hover,
+.sidebar-nav ul > .active > a:focus {
+  color: #ffffff;
+  background-color: #89be3d;
+}
+.sidebar-nav ul > .disabled > a,
+.sidebar-nav ul > .disabled > a:hover,
+.sidebar-nav ul > .disabled > a:focus {
+  color: #444444;
+  background-color: transparent;
+}
+.sidebar .arrow {
+    float: right;
+    padding: 5px;
+}
