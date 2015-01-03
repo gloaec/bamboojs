@@ -14,7 +14,7 @@ do (Backbone) ->
         frag
 		
     highlightRoute: (href) ->
-      $('.page-sidebar-menu li.active').removeClass('active')
+      $('.sidebar-nav li.active:not(.dropdown-toggle)').removeClass('active')
       $('a').each (i, el)->
         if href.match($(el).attr('href'))
           $(el).parent('li').addClass('active')

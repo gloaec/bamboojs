@@ -25,5 +25,7 @@
 
   _.extend Marionette.View::,
 
+    # FIXME Will be overriden by other templateHelpers
     templateHelpers: ->
-
+      render: (template, data = {}) ->
+        @safe Marionette.Renderer.render template, _.extend(@, data)

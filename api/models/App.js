@@ -14,7 +14,8 @@ module.exports = {
     route: 'string',
     count: 'string',
     count_label: 'string',
-    color: 'string'
+    color: 'string',
+    force: 'string'
   }
 
 };

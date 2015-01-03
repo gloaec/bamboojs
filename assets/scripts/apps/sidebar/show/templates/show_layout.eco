@@ -4,7 +4,7 @@
         <div class="input-group custom-search-form">
             <input type="text" class="form-control" placeholder="Search...">
             <span class="input-group-btn">
-            <button class="btn btn-default" type="button">
+            <button class="btn btn-success" type="button">
                 <i class="fa fa-search"></i>
             </button>
         </span>
@@ -14,7 +14,7 @@
     <li>
         <a class="active" href="/dashboard"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
     </li>
-    <li>
+    <li class="dropdown-toggle">
         <a href="#"><i class="fa fa-book fa-fw"></i> Documentation<span class="fa arrow"></span></a>
         <ul class="nav nav-second-level">
             <li>
@@ -26,7 +26,7 @@
             <li>
                 <a href="/docs/bootstrap">Bootstrap</a>
             </li>
-            <li>
+            <li class="dropdown-toggle">
                 <a href="#">Backbone / Marionette<span class="fa arrow"></span></a>
                 <ul class="nav nav-third-level">
                     <li>

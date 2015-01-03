@@ -1,0 +1,30 @@
+<div class="btn-group btn-group-justified panel-toolbar" role="group" aria-label="...">
+  <div class="btn-group" role="group">
+    <button class="btn btn-default dropdown-toggle" type="button" id="topic-dropdown" data-toggle="dropdown" aria-expanded="true">
+      <span class="hidden-xs hidden-sm">Topic:</span>
+      <span class="topic"><%= @topic %></span>
+      <i class="fa fa-caret-down"></i>
+    </button>
+    <ul class="dropdown-menu topics" role="menu" aria-labelledby="topic-dropdown">
+      <% for topic in @topics: %>
+        <li role="presentation"><a role="menuitem" tabindex="-1" href="#"><%= topic %></a></li>
+      <% end %>
+    </ul>
+  </div>
+  <div class="btn-group" role="group">
+    <button class="btn btn-default dropdown-toggle" type="button" id="topic-dropdown" data-toggle="dropdown" aria-expanded="true">
+      <span class="hidden-xs hidden-sm">Language:</span>
+      <span class="lang"><%= @lang %></span>
+      <i class="fa fa-caret-down"></i>
+    </button>
+    <ul class="dropdown-menu langs" role="menu" aria-labelledby="topic-dropdown">
+      <% for lang in @langs: %>
+        <li role="presentation"><a role="menuitem" tabindex="-1" href="#"><%= lang %></a></li>
+      <% end %>
+    </ul>
+  </div>
+  <div class="btn-group" role="group">
+    <button type="button" class="btn btn-default">Right</button>
+  </div>
+</div>
+<div class="rss-items list-group dropdown-tasks bottom-0"></div>

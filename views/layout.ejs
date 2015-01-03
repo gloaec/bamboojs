@@ -30,6 +30,7 @@
     <!--STYLES-->
     <link rel="stylesheet" href="/styles/vendor/_bootstrap.css">
     <link rel="stylesheet" href="/styles/vendor/bootstrap.css">
+    <link rel="stylesheet" href="/styles/vendor/calendar.css">
     <link rel="stylesheet" href="/styles/vendor/dataTables.bootstrap.css">
     <link rel="stylesheet" href="/styles/vendor/font-awesome.css">
     <link rel="stylesheet" href="/styles/vendor/metisMenu.css">
@@ -116,9 +117,11 @@
     <script src="/scripts/vendor/bootstrap.js"></script>
     <script src="/scripts/vendor/bootstrap_btn_checkbox.js"></script>
     <script src="/scripts/vendor/bootstrap_hover_dropdown.min.js"></script>
+    <script src="/scripts/vendor/calendar.js"></script>
     <script src="/scripts/vendor/classie.js"></script>
     <script src="/scripts/vendor/jquery_dataTables.js"></script>
     <script src="/scripts/vendor/jquery_dataTables_bootstrap.js"></script>
+    <script src="/scripts/vendor/jquery_jfeed.js"></script>
     <script src="/scripts/vendor/jquery_metisMenu.js"></script>
     <script src="/scripts/vendor/metronic.js"></script>
     <script src="/scripts/vendor/moment.js"></script>
@@ -131,6 +134,7 @@
     <script src="/scripts/config/backbone/mixins.js"></script>
     <script src="/scripts/config/backbone/router.js"></script>
     <script src="/scripts/config/backbone/sync.js"></script>
+    <script src="/scripts/config/backbone/wreqr.js"></script>
     <script src="/scripts/config/cocktail/mixins.js"></script>
     <script src="/scripts/config/javascript.js"></script>
     <script src="/scripts/config/marionette/application.js"></script>
@@ -155,8 +159,10 @@
     <script src="/scripts/entities/folders.js"></script>
     <script src="/scripts/entities/groups.js"></script>
     <script src="/scripts/entities/movies.js"></script>
+    <script src="/scripts/entities/rss.js"></script>
     <script src="/scripts/entities/scans.js"></script>
     <script src="/scripts/entities/stats.js"></script>
+    <script src="/scripts/entities/todos.js"></script>
     <script src="/scripts/entities/users.js"></script>
     <script src="/scripts/entities/widgets.js"></script>
     <script src="/scripts/views/_base/_region.js"></script>
@@ -241,13 +247,26 @@
     <script src="/scripts/apps/users/show/show_controller.js"></script>
     <script src="/scripts/apps/users/show/show_view.js"></script>
     <script src="/scripts/apps/users/users_app.js"></script>
+    <script src="/scripts/apps/widget_default/show/show_controller.js"></script>
+    <script src="/scripts/apps/widget_default/show/show_view.js"></script>
+    <script src="/scripts/apps/widget_default/widget_default_app.js"></script>
+    <script src="/scripts/apps/widget_rss/list/list_controller.js"></script>
+    <script src="/scripts/apps/widget_rss/list/list_view.js"></script>
+    <script src="/scripts/apps/widget_rss/widget_rss_app.js"></script>
+    <script src="/scripts/apps/widget_todos/list/list_controller.js"></script>
+    <script src="/scripts/apps/widget_todos/list/list_view.js"></script>
+    <script src="/scripts/apps/widget_todos/widget_todos_app.js"></script>
     <script src="/scripts/apps/widgets/list/list_controller.js"></script>
     <script src="/scripts/apps/widgets/list/list_view.js"></script>
     <script src="/scripts/apps/widgets/widgets_app.js"></script>
     <!--SCRIPTS END-->
+
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
         
     <script type="text/javascript">
-    
+
+        google.load("feeds", "1");
+
         $(function() {
             Bamboo.current_user = new
             Bamboo.Entities.User({});

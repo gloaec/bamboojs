@@ -4,3 +4,4 @@ do (Backbone, Marionette) ->
 	
     open: (view) ->
       @$el.html view.$el.children().clone(true)
+      #@$el.replaceWith view.$el

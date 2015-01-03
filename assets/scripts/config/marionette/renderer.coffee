@@ -6,7 +6,7 @@ do (Marionette) ->
       "assets/scripts/components/"
     ]
 
-    render: (template, data) ->
+    render: (template, data, more) ->
       console.info 'Render', template, data
       return if template is false
       path = @getTemplate(template)

@@ -2,34 +2,77 @@
 
   class Entities.Widget extends Entities.Model
 
-    defaults:
+    defaults: ->
       name: "[Untitled Widget]"
-      command: "widget:default"
+      link: '/404'
+      command: "widget:default:show"
       icon: "fa-puzzle-piece"
       color: "default"
-      class: "col-lg-3 col-md-4 col-sm-6 col-xs-12"
-      type: "panel"
+      badge: false
+      force: false
+      collg: 3
+      colmd: 4
+      colsm: 6
+      colxs: 3
 
   class Entities.WidgetsCollection extends Entities.Collection
     model: Entities.Widget
 
+    comparator: (m) ->
+      m.get 'force' || ''
+
   API =
     getWidgets: (url, params = {}) ->
       new Entities.WidgetsCollection [
-        name: "Calendar md-6"
-        command: "widget:calendar:sm6"
+        name: "Calendar"
+        link: "/calendar"
         icon: "fa-calendar"
-        color: "green"
-        class: "col-md-6"
+        color: "success"
+        badge: 3
+        collg: 4
+        colmd: 6
       ,
-        name: "Mail sm-1"
-        command: "widget:mail:sm1"
+        name: "Mail"
+        link: "/mail"
         icon: "fa-envelope"
         color: "primary"
-        class: "col-lg-1 col-md-2 col-sm-4 col-xs-4"
-        type: "icon"
+        badge: 5
+        collg: 4
+        colmd: 6
       ,
-        {}
+        {force: 'icon', badge: '<i class="fa fa-warning text-danger"></i>'},
+        {force: 'icon'},
+        {force: 'icon'},
+        {force: 'icon'},
+      ,
+        name: "Users"
+        link: "/users"
+        icon: "fa-users"
+        color: "danger"
+        badge: 1
+        force: 'icon'
+      ,
+        name: "France24 RSS"
+        link: "/rss"
+        command: "widget:rss:list"
+        icon: "fa-rss"
+        color: "warning"
+        collg: 6
+        colmd: 6
+        colsm: 12
+        force: 'panel'
+      ,
+        name: "Todos"
+        link: "/todos"
+        command: "widget:todos:list"
+        icon: "fa-list-ul"
+        color: "info"
+        collg: 6
+        colmd: 6
+        colsm: 12
+      ,
+        {force: 'panel'},
+        {}, {},
       ]
     
   App.reqres.setHandler "widget:entities", ->

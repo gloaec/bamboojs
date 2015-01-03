@@ -1,8 +1,8 @@
-<div class="navbar-text">
-    BambooJS - Under the <a href="http://www.gnu.org/">GNU General Public License v3.0</a>. 
+<div class="navbar-text pull-left">
+    BambooJS - Under the <a href="http://www.gnu.org/">GNU General Public License v3.0</a>
 </div>
 <div class="navbar-text pull-right">
-    <span class="go-top">
+    <a href="#" class="go-top">
         <i class="fa fa-angle-up"></i>
-    </span>
+    </a>
 </div>
