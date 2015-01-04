@@ -1,6 +1,10 @@
 @Bamboo.module "Entities", (Entities, App, Backbone, Marionette, $, _) ->
 
+  localStorage = new Backbone.LocalStorage "WidgetsCollection"
+
   class Entities.Widget extends Entities.Model
+
+    localStorage: localStorage
 
     defaults: ->
       name: "[Untitled Widget]"
@@ -14,9 +18,13 @@
       colmd: 4
       colsm: 6
       colxs: 3
+      id: _.random 1, 999999999999999
 
   class Entities.WidgetsCollection extends Entities.Collection
+
     model: Entities.Widget
+
+    localStorage: localStorage
 
     comparator: (m) ->
       m.get 'force' || ''
@@ -64,7 +72,8 @@
       ,
         name: "Todos"
         link: "/todos"
-        command: "widget:todos:list"
+        command: "todos:widget:list"
+        force: "panel"
         icon: "fa-list-ul"
         color: "info"
         collg: 6

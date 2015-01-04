@@ -1,97 +1,118 @@
-@BambooApp.module "TodosModule.List", (List, App, Backbone, Marionette, $, _) ->
+@Bamboo.module "TodosWidget.List", (List, App, Backbone, Marionette, $, _) ->
+    
+  ENTER = 13
 
   class List.Layout extends App.Views.Layout
     template: "todos/list/list_layout"
 
     regions:
-      todosHeaderRegion: "#todos-header-region"
-      todosMainRegion:   "#todos-main-region"
-      todosFooterRegion:  "#todos-footer-region"
-
+      todosHeaderRegion: ".todos-header-region"
+      todosMainRegion:   ".todos-main-region"
+      todosFooterRegion:  ".todos-footer-region"
 
   class List.Todo extends App.Views.ItemView
     template: "todos/list/_todo"
-    tagName: 'li'
-    ui:
-      checkbox: 'input[type=checkbox]'
-      mainCheckbox: '#toggle-all'
+    tagName: "li"
+    className: "bottom-0 top-0 clearfix"
 
-    initialize: ->
-      @listenTo @model, 'all', @render, @
-            
+    ui:
+      toggleBtn: '.toogle'
+
     events:
       "click .destroy" : -> @trigger 'destroy:todo:clicked', @model
-      "click .toggle" : 'onToggle'
+      "click .toggle"  : 'onToggle'
+      "blur .content"  : 'onBlur'
 
-    onToggle : =>
-      if @model.get('is_completed')
-        document.getElementById('toggle-all').checked = false
-      @model.set('is_completed', not @model.get('is_completed'))
+    modelEvents:
+      'change:done': 'render'
+
+    bindings:
+      '.content': 'content'
+
+    onRender: ->
+      @stickit()
+
+    onToggle: (e) =>
+      @model.toggle()
       @model.save null,
         success: =>
-          #@trigger 'toggle:todo:clicked', @collection
+          console.log @model.attributes
+          #@trigger 'toggle:todo:clicked', @model
         error: (todo, jqXHR) =>
           @showErrors $.parseJSON(jqXHR.responseText)
 
-      
-    onRender: ->
-      if @model.get('is_completed')
-        @$el.prop('class', 'completed')
-        @ui.checkbox.prop('checked', true)
-      else
-        @$el.prop('class', 'active')
-        @ui.checkbox.prop('checked', false)
-      @stickit()
+    onBlur: (e) =>
+      if @model.isValid(true)
+        @model.save null,
+          error: (todo, jqXHR) =>
+            @showErrors $.parseJSON(jqXHR.responseText)
 
+    templateHelpers: =>
+      isHidden: =>
+        if @model.get 'done'
+          @model.collection.getFilter() is 'remaining'
+        else
+          @model.collection.getFilter() is 'completed'
 
-  class List.Todos extends App.Views.CompositeView
+  class List.Todos extends App.Views.CollectionView
     template: "todos/list/_todos"
     itemView: List.Todo
-    itemViewContainer: "#todo-list"
-
-    events:
-      "click #toggle-all" : 'onToggleAll'
-
-    onToggleAll: (e) ->
-      wasChecked = not e.target.checked
-      if wasChecked
-        e.target.checked = false
-        _.each @collection.models, (model) =>
-          model.set('is_completed', false)
-      else
-        e.target.checked = true
-        _.each @collection.models, (model) =>
-          model.set('is_completed', true)
+    tagName: 'ul'
+    className: 'list-group bottom-0'
+    collectionEvents:
+      'filter': 'render'
         
-
-  class List.NewTodo extends App.Views.ItemView
-    template: "todos/list/_newtodo"
+  class List.Form extends App.Views.ItemView
+    template: "todos/list/_form"
 
     initialize: ->
       @listenTo @model, 'validated', (_, __, attrs) => @showErrors(attrs)
+
+    ui:
+      content: '.content'
         
     bindings:
-      '#new-todo': "content"
+      '.content': "content"
+
+    collectionEvents:
+      'change': 'render'
     
     events:
-      "keypress #new-todo"   : 'onKeyPress'
+      "keypress .content" : 'onKeyPress'
+      "click .add"        : 'onAddClicked'
+      "click .toggle-all" : 'onToggleAllClicked'
+
+    onAddClicked: (e) =>
+      @save()
+
+    onToggleAllClicked: (e) =>
+      @collection.toggleAll()
 
     onKeyPress : (e) =>
-      ENTER = 13
       switch e.which
         when ENTER
-          if @model.isValid(true)
-            @model.save null,
-              success: =>
-                @collection.add(@model)
-                #App.execute 'flash:success', "Todo successfully created"
-                @trigger 'new:todo:clicked', @collection
-              error: (todo, jqXHR) =>
-                @showErrors $.parseJSON(jqXHR.responseText)
+          @save()
+
+    save: =>
+      if @model.isValid(true)
+        @model.save null,
+          success: =>
+            @collection.add(@model)
+            @model = new @collection.model()
+            @render()
+            @ui.content.focus()
+            @trigger 'new:todo:clicked', @model
+          error: (todo, jqXHR) =>
+            @showErrors $.parseJSON(jqXHR.responseText)
+
     
     onRender: ->
       @stickit()
       @validateit()
+
+    templateHelpers: =>
+      allDone: =>
+        @collection.remaining().size() == 0
 
   class List.Footer extends App.Views.ItemView
     template: "todos/list/_footer"
@@ -99,11 +120,21 @@
     initialize: ->
       @listenTo @collection, 'all', @render, @
 
+    ui:
+      filter: "change input[name='filter']"
+
     events:
-      "click #clear-completed" : -> @trigger 'clear-completed:todos:clicked', @collection
+      "click .clear-completed"     : "onClearCompleted"
+      "change input[name='filter']": "onFilterChange"
+
+    onClearCompleted: (e) ->
+      @collection.completed().destroyAll()
+
+    onFilterChange: (e) ->
+      @trigger "filter:clicked", $(e.target).val()
 
     serializeData: ->
       _.extend super(),
-        completedCount: @collection.getCompleted().size()
-        itemsLeft: @collection.size()-@collection.getCompleted().size()
+        completed: @collection.completed().size()
+        filter: @collection.getFilter()
       

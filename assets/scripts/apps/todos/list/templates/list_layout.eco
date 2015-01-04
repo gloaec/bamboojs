@@ -1,0 +1,9 @@
+<header class="todos-header">
+  <div class="todos-header-region"></div>
+</header>
+<section class="todo-main">
+  <div class="todos-main-region"></div>
+</section>
+<footer id="todo-footer">
+  <div class="todos-footer-region"></div>
+</footer>

@@ -35,6 +35,13 @@ body {
   background-color: #93c54b;
   background-color: #3e3f3a;
 }
+.text-line-through {
+    text-decoration: line-through;
+}
+.text-info { color: #29abe0 !important; }
+.border-0 { border: none; }
+.border-x-0 { border-top: none; border-bottom: none; }
+.border-y-0 { border-left: none; border-right: none; }
 .bottom-0 { margin-bottom: 0; }
 .bottom-5 { margin-bottom: 5px; }
 .bottom-10 { margin-bottom: 10px; }
@@ -150,6 +157,10 @@ h3.page-header,
     text-align: center;
     display: block;
 }
+.list-group {
+    overflow: hidden;
+    border-radius: 0 0 4px 4px;
+}
 .panel-heading {
     background-image: 
         linear-gradient(
@@ -159,6 +170,10 @@ h3.page-header,
           rgba(1, 1, 1, 0) 50%, 
           rgba(0, 0, 0, 0) 100%
         );
+}
+.panel-heading .btn {
+   padding: 5px 10px;
+   margin: -7px -10px -5px 0px;
 }
 .icon-widget .btn {
     position: relative;
@@ -183,7 +198,6 @@ h3.page-header,
     display: block;
     line-height: 24px;
 }
-.panel-heading,
 .panel-title,
 .ellipsis,
 .icon-widget .icon-widget-label {
@@ -215,9 +229,14 @@ h3.page-header,
 .panel-warning > .panel-heading .badge {
     background-color: #fff;
 }
-.panel .panel-toolbar .btn {
+.panel .panel-heading {
+  margin-bottom: -1px;
+}
+.panel-toolbar .btn,
+.panel-toolbar .form-control,
+.panel-toolbar .input-group-addon,
+.panel-toolbar .input-group-btn {
     border-radius: 0px;
-    margin-top: -1px;
 }
 .page-footer .navbar-text {
    color: #fff;
@@ -235,4 +254,23 @@ h3.page-header,
 .badge:empty {
    display: none;
 }
-
+.help-block:empty {
+    display: none;
+}
+.input-group-addon {
+    padding: 6px 12px;
+}
+.input-group-btn input[type='checkbox'] {
+    margin: 1px -3px;
+}
+.has-info .form-control {
+    border-color: #1b8dbb;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+}
+ul.list-group > li,
+ol.list-group > li {
+  display: block;
+}
+.context-menu .dropdown-menu {
+    width: 310px;
+}

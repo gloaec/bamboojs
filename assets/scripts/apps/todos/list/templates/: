@@ -1,0 +1,27 @@
+<div class="btn-group btn-group-justified panel-toolbar" data-toggle="buttons"  role="group" aria-label="...">
+  <label class="btn btn-info active">
+    <input type="radio" name="filter" autocomplete="off" checked>
+    <i class="fa fa-fw fa-square"></i>
+    <span class="hidden-xs">All</span>
+  </label>
+  <label class="btn btn-info">
+    <input type="radio" name="filter" autocomplete="off">
+    <i class="fa fa-fw fa-square-o"></i>
+    <span class="hidden-xs">Active</span>
+  </label>
+  <label class="btn btn-info">
+    <input type="radio" name="filter" autocomplete="off">
+    <i class="fa fa-fw fa-check-square-o"></i>
+    <span class="hidden-xs">Done</span>
+  </label>
+  <div class="btn-group">
+    <button class="btn btn-danger" type="button">
+      <i class="fa fa-trash"></i>
+      <span class="hidden-xs">Done</span>
+      <span class="hidden-lg hidden-md hidden-sm">
+        <i class="fa fa-check-square"></i>
+      </span>
+      <span class="badge"><%= @completed %></span>
+    </button>
+  </div>
+</div>

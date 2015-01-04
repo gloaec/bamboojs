@@ -9,13 +9,9 @@
     regions:
       widgetRegion: '.widget-region'
 
-    attributes: ->
-      class: """
-        col-lg-#{if @model.get('force') is 'icon'  then 1  else @model.get('collg')}
-        col-md-#{if @model.get('force') is 'icon'  then 2  else @model.get('colmd')}
-        col-sm-#{if @model.get('force') is 'icon'  then 3  else @model.get('colsm')}
-        col-xs-#{if @model.get('force') is 'panel' then 12 else @model.get('colxs')}
-      """
+    ui:
+      link: 'a'
+      appearance: '.appearance'
 
     bindings:
       '.name' : 'name'
@@ -28,12 +24,30 @@
       "click .edit"   : -> @trigger "edit:widget:clicked", @model
       "click .delete" : -> @trigger "delete:widget:clicked", @model
       "dblclick .name": "onEditWidgetNameClicked"
+      "change .appearance": "onAppearanceChange"
+
+    modelEvents:
+      "change:force": "render"
+
+    onClearCompleted: (e) ->
+      @collection.completed().destroyAll()
+
+    onAppearanceChange: (e) ->
+      @model.set force: $(e.target).val()
 
     onEditWidgetNameClicked: ->
       console.log 'edit'
 
     onRender: ->
       @stickit()
+      @ui.link.contextmenu
+        before: ->
+          $('body').on 'click contextmenu', =>
+            @closemenu()
+          $('.context-menu.open').removeClass 'open'
+        onItem: (context, e) ->
+          if $(e.target).find('.appearance').length
+            $(e.target).find('.appearance').trigger 'change'
       App.execute @model.get('command'),
         widget: @model
         region: @widgetRegion

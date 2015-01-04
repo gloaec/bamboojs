@@ -1,3 +1,0 @@
-%h1
-  todos
-%input#new-todo{autofocus: "", placeholder: "What needs to be done?"}

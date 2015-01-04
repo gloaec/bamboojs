@@ -1,0 +1,17 @@
+<div class="panel-toolbar">
+  <div class="input-group">
+    <span class="input-group-btn">
+      <button class="btn btn-default toggle-all">
+        <i class="fa fa-fw fa<%= '-check' if @allDone() %>-square-o"></i>
+        <i class="fa fa-fw fa-caret-down"></i>
+      </button>
+    </span>
+    <input class="form-control content" autofocus="" placeholder="What needs to be done?" />
+    <p class="help-block"></p>
+    <span class="input-group-btn">
+      <button class="btn btn-success add">
+        <i class="fa fa-fw fa-plus"></i>
+      </button>
+    </span>
+  </div>
+</div>

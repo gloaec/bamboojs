@@ -7,6 +7,8 @@
     @mixin 'validable'
 
     save: (key, val, options) ->
+      @set updated_at: new Date()
+      @set created_at: new Date() if @isNew()
       if not key? or _.isObject(key)
         attrs = key
         options = val
@@ -22,6 +24,7 @@
       options.data = JSON.stringify _.extend(attributes, attrs)
       options.type = if @get('id')? then "PUT" else "POST"
       options.contentType = "application/json"
+
       super attrs, options
 
     parse: (data) ->

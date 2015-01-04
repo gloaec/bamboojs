@@ -1,29 +1,41 @@
-@BambooApp.module "TodosModule.List", (List, App, Backbone, Marionette, $, _) ->
+@Bamboo.module "TodosWidget.List", (List, App, Backbone, Marionette, $, _) ->
 
   class List.Controller extends App.Controllers.Base
 
     initialize: (options) ->
-      todos = options.todos or= App.request "todo:entities"
-      show = options.show
+      {widget, todos} = options
+      @todos = todos or= App.request "todo:entities"
+      @filter
+
+      App.execute "when:fetched", todos, =>
+        @updateWidget widget, todos
+
+      @listenTo @todos, 'all', =>
+        @updateWidget widget, todos
 
       @layout = @getLayoutView()
 			
       @listenTo @layout, "show", =>
-        @newTodoView todos
-        @todosView @getTodosToShow todos, show
+        @todosView todos
         @footerView todos
+        @formView todos
 			
-      @show @layout,
-        loading:
-          entities: todos
+      @show @layout
 
-    newTodoView: (todos) ->
-      newTodoView = @getNewTodoView todos
+    updateWidget: (widget) ->
+      widget.set
+        badge: """
+          #{@todos.remaining().size()}
+          <span class='hidden-xs'>remaining</span>
+        """
 
-      newTodoView.on "new:todo:clicked", (todos) ->
-        App.vent.trigger "todos:clicked", todos
+    formView: (todos) ->
+      formView = @getFormView todos
 
-      @show newTodoView, region: @layout.todosHeaderRegion
+      formView.on "new:todo:clicked", (todo) ->
+        App.vent.trigger "new:todo:clicked", todo
+
+      @show formView, region: @layout.todosHeaderRegion
 		
     todosView: (todos) ->
       todosView = @getTodosView todos
@@ -32,25 +44,23 @@
         App.vent.trigger "destroy:todo:clicked", todo
 
       @show todosView,
-        loading: true
         region: @layout.todosMainRegion
+        loading: if @layout.todosMainRegion.currentView then { loadingType: "opacity" } else true
 
     footerView: (todos) ->
       footerView = @getFooterView todos
 
       footerView.on "clear-completed:todos:clicked", (todos) ->
         App.vent.trigger "clear-completed:todos:clicked", todos
-        
+
+      footerView.on "filter:clicked", (filter) =>
+        @todos.setFilter filter
+        @todos.trigger 'filter'
+
       @show footerView, region: @layout.todosFooterRegion
 
-    getTodosToShow: (todos, show) ->
-      switch show
-        when "completed" then return todos.getCompleted()
-        when "active" then return todos.getActive()
-        else return todos
-        
-    getNewTodoView: (todos) ->
-      new List.NewTodo
+    getFormView: (todos) ->
+      new List.Form
         model: new todos.model()
         collection: todos
 
