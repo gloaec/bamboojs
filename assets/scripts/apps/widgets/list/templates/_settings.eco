@@ -1,0 +1,108 @@
+<div class="input-group panel-toolbar">
+  <span class="input-group-addon">
+    <i class="fa fa-fw fa-eye"></i>
+    <span class="hidden-xs">Appearance</span>
+  </span>
+  <div class="btn-group btn-group-justified panel-toolbar" data-toggle="buttons" role="group" aria-label="...">
+    <label class="btn btn-<%= @color %> <%= 'active' if @force is 'auto' %>">
+      <input type="radio" class="appearance" name="<%= @form %>-appearance" value="auto" autocomplete="off" <%= 'checked' if @force is 'auto' %>>
+      Auto
+    </label>
+    <label class="btn btn-<%= @color %> <%= 'active' if @force is 'icon' %>">
+      <input type="radio" class="appearance" name="<%= @form %>-appearance" value="icon" autocomplete="off" <%= 'checked' if @force is 'icon' %>>
+      Icon
+    </label>
+    <label class="btn btn-<%= @color %> <%= 'active' if @force is 'panel' %>">
+      <input type="radio" class="appearance" name="<%= @form %>-appearance" value="panel" autocomplete="off" <%= 'checked' if @force is 'panel' %>>
+      Panel
+    </label>
+  </div>
+</div>
+<div class="input-group panel-toolbar">
+  <span class="input-group-addon">
+    <i class="fa fa-fw fa-info-circle"></i>
+    <span class="hidden-xs">Icon</span>
+  </span>
+  <input placeholder="Widget icon" autofocus="" class="form-control input-icon">
+</div>
+<div class="input-group panel-toolbar">
+  <span class="input-group-addon">
+    <i class="fa fa-fw fa-tag"></i>
+    <span class="hidden-xs">Name</span>
+  </span>
+  <input placeholder="Widget name" autofocus="" class="form-control input-name">
+</div>
+<div class="input-group panel-toolbar">
+  <span class="input-group-addon">
+    <i class="fa fa-fw fa-link"></i>
+    <span class="hidden-xs">Link</span>
+  </span>
+  <input placeholder="Widget link" autofocus="" class="form-control input-link">
+</div>
+<div class="input-group panel-toolbar">
+  <span class="input-group-addon">
+    <i class="fa fa-fw fa-terminal"></i>
+    <span class="hidden-xs">Command</span>
+  </span>
+  <input placeholder="Widget command" autofocus="" class="form-control input-command">
+</div>
+<div class="input-group panel-toolbar">
+  <span class="input-group-addon">
+    <i class="fa fa-fw fa-mobile"></i>
+  </span>
+  <span class="input-group-addon">
+    <i class="fa fa-arrows-h"></i>
+    <span class="hidden-xs">ColXS</span>
+  </span>
+  <input type="number" placeholder="Tiny screen width" autofocus="" class="form-control input-colxs">
+  <span class="input-group-addon">
+    <i class="fa fa-arrows-v"></i>
+    <span class="hidden-xs">RowXS</span>
+  </span>
+  <input type="number" placeholder="Tiny screen height" autofocus="" class="form-control input-rowxs">
+</div>
+<div class="input-group panel-toolbar">
+  <span class="input-group-addon">
+    <i class="fa fa-fw fa-tablet"></i>
+  </span>
+  <span class="input-group-addon">
+    <i class="fa fa-arrows-h"></i>
+    <span class="hidden-xs">ColSM</span>
+  </span>
+  <input type="number" placeholder="Small sceen width" autofocus="" class="form-control input-colsm">
+  <span class="input-group-addon">
+    <i class="fa fa-arrows-v"></i>
+    <span class="hidden-xs">RowSM</span>
+  </span>
+  <input type="number" placeholder="Small sceen height" autofocus="" class="form-control input-rowsm">
+</div>
+<div class="input-group panel-toolbar">
+  <span class="input-group-addon">
+    <i class="fa fa-fw fa-laptop"></i>
+  </span>
+  <span class="input-group-addon">
+    <i class="fa fa-arrows-h"></i>
+    <span class="hidden-xs">ColMD</span>
+  </span>
+  <input type="number" placeholder="Medium screen width" autofocus="" class="form-control input-colmd">
+  <span class="input-group-addon">
+    <i class="fa fa-arrows-v"></i>
+    <span class="hidden-xs">RowMD</span>
+  </span>
+  <input type="number" placeholder="Medium screen height" autofocus="" class="form-control input-rowmd">
+</div>
+<div class="input-group panel-toolbar">
+  <span class="input-group-addon">
+    <i class="fa fa-fw fa-desktop"></i>
+  </span>
+  <span class="input-group-addon">
+    <i class="fa fa-arrows-h"></i>
+    <span class="hidden-xs">ColLG</span>
+  </span>
+  <input type="number" placeholder="Large Screen width" autofocus="" class="form-control input-collg">
+  <span class="input-group-addon">
+    <i class="fa fa-arrows-v"></i>
+    <span class="hidden-xs">RowLG</span>
+  </span>
+  <input type="number" placeholder="Large screen height" autofocus="" class="form-control input-rowlg">
+</div>

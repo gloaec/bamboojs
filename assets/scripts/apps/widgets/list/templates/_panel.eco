@@ -1,46 +1,34 @@
 <div id="widget-<%= @id %>" class="panel panel-<%= @color %>">
-  <div class="panel-heading">
+  <div class="panel-heading clearfix">
     <div class="pull-right">
       <div class="pull-right">
         <div class="btn-group">
-          <a href=".widget-<%= @id %>" type="button" class="btn btn-<%= @color %> dropdown-toggle" data-toggle="collapse" data-parent="#widget-<%= @id %>" aria-expanded="false">
+          <button class="btn btn-<%= @color %> dropdown-toggle" data-toggle="collapse" data-parent="#widget-<%= @id %>" data-target=".widget-<%= @id %>" aria-expanded="false">
             <i class="fa fa-fw fa-wrench"></i>
-          </a>
+          </button>
         </div>
       </div>
     </div>
-    <a href="<%= @link %>" class="panel-title">
-      <i class="fa <%= @icon %>"></i>
-      <span class="name"><%= @name %></span>
-      <span class="badge"><%= @badge %></span>
-    </a>
-  </div>
-  <div class="widget-<%= @id %> panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
-    <div class="input-group panel-toolbar">
-      <span class="input-group-addon">
-        Appearance
-      </span>
-      <div class="btn-group btn-group-justified panel-toolbar" data-toggle="buttons" role="group" aria-label="...">
-        <label class="btn btn-<%= @color %> active">
-          <input type="radio" class="appearance" name="panel-appearance" value="auto" autocomplete="off" checked="">
-          Auto
-        </label>
-        <label class="btn btn-<%= @color %>">
-          <input type="radio" class="appearance" name="panel-appearance" value="icon" autocomplete="off">
-          Icon
-        </label>
-        <label class="btn btn-<%= @color %>">
-          <input type="radio" class="appearance" name="panel-appearance" value="panel" autocomplete="off">
-          Panel
-        </label>
-      </div>
+    <div class="widget-<%= @id %> collapse" style="padding-right: 38px">
+      <i class="fa fa-fw fa-bars"></i>
+      <a href="<%= @link %>" class="panel-title">
+        <span class="icon"><i class="fa <%= @icon %>"></i></span>
+        <span class="name"><%= @name %></span>
+        <span class="badge"><%= @badge %></span>
+      </a>
     </div>
-    <div class="input-group panel-toolbar">
-      <span class="input-group-addon">
-        Name
-      </span>
-      <input placeholder="Widget name..." autofocus="" class="form-control name">
+    <div class="widget-<%= @id %> collapse in ellipsis" style="padding-right: 38px">
+      <a href="<%= @link %>" class="panel-title">
+        <span class="icon"><i class="fa <%= @icon %>"></i></span>
+        <span class="name"><%= @name %></span>
+        <span class="badge"><%= @badge %></span>
+      </a>
     </div>
   </div>
-  <div class="widget-<%= @id %> panel-collapse collapse in widget-region list-group"></div>
+  <div class="widget-body list-group">
+    <div class="widget-<%= @id %> panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+      <%= @render 'widgets/list/_settings', form: 'panel' %>
+    </div>
+    <div class="widget-<%= @id %> panel-collapse collapse in widget-region"></div>
+  </div>
 </div>

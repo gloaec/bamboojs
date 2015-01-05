@@ -2,4 +2,11 @@
 
   class Show.Widget extends App.Views.ItemView
     template: "widget_default/show/widget"
-    className: "panel-body"
+
+    ui:
+      frame: '.frame'
+
+    modelEvents:
+      'change:link': ->
+        clearTimeout @timer
+        @timer = setTimeout @render, 2000

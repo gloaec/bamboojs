@@ -2,8 +2,21 @@ Array::insertAt = (index, item) ->
   @splice(index, 0, item)
   @
 
-String::capitalize = ->
-  @charAt(0).toUpperCase() + @slice(1)
+if typeof String::capitalize != 'function'
+  String::capitalize = ->
+    @charAt(0).toUpperCase() + @slice(1)
+
+if not String::startsWith
+  Object.defineProperty String::, 'startsWith',
+    enumerable: false
+    configurable: false
+    writable: false
+    value: (searchString, position = 0) ->
+      @lastIndexOf(searchString, position) is position
+
+#if typeof String::startsWith != 'function'
+#  String::startsWith = (str) ->
+#    @indexOf(str) is 0
 
 Object.defineProperty Number::, 'fileSize',
   value: (a,b,c,d) ->

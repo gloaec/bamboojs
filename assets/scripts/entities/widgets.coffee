@@ -13,7 +13,7 @@
       icon: "fa-puzzle-piece"
       color: "default"
       badge: false
-      force: false
+      force: "auto"
       collg: 3
       colmd: 4
       colsm: 6
@@ -26,20 +26,12 @@
 
     localStorage: localStorage
 
-    comparator: (m) ->
-      m.get 'force' || ''
+    #comparator: (m) ->
+    #  m.get 'force' || ''
 
   API =
     getWidgets: (url, params = {}) ->
       new Entities.WidgetsCollection [
-        name: "Calendar"
-        link: "/calendar"
-        icon: "fa-calendar"
-        color: "success"
-        badge: 3
-        collg: 4
-        colmd: 6
-      ,
         name: "Mail"
         link: "/mail"
         icon: "fa-envelope"
@@ -47,28 +39,38 @@
         badge: 5
         collg: 4
         colmd: 6
+        force: 'icon'
       ,
-        {force: 'icon', badge: '<i class="fa fa-warning text-danger"></i>'},
-        {force: 'icon'},
-        {force: 'icon'},
-        {force: 'icon'},
+        name: "Calendar"
+        link: "/calendar"
+        icon: "fa-calendar"
+        color: "success"
+        badge: 3
+        collg: 4
+        colmd: 6
+        force: 'icon'
       ,
         name: "Users"
         link: "/users"
         icon: "fa-users"
         color: "danger"
-        badge: 1
         force: 'icon'
       ,
-        name: "France24 RSS"
-        link: "/rss"
-        command: "widget:rss:list"
-        icon: "fa-rss"
-        color: "warning"
-        collg: 6
+        {force: 'icon', badge: '<i class="fa fa-warning text-warning"></i>'}
+      ,
+        name: "Youtube",
+        link: "//www.youtube.com/embed/bTEoejDdwoM"
+        icon: "fa-youtube-play"
+        color: "danger"
+        collg: 4
         colmd: 6
-        colsm: 12
-        force: 'panel'
+      ,
+        name: "Soundcloud",
+        link: "//w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/154345411&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;visual=true"
+        icon: "fa-soundcloud"
+        color: "warning"
+        collg: 4
+        colmd: 6
       ,
         name: "Todos"
         link: "/todos"
@@ -80,8 +82,23 @@
         colmd: 6
         colsm: 12
       ,
+        name: "France24 RSS"
+        link: "/rss"
+        command: "widget:rss:list"
+        icon: "fa-rss"
+        color: "warning"
+        collg: 6
+        colmd: 6
+        colsm: 12
+        force: 'panel'
+      ,
         {force: 'panel'},
         {}, {},
+        {}, {},
+        {force: 'icon'},
+        {force: 'icon'},
+        {force: 'icon'},
+        {force: 'icon'},
       ]
     
   App.reqres.setHandler "widget:entities", ->

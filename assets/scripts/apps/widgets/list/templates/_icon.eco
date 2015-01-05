@@ -1,32 +1,14 @@
-<a href="<%= @link %>" class="icon-widget" role="group" data-toggle="tooltip" data-placement="bottom" data-toggle="context" data-target="#widget-<%= @id %>-context-menu" title="<%= @name %>">
+<a href="<%= @link %>" class="icon-widget" role="group" data-toggle="tooltip" data-placement="bottom" data-toggle="context" data-target=".widget-<%= @id %>-context-menu" title="<%= @name %>">
   <button class="btn btn-lg btn-<%= @color %>">
-    <i class="fa <%= @icon %> fa-fw fa-2x"></i>
+    <span class="big-icon"><i class="fa <%= @icon %> fa-fw fa-2x"></i></span>
     <span class="badge"><%= @safe @badge %></span>
   </button>
   <span class="icon-widget-label name"><%= @name %></span>
 </a>
-<div id="widget-<%= @id %>-context-menu" class="context-menu">
+<div class="widget-<%= @id %>-context-menu context-menu">
   <ul class="dropdown-menu" role="menu">
     <li>
-    <div class="input-group panel-toolbar">
-      <span class="input-group-addon">
-        Appearance
-      </span>
-      <div class="btn-group btn-group-justified panel-toolbar" data-toggle="buttons" role="group" aria-label="...">
-        <label class="btn btn-<%= @color %> active">
-          <input type="radio" class="appearance" name="appearance" value="auto" autocomplete="off" checked="">
-          Auto
-        </label>
-        <label class="btn btn-<%= @color %>">
-          <input type="radio" class="appearance" name="appearance" value="icon" autocomplete="off">
-          Icon
-        </label>
-        <label class="btn btn-<%= @color %>">
-          <input type="radio" class="appearance" name="appearance" value="panel" autocomplete="off">
-          Panel
-        </label>
-      </div>
-    </div>
+      <%= @render 'widgets/list/_settings', form: 'icon' %>
     </li>
   </ul>
 </div>

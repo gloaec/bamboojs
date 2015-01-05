@@ -1,21 +1,10 @@
-<div class="
-  col-lg-<%= if @force is 'icon'  then 1  else @collg %>
-  col-md-<%= if @force is 'icon'  then 2  else @colmd %>
-  col-sm-<%= if @force is 'icon'  then 3  else @colsm %>
-  col-xs-<%= if @force is 'panel' then 12 else @colxs %>
-">
 <% if @force is 'custom': %>
   <div class="widget-region"></div>
-<% else if @force is 'panel': %>
-  <%= @render 'widgets/list/_panel' %>
-<% else if @force is 'icon': %>
-  <%= @render 'widgets/list/_icon' %>
 <% else: %>
-  <div class="hidden-xs">
-    <%= @render 'widgets/list/_panel' %>
-  </div>
-  <div class="visible-xs">
+  <div class="icon-region <%= 'hidden' if @force is 'panel' %> <%= 'visible-xs' if @force is 'auto' %>">
     <%= @render 'widgets/list/_icon' %>
   </div>
+  <div class="panel-region <%= 'hidden' if @force is 'icon' %> <%= 'hidden-xs' if @force is 'auto' %>">
+    <%= @render 'widgets/list/_panel' %>
+  </div>
 <% end %>
-</div>

@@ -2,8 +2,10 @@
 
   class Show.Controller extends App.Controllers.Base
 
-    initialize: ->
-      @show @getWidgetView()
+    initialize: (options) ->
+      {widget} = options
+      @show @getWidgetView widget
 
-    getWidgetView: ->
+    getWidgetView: (widget)->
       new Show.Widget
+        model: widget
