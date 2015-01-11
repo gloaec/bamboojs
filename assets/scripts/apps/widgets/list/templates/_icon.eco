@@ -7,7 +7,7 @@
 </a>
 <div class="widget-<%= @id %>-context-menu context-menu">
   <ul class="dropdown-menu" role="menu">
-    <li>
+    <li class="settings-region">
       <%= @render 'widgets/list/_settings', form: 'icon' %>
     </li>
   </ul>

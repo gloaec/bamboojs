@@ -1,0 +1,43 @@
+<!DOCTYPE html><html lang="en"><head><title>assets/scripts/vendor/app</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../../"><meta name="groc-document-path" content="assets/scripts/vendor/app"><meta name="groc-project-path" content="assets/scripts/vendor/app.js"><link rel="stylesheet" type="text/css" media="all" href="../../../assets/style.css"><script type="text/javascript" src="../../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/vendor/app.js</div></div><div id="document"><div class="segment"><div class="comments "><div class="wrapper"><p>app.js</p>
+<p>This file contains some conventional defaults for working with Socket.io + Sails.
+It is designed to get you up and running fast, but is by no means anything special.</p>
+<p>Feel free to change none, some, or ALL of this file to fit your needs!</p></div></div><div class="code"><div class="wrapper">(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(io)</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>as soon as this file is loaded, connect automatically, </p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> socket = io.connect();
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> console !== <span class="hljs-string">'undefined'</span>) {
+    log(<span class="hljs-string">'Connecting to Sails.js...'</span>);
+  }
+
+  socket.on(<span class="hljs-string">'connect'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">socketConnected</span><span class="hljs-params">()</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Listen for Comet messages from Sails</p></div></div><div class="code"><div class="wrapper">    socket.on(<span class="hljs-string">'message'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">messageReceived</span><span class="hljs-params">(message)</span> {</span>
+
+      <span class="hljs-comment">///////////////////////////////////////////////////////////</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Replace the following with your own custom logic
+to run when a new message arrives from the Sails.js
+server.</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-comment">///////////////////////////////////////////////////////////</span>
+      log(<span class="hljs-string">'New comet message received :: '</span>, message);
+      <span class="hljs-comment">//////////////////////////////////////////////////////</span>
+
+    });
+
+
+    <span class="hljs-comment">///////////////////////////////////////////////////////////</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Here&#39;s where you&#39;ll want to add any custom logic for
+when the browser establishes its socket connection to 
+the Sails.js server.</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-comment">///////////////////////////////////////////////////////////</span>
+    log(
+        <span class="hljs-string">'Socket is now connected and globally accessible as `socket`.\n'</span> + 
+        <span class="hljs-string">'e.g. to send a GET request to Sails, try \n'</span> + 
+        <span class="hljs-string">'`socket.get("/", function (response) '</span> +
+        <span class="hljs-string">'{ console.log(response); })`'</span>
+    );
+    <span class="hljs-comment">///////////////////////////////////////////////////////////</span>
+
+
+  });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Expose connected <code>socket</code> instance globally so that it&#39;s easy
+to experiment with from the browser console while prototyping.</p></div></div><div class="code"><div class="wrapper">  window.socket = socket;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Simple log function to keep the example simple</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">log</span> <span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> console !== <span class="hljs-string">'undefined'</span>) {
+      console.log.apply(console, <span class="hljs-built_in">arguments</span>);
+    }
+  }
+  
+
+})(</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>In case you&#39;re wrapping socket.io to prevent pollution of the global namespace,
+you can replace <code>window.io</code> with your own <code>io</code> here:</p></div></div><div class="code"><div class="wrapper">  window.io
+
+);</div></div></div></div></body></html>

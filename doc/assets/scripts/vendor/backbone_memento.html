@@ -1,0 +1,133 @@
+<!DOCTYPE html><html lang="en"><head><title>assets/scripts/vendor/backbone_memento</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../../"><meta name="groc-document-path" content="assets/scripts/vendor/backbone_memento"><meta name="groc-project-path" content="assets/scripts/vendor/backbone_memento.js"><link rel="stylesheet" type="text/css" media="all" href="../../../assets/style.css"><script type="text/javascript" src="../../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/vendor/backbone_memento.js</div></div><div id="document"><div class="segment"><div class="comments "><div class="wrapper"><p>Backbone.Memento v0.4.1a
+Copyright (C)2011 Derick Bailey, Muted Solutions, LLC
+Distributed Under MIT License
+Documentation and Full License Available at:
+<a href="http://github.com/derickbailey/backbone.memento">http://github.com/derickbailey/backbone.memento</a></p></div></div><div class="code"><div class="wrapper">Backbone.Memento = (<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(Backbone, _)</span>{</span>
+<span class="hljs-pi">  'use strict'</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><hr>
+<h2 id="memento-the-public-api">Memento: the public API</h2></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> Memento = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(structure, config)</span>{</span>
+    <span class="hljs-keyword">this</span>.version = <span class="hljs-string">"0.4.1a"</span>;
+
+    config = _.extend({ignore: []}, config);
+
+    <span class="hljs-keyword">var</span> serializer = <span class="hljs-keyword">new</span> Serializer(structure, config);
+    <span class="hljs-keyword">var</span> mementoStack = <span class="hljs-keyword">new</span> MementoStack(structure, config);
+
+    <span class="hljs-keyword">var</span> restoreState = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(previousState, restoreConfig)</span>{</span>
+      <span class="hljs-keyword">if</span> (!previousState){ <span class="hljs-keyword">return</span>; }
+      serializer.deserialize(previousState, restoreConfig);
+    };
+
+    <span class="hljs-keyword">this</span>.store = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+      <span class="hljs-keyword">var</span> currentState = serializer.serialize();
+      mementoStack.push(currentState);
+    };
+
+    <span class="hljs-keyword">this</span>.restore = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(restoreConfig)</span>{</span>
+      <span class="hljs-keyword">var</span> previousState = mementoStack.pop();
+      restoreState(previousState, restoreConfig);
+    };
+
+    <span class="hljs-keyword">this</span>.restart = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(restoreConfig)</span>{</span>
+      <span class="hljs-keyword">var</span> previousState = mementoStack.rewind();
+      restoreState(previousState, restoreConfig);
+    };
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><hr>
+<p>TypeHelper: a consistent API for removing attributes and</p>
+<h2 id="restoring-attributes-on-models-and-collections">restoring attributes, on models and collections</h2></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> TypeHelper = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(structure)</span>{</span>
+    <span class="hljs-keyword">if</span> (structure <span class="hljs-keyword">instanceof</span> Backbone.Model) {
+      <span class="hljs-keyword">this</span>.removeAttr = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(data)</span>{</span> structure.unset(data); };
+      <span class="hljs-keyword">this</span>.restore = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(data)</span>{</span> structure.set(data); };
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">this</span>.removeAttr = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(data)</span>{</span> structure.remove(data); };
+      <span class="hljs-keyword">this</span>.restore = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(data)</span>{</span> structure.reset(data); };
+    }
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><hr>
+<h2 id="serializer-serializer-and-deserialize-model-and-collection-state">Serializer: serializer and deserialize model and collection state</h2></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> Serializer = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(structure, config)</span>{</span>
+    <span class="hljs-keyword">var</span> typeHelper = <span class="hljs-keyword">new</span> TypeHelper(structure);
+
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">dropIgnored</span><span class="hljs-params">(attrs, restoreConfig)</span>{</span>
+      attrs = _.clone(attrs);
+      <span class="hljs-keyword">if</span> (restoreConfig.hasOwnProperty(<span class="hljs-string">"ignore"</span>) &amp;&amp; restoreConfig.ignore.length &gt; <span class="hljs-number">0</span>){
+        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> index <span class="hljs-keyword">in</span> restoreConfig.ignore){
+          <span class="hljs-keyword">var</span> ignore = restoreConfig.ignore[index];
+          <span class="hljs-keyword">delete</span> attrs[ignore];
+        }
+      }
+      <span class="hljs-keyword">return</span> attrs;
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getAddedAttrDiff</span><span class="hljs-params">(newAttrs, oldAttrs)</span>{</span>
+      <span class="hljs-keyword">var</span> removedAttrs = [];</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>guard clause to ensure we have attrs to compare</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">if</span> (!newAttrs || !oldAttrs){
+        <span class="hljs-keyword">return</span> removedAttrs;
+      }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>if the attr is found in the old set but not in
+the new set, then it was remove in the new set</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> attr <span class="hljs-keyword">in</span> oldAttrs){
+        <span class="hljs-keyword">if</span> (oldAttrs.hasOwnProperty(attr)){
+          <span class="hljs-keyword">if</span> (!newAttrs.hasOwnProperty(attr)){
+            removedAttrs.push(attr);
+          }
+        }
+      }
+
+      <span class="hljs-keyword">return</span> removedAttrs;
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">removeAttributes</span><span class="hljs-params">(structure, attrsToRemove)</span>{</span>
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> index <span class="hljs-keyword">in</span> attrsToRemove){
+        <span class="hljs-keyword">var</span> attr = attrsToRemove[index];
+        typeHelper.removeAttr(attr);
+      }
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">restoreState</span><span class="hljs-params">(previousState, restoreConfig)</span>{</span>
+      <span class="hljs-keyword">var</span> oldAttrs = dropIgnored(previousState, restoreConfig);
+
+      <span class="hljs-comment">//get the current state</span>
+      <span class="hljs-keyword">var</span> currentAttrs = structure.toJSON();
+      currentAttrs = dropIgnored(currentAttrs, restoreConfig);
+
+      <span class="hljs-comment">//handle removing attributes that were added</span>
+      <span class="hljs-keyword">var</span> removedAttrs = getAddedAttrDiff(oldAttrs, currentAttrs);
+      removeAttributes(structure, removedAttrs);
+
+      typeHelper.restore(oldAttrs);
+    }
+
+    <span class="hljs-keyword">this</span>.serialize = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+      <span class="hljs-keyword">var</span> attrs = structure.toJSON();
+      attrs = dropIgnored(attrs, config);
+      <span class="hljs-keyword">return</span> attrs;
+    }
+
+    <span class="hljs-keyword">this</span>.deserialize = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(previousState, restoreConfig)</span>{</span>
+      restoreConfig = _.extend({}, config, restoreConfig);
+      restoreState(previousState, restoreConfig);
+    }
+      
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><hr>
+<h2 id="mementostack-push--pop-model-and-collection-states">MementoStack: push / pop model and collection states</h2></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> MementoStack = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(structure, config)</span>{</span>
+    <span class="hljs-keyword">var</span> attributeStack;
+
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">initialize</span><span class="hljs-params">()</span>{</span>
+      attributeStack = [];
+    }
+
+    <span class="hljs-keyword">this</span>.push = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(attrs)</span>{</span>
+      attributeStack.push(attrs);
+    }
+    
+    <span class="hljs-keyword">this</span>.pop = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(restoreConfig)</span>{</span>
+      <span class="hljs-keyword">var</span> oldAttrs = attributeStack.pop();
+      <span class="hljs-keyword">return</span> oldAttrs;
+    }
+
+    <span class="hljs-keyword">this</span>.rewind = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+      <span class="hljs-keyword">var</span> oldAttrs = attributeStack[<span class="hljs-number">0</span>];
+      initialize();
+      <span class="hljs-keyword">return</span> oldAttrs;
+    }
+
+    initialize();
+  };
+
+  <span class="hljs-keyword">return</span> Memento;
+})(Backbone, _);</div></div></div></div></body></html>

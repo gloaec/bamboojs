@@ -1,0 +1,40 @@
+<!DOCTYPE html><html lang="en"><head><title>assets/scripts/apps/documents/show/show_view</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../../../../"><meta name="groc-document-path" content="assets/scripts/apps/documents/show/show_view"><meta name="groc-project-path" content="assets/scripts/apps/documents/show/show_view.coffee"><link rel="stylesheet" type="text/css" media="all" href="../../../../../assets/style.css"><script type="text/javascript" src="../../../../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/apps/documents/show/show_view.coffee</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-property">@Bamboo</span>.<span class="hljs-built_in">module</span> <span class="hljs-string">"DocumentsApp.Show"</span>, <span class="hljs-function"><span class="hljs-params">(Show, App, Backbone, Marionette, $, _)</span> -&gt;</span>
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Show</span>.<span class="hljs-title">Toolbar</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">App</span>.<span class="hljs-title">Views</span>.<span class="hljs-title">ItemView</span></span>
+    <span class="hljs-attribute">template</span>: <span class="hljs-string">"documents/show/_toolbar"</span>
+    <span class="hljs-class">className: "<span class="hljs-title">btn</span>-<span class="hljs-title">group</span> <span class="hljs-title">pull</span>-<span class="hljs-title">right</span>"</span>
+
+    <span class="hljs-attribute">ui</span>:
+      <span class="hljs-attribute">buttons</span>: <span class="hljs-string">'button'</span>
+
+    <span class="hljs-attribute">events</span>: {}
+
+    <span class="hljs-attribute">onRender</span>:<span class="hljs-function"> -&gt;</span>
+      <span class="hljs-property">@ui</span>.buttons.tooltip()
+
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Show</span>.<span class="hljs-title">Document</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">App</span>.<span class="hljs-title">Views</span>.<span class="hljs-title">ItemView</span></span>
+    <span class="hljs-attribute">template</span>: <span class="hljs-string">"documents/show/document"</span>
+
+    <span class="hljs-attribute">ui</span>:
+      <span class="hljs-attribute">preview</span>: <span class="hljs-string">'#preview'</span>
+
+    <span class="hljs-attribute">bindings</span>:
+      <span class="hljs-string">'.name'</span>                 : <span class="hljs-string">'name'</span>
+      <span class="hljs-string">'.attachment_file_name'</span> : <span class="hljs-string">'attachment_file_name'</span>
+      
+    <span class="hljs-attribute">onRender</span>:<span class="hljs-function"> -&gt;</span>
+      <span class="hljs-property">@stickit</span>()
+      <span class="hljs-comment">#if @model.get 'attachment_file_type' == 'pdf'</span>
+      PDFJS.getDocument<span class="hljs-function"><span class="hljs-params">(<span class="hljs-string">"/documents/<span class="hljs-subst">#{<span class="hljs-property">@model</span>.id}</span>.pdf"</span>)</span>.<span class="hljs-title">then</span> <span class="hljs-params">(pdf)</span> -&gt;</span>
+        pdf.getPage<span class="hljs-function"><span class="hljs-params">(<span class="hljs-number">2</span>)</span>.<span class="hljs-title">then</span> <span class="hljs-params">(page)</span> -&gt;</span>
+          scale = <span class="hljs-number">1.5</span>
+          viewport = page.getViewport(scale)
+          canvas = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'preview'</span>)
+          context = canvas.getContext(<span class="hljs-string">'2d'</span>)
+          canvas.height = viewport.height
+          canvas.width = viewport.width
+          renderContext =
+            <span class="hljs-attribute">canvasContext</span>: context
+            <span class="hljs-attribute">viewport</span>: viewport
+          page.render(renderContext)</div></div></div></div></body></html>

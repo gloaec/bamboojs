@@ -2,6 +2,9 @@
     
   ENTER = 13
 
+  class List.Empty extends App.Views.ItemView
+    template: "todos/list/_empty"
+
   class List.Layout extends App.Views.Layout
     template: "todos/list/list_layout"
 
@@ -57,6 +60,7 @@
   class List.Todos extends App.Views.CollectionView
     template: "todos/list/_todos"
     itemView: List.Todo
+    emptyView: List.Empty
     tagName: 'ul'
     className: 'list-group bottom-0'
     collectionEvents:

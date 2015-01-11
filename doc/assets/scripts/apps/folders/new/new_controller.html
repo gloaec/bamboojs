@@ -1,0 +1,21 @@
+<!DOCTYPE html><html lang="en"><head><title>assets/scripts/apps/folders/new/new_controller</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../../../../"><meta name="groc-document-path" content="assets/scripts/apps/folders/new/new_controller"><meta name="groc-project-path" content="assets/scripts/apps/folders/new/new_controller.coffee"><link rel="stylesheet" type="text/css" media="all" href="../../../../../assets/style.css"><script type="text/javascript" src="../../../../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/apps/folders/new/new_controller.coffee</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-property">@Bamboo</span>.<span class="hljs-built_in">module</span> <span class="hljs-string">"FoldersApp.New"</span>, <span class="hljs-function"><span class="hljs-params">(New, App, Backbone, Marionette, $, _)</span> -&gt;</span>
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">New</span>.<span class="hljs-title">Controller</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">App</span>.<span class="hljs-title">Controllers</span>.<span class="hljs-title">Base</span></span>
+
+    <span class="hljs-attribute">initialize</span>: <span class="hljs-function"><span class="hljs-params">(options)</span> -&gt;</span>
+      folders = options.folders <span class="hljs-keyword">or</span>= App.request <span class="hljs-string">"folder:entities"</span>
+      <span class="hljs-built_in">console</span>.log folders
+      folder = <span class="hljs-keyword">new</span> folders.model()
+
+      <span class="hljs-property">@newView</span> = <span class="hljs-property">@getNewView</span> folder, folders
+			
+      <span class="hljs-property">@listenTo</span> <span class="hljs-property">@newView</span>, <span class="hljs-string">"form:submitted"</span>,<span class="hljs-function"> =&gt;</span>
+        <span class="hljs-comment">#data = Backbone.Syphon.serialize newView</span>
+        <span class="hljs-comment">#post.processForm data, posts</span>
+			
+      <span class="hljs-property">@show</span> <span class="hljs-property">@newView</span>
+
+    <span class="hljs-attribute">getNewView</span>: <span class="hljs-function"><span class="hljs-params">(folder, folders)</span> -&gt;</span>
+      <span class="hljs-keyword">new</span> New.Folder
+        model      : folder
+        collection : folders</div></div></div></div></body></html>

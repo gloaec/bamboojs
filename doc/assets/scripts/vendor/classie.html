@@ -1,0 +1,62 @@
+<!DOCTYPE html><html lang="en"><head><title>assets/scripts/vendor/classie</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../../"><meta name="groc-document-path" content="assets/scripts/vendor/classie"><meta name="groc-project-path" content="assets/scripts/vendor/classie.js"><link rel="stylesheet" type="text/css" media="all" href="../../../assets/style.css"><script type="text/javascript" src="../../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/vendor/classie.js</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-comment">/*!
+ * classie - class helper functions
+ * from bonzo https://github.com/ded/bonzo
+ * 
+ * classie.has( elem, 'my-class' ) -&gt; true/false
+ * classie.add( elem, 'my-new-class' )
+ * classie.remove( elem, 'my-unwanted-class' )
+ * classie.toggle( elem, 'my-class' )
+ */</span>
+
+<span class="hljs-comment">/*jshint browser: true, strict: true, undef: true */</span>
+<span class="hljs-comment">/*global define: false */</span>
+
+( <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( window )</span> {</span>
+<span class="hljs-pi">
+'use strict'</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>class helper functions from bonzo <a href="https://github.com/ded/bonzo">https://github.com/ded/bonzo</a></p></div></div><div class="code"><div class="wrapper"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">classReg</span><span class="hljs-params">( className )</span> {</span>
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">RegExp</span>(<span class="hljs-string">"(^|\\s+)"</span> + className + <span class="hljs-string">"(\\s+|$)"</span>);
+}</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>classList support for class management
+altho to be fair, the api sucks because it won&#39;t accept multiple classes at once</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> hasClass, addClass, removeClass;
+
+<span class="hljs-keyword">if</span> ( <span class="hljs-string">'classList'</span> <span class="hljs-keyword">in</span> document.documentElement ) {
+  hasClass = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( elem, c )</span> {</span>
+    <span class="hljs-keyword">return</span> elem.classList.contains( c );
+  };
+  addClass = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( elem, c )</span> {</span>
+    elem.classList.add( c );
+  };
+  removeClass = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( elem, c )</span> {</span>
+    elem.classList.remove( c );
+  };
+}
+<span class="hljs-keyword">else</span> {
+  hasClass = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( elem, c )</span> {</span>
+    <span class="hljs-keyword">return</span> classReg( c ).test( elem.className );
+  };
+  addClass = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( elem, c )</span> {</span>
+    <span class="hljs-keyword">if</span> ( !hasClass( elem, c ) ) {
+      elem.className = elem.className + <span class="hljs-string">' '</span> + c;
+    }
+  };
+  removeClass = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( elem, c )</span> {</span>
+    elem.className = elem.className.replace( classReg( c ), <span class="hljs-string">' '</span> );
+  };
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">toggleClass</span><span class="hljs-params">( elem, c )</span> {</span>
+  <span class="hljs-keyword">var</span> fn = hasClass( elem, c ) ? removeClass : addClass;
+  fn( elem, c );
+}
+
+<span class="hljs-keyword">var</span> classie = {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>full names</p></div></div><div class="code"><div class="wrapper">  hasClass: hasClass,
+  addClass: addClass,
+  removeClass: removeClass,
+  toggleClass: toggleClass,</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>short names</p></div></div><div class="code"><div class="wrapper">  has: hasClass,
+  add: addClass,
+  remove: removeClass,
+  toggle: toggleClass
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>transport</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">if</span> ( <span class="hljs-keyword">typeof</span> define === <span class="hljs-string">'function'</span> &amp;&amp; define.amd ) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>AMD</p></div></div><div class="code"><div class="wrapper">  define( classie );
+} <span class="hljs-keyword">else</span> {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>browser global</p></div></div><div class="code"><div class="wrapper">  window.classie = classie;
+}
+
+})( window );</div></div></div></div></body></html>

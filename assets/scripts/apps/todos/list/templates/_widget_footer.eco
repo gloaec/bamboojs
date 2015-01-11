@@ -10,17 +10,17 @@
       </span>
     <% end %>
     <div class="btn-group btn-group-justified panel-toolbar" data-toggle="buttons"  role="group" aria-label="...">
-      <label class="btn btn-info <%= 'active' if @filter is 'all' %>">
+      <label class="btn btn-primary <%= 'active' if @filter is 'all' %>">
         <input type="radio" name="filter" value="all" autocomplete="off" checked>
         <i class="fa fa-fw fa-square"></i>
         <span class="">All</span>
       </label>
-      <label class="btn btn-info <%= 'active' if @filter is 'remaining' %>">
+      <label class="btn btn-primary <%= 'active' if @filter is 'remaining' %>">
         <input type="radio" name="filter" value="remaining" autocomplete="off">
         <i class="fa fa-fw fa-square-o"></i>
         <span class="hidden-xs hidden-md">Remaining</span>
       </label>
-      <label class="btn btn-info <%= 'active' if @filter is 'completed' %>">
+      <label class="btn btn-primary <%= 'active' if @filter is 'completed' %>">
         <input type="radio" name="filter" value="completed" autocomplete="off">
         <i class="fa fa-fw fa-check-square-o"></i>
         <span class="hidden-xs hidden-md">Completed</span>

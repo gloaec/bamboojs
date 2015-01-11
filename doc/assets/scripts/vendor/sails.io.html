@@ -1,0 +1,111 @@
+<!DOCTYPE html><html lang="en"><head><title>assets/scripts/vendor/sails.io</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../../"><meta name="groc-document-path" content="assets/scripts/vendor/sails.io"><meta name="groc-project-path" content="assets/scripts/vendor/sails.io.js"><link rel="stylesheet" type="text/css" media="all" href="../../../assets/style.css"><script type="text/javascript" src="../../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/vendor/sails.io.js</div></div><div id="document"><div class="segment"><div class="comments "><div class="wrapper"><p>sails.io.js</p>
+<p>This file is completely optional, and merely here for your convenience.</p>
+<p>It reduces the amount of browser code necessary to send and receive messages
+to &amp; from Sails by simulating a REST client interface on top of socket.io.
+It models its API after the pattern in jQuery you might be familiar with.</p>
+<p>So to switch from using AJAX to Socket.io, instead of:
+   <code>$.post( url, [data], [cb] )</code></p>
+<p>You would use:
+   <code>socket.post( url, [data], [cb] )</code></p>
+<p>For more information, visit:
+<a href="http://sailsjs.org/#documentation">http://sailsjs.org/#documentation</a></p></div></div><div class="code"><div class="wrapper">(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(io)</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>We&#39;ll be adding methods to <code>io.SocketNamespace.prototype</code>, the prototype for the 
+Socket instance returned when the browser connects with <code>io.connect()</code></p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> Socket = io.SocketNamespace;</div></div></div><div class="segment"><div class="comments doc-section"><div class="wrapper"><p>Simulate a GET request to sails
+e.g.
+   <code>socket.get(&#39;/user/3&#39;, Stats.populate)</code></p>
+<p>Parameters:</p>
+<ul>
+<li><p><strong>url must be a String.</strong><br/>(:: destination URL)</p>
+</li>
+<li><p><strong>params must be an Object.</strong><br/>(:: parameters to send with the request [optional])</p>
+</li>
+<li><p><strong>cb must be a Function.</strong><br/>(:: callback function to call when finished [optional])</p>
+</li>
+</ul></div></div><div class="code"><div class="wrapper">  Socket.prototype.get = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(url, data, cb)</span> {</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.request(url, data, cb, <span class="hljs-string">'get'</span>);
+  };</div></div></div><div class="segment"><div class="comments doc-section"><div class="wrapper"><p>Simulate a POST request to sails
+e.g.
+   <code>socket.post(&#39;/event&#39;, newMeeting, $spinner.hide)</code></p>
+<p>Parameters:</p>
+<ul>
+<li><p><strong>url must be a String.</strong><br/>(:: destination URL)</p>
+</li>
+<li><p><strong>params must be an Object.</strong><br/>(:: parameters to send with the request [optional])</p>
+</li>
+<li><p><strong>cb must be a Function.</strong><br/>(:: callback function to call when finished [optional])</p>
+</li>
+</ul></div></div><div class="code"><div class="wrapper">  Socket.prototype.post = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(url, data, cb)</span> {</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.request(url, data, cb, <span class="hljs-string">'post'</span>);
+  };</div></div></div><div class="segment"><div class="comments doc-section"><div class="wrapper"><p>Simulate a PUT request to sails
+e.g.
+   <code>socket.post(&#39;/event/3&#39;, changedFields, $spinner.hide)</code></p>
+<p>Parameters:</p>
+<ul>
+<li><p><strong>url must be a String.</strong><br/>(:: destination URL)</p>
+</li>
+<li><p><strong>params must be an Object.</strong><br/>(:: parameters to send with the request [optional])</p>
+</li>
+<li><p><strong>cb must be a Function.</strong><br/>(:: callback function to call when finished [optional])</p>
+</li>
+</ul></div></div><div class="code"><div class="wrapper">  Socket.prototype.put = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(url, data, cb)</span> {</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.request(url, data, cb, <span class="hljs-string">'put'</span>);
+  };</div></div></div><div class="segment"><div class="comments doc-section"><div class="wrapper"><p>Simulate a DELETE request to sails
+e.g.
+   <code>socket.delete(&#39;/event&#39;, $spinner.hide)</code></p>
+<p>Parameters:</p>
+<ul>
+<li><p><strong>url must be a String.</strong><br/>(:: destination URL)</p>
+</li>
+<li><p><strong>params must be an Object.</strong><br/>(:: parameters to send with the request [optional])</p>
+</li>
+<li><p><strong>cb must be a Function.</strong><br/>(:: callback function to call when finished [optional])</p>
+</li>
+</ul></div></div><div class="code"><div class="wrapper">  Socket.prototype[<span class="hljs-string">'delete'</span>] = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(url, data, cb)</span> {</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.request(url, data, cb, <span class="hljs-string">'delete'</span>);
+  };</div></div></div><div class="segment"><div class="comments doc-section"><div class="wrapper"><p><span class='doc-section-header'> api private :: but exposed for backwards compatibility w/ &lt;= sails@~0.8</span></p>
+<p>Simulate HTTP over Socket.io</p></div></div><div class="code"><div class="wrapper">  Socket.prototype.request = request;
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">request</span> <span class="hljs-params">(url, data, cb, method)</span> {</span>
+
+    <span class="hljs-keyword">var</span> socket = <span class="hljs-keyword">this</span>;
+
+    <span class="hljs-keyword">var</span> usage = <span class="hljs-string">'Usage:\n socket.'</span> +
+      (method || <span class="hljs-string">'request'</span>) +
+      <span class="hljs-string">'( destinationURL, dataToSend, fnToCallWhenComplete )'</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Remove trailing slashes and spaces</p></div></div><div class="code"><div class="wrapper">    url = url.replace(<span class="hljs-regexp">/^(.+)\/*\s*$/</span>, <span class="hljs-string">'$1'</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>If method is undefined, use &#39;get&#39;</p></div></div><div class="code"><div class="wrapper">    method = method || <span class="hljs-string">'get'</span>;
+
+
+    <span class="hljs-keyword">if</span> ( <span class="hljs-keyword">typeof</span> url !== <span class="hljs-string">'string'</span> ) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Invalid or missing URL!\n'</span> + usage);
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Allow data arg to be optional</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> ( <span class="hljs-keyword">typeof</span> data === <span class="hljs-string">'function'</span> ) {
+      cb = data;
+      data = {};
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Build to request</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> json = window.io.JSON.stringify({
+      url: url,
+      data: data
+    });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Send the message over the socket</p></div></div><div class="code"><div class="wrapper">    socket.emit(method, json, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">afterEmitted</span> <span class="hljs-params">(result)</span> {</span>
+
+      <span class="hljs-keyword">var</span> parsedResult = result;
+
+      <span class="hljs-keyword">if</span> (result &amp;&amp; <span class="hljs-keyword">typeof</span> result === <span class="hljs-string">'string'</span>) {
+        <span class="hljs-keyword">try</span> {
+          parsedResult = window.io.JSON.parse(result);
+        } <span class="hljs-keyword">catch</span> (e) {
+          <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> console !== <span class="hljs-string">'undefined'</span>) {
+            console.warn(<span class="hljs-string">"Could not parse:"</span>, result, e);
+          }
+          <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"Server response could not be parsed!\n"</span> + result);
+        }
+      }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>TODO: Handle errors more effectively</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">if</span> (parsedResult === <span class="hljs-number">404</span>) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"404: Not found"</span>);
+      <span class="hljs-keyword">if</span> (parsedResult === <span class="hljs-number">403</span>) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"403: Forbidden"</span>);
+      <span class="hljs-keyword">if</span> (parsedResult === <span class="hljs-number">500</span>) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"500: Server error"</span>);
+
+      cb &amp;&amp; cb(parsedResult);
+
+    });
+  }
+  
+
+
+
+}) (</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>In case you&#39;re wrapping socket.io to prevent pollution of the global namespace,
+you can replace <code>window.io</code> with your own <code>io</code> here:</p></div></div><div class="code"><div class="wrapper">  window.io
+
+);</div></div></div></div></body></html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html><html lang="en"><head><title>assets/scripts/vendor/bootstrap_btn_checkbox</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../../"><meta name="groc-document-path" content="assets/scripts/vendor/bootstrap_btn_checkbox"><meta name="groc-project-path" content="assets/scripts/vendor/bootstrap_btn_checkbox.js"><link rel="stylesheet" type="text/css" media="all" href="../../../assets/style.css"><script type="text/javascript" src="../../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/vendor/bootstrap_btn_checkbox.js</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper">$(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+
+
+    $.fn.btn_checkbox = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(options)</span> {</span>
+        <span class="hljs-keyword">return</span> $(<span class="hljs-keyword">this</span>).each(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Settings</p></div></div><div class="code"><div class="wrapper">            <span class="hljs-keyword">var</span> $widget = $(<span class="hljs-keyword">this</span>),
+                $button = $widget.find(<span class="hljs-string">'button'</span>),
+                $checkbox = $widget.find(<span class="hljs-string">'input:checkbox'</span>),
+                color = $button.data(<span class="hljs-string">'color'</span>),
+                settings = {
+                    on: {
+                        icon: <span class="hljs-string">'fa fa-check-square-o'</span>
+                    },
+                    off: {
+                        icon: <span class="hljs-string">'fa fa-square-o'</span>
+                    }
+                };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Event Handlers</p></div></div><div class="code"><div class="wrapper">            $button.on(<span class="hljs-string">'click'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+                $checkbox.prop(<span class="hljs-string">'checked'</span>, !$checkbox.is(<span class="hljs-string">':checked'</span>));
+                $checkbox.triggerHandler(<span class="hljs-string">'change'</span>);
+                updateDisplay();
+            });
+            $checkbox.on(<span class="hljs-string">'change'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+                updateDisplay();
+            });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Actions</p></div></div><div class="code"><div class="wrapper">            <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">updateDisplay</span><span class="hljs-params">()</span> {</span>
+                <span class="hljs-keyword">var</span> isChecked = $checkbox.is(<span class="hljs-string">':checked'</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Set the button&#39;s state</p></div></div><div class="code"><div class="wrapper">                $button.data(<span class="hljs-string">'state'</span>, (isChecked) ? <span class="hljs-string">"on"</span> : <span class="hljs-string">"off"</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Set the button&#39;s icon</p></div></div><div class="code"><div class="wrapper">                $button.find(<span class="hljs-string">'.state-icon'</span>)
+                    .removeClass()
+                    .addClass(<span class="hljs-string">'state-icon '</span> + settings[$button.data(<span class="hljs-string">'state'</span>)].icon);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Update the button&#39;s color</p></div></div><div class="code"><div class="wrapper">                <span class="hljs-keyword">if</span> (isChecked) {
+                    $button
+                        .removeClass(<span class="hljs-string">'btn-default'</span>)
+                        .addClass(<span class="hljs-string">'btn-'</span> + color + <span class="hljs-string">' active'</span>);
+                }
+                <span class="hljs-keyword">else</span> {
+                    $button
+                        .removeClass(<span class="hljs-string">'btn-'</span> + color + <span class="hljs-string">' active'</span>)
+                        .addClass(<span class="hljs-string">'btn-default'</span>);
+                }
+            }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Initialization</p></div></div><div class="code"><div class="wrapper">            <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">init</span><span class="hljs-params">()</span> {</span>
+
+                updateDisplay();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Inject the icon if applicable</p></div></div><div class="code"><div class="wrapper">                <span class="hljs-keyword">if</span> ($button.find(<span class="hljs-string">'.state-icon'</span>).length == <span class="hljs-number">0</span>) {
+                    $button.prepend(<span class="hljs-string">'&lt;i class="state-icon '</span> + settings[$button.data(<span class="hljs-string">'state'</span>)].icon + <span class="hljs-string">'"&gt;&lt;/i&gt; '</span>);
+                }
+            }
+            init();
+        });
+    }
+
+    $(<span class="hljs-string">'.btn-checkbox'</span>).btn_checkbox();
+
+});</div></div></div></div></body></html>

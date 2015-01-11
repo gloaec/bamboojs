@@ -1,0 +1,17 @@
+<!DOCTYPE html><html lang="en"><head><title>assets/scripts/apps/dashboard_apps/list/list_view</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../../../../"><meta name="groc-document-path" content="assets/scripts/apps/dashboard_apps/list/list_view"><meta name="groc-project-path" content="assets/scripts/apps/dashboard_apps/list/list_view.coffee"><link rel="stylesheet" type="text/css" media="all" href="../../../../../assets/style.css"><script type="text/javascript" src="../../../../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/apps/dashboard_apps/list/list_view.coffee</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-property">@Bamboo</span>.<span class="hljs-built_in">module</span> <span class="hljs-string">"DashboardAppsApp.List"</span>, <span class="hljs-function"><span class="hljs-params">(List, App, Backbone, Marionette, $, _)</span> -&gt;</span>
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">List</span>.<span class="hljs-title">Empty</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">App</span>.<span class="hljs-title">Views</span>.<span class="hljs-title">ItemView</span></span>
+    <span class="hljs-attribute">template</span>: <span class="hljs-string">"dashboard_apps/list/_empty"</span>
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">List</span>.<span class="hljs-title">App</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">App</span>.<span class="hljs-title">Views</span>.<span class="hljs-title">ItemView</span></span>
+    <span class="hljs-attribute">template</span>: <span class="hljs-string">"dashboard_apps/list/_app"</span>
+    <span class="hljs-class">className: "<span class="hljs-title">col</span>-<span class="hljs-title">md</span>-3"</span>
+
+    <span class="hljs-attribute">modelEvents</span>:
+      <span class="hljs-string">'change'</span>: <span class="hljs-string">'render'</span>
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">List</span>.<span class="hljs-title">Apps</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">App</span>.<span class="hljs-title">Views</span>.<span class="hljs-title">CompositeView</span></span>
+    <span class="hljs-attribute">template</span>: <span class="hljs-string">"dashboard_apps/list/apps"</span>
+    <span class="hljs-attribute">itemViewContainer</span>: <span class="hljs-string">"#apps"</span>
+    <span class="hljs-attribute">itemView</span>: List.App
+    <span class="hljs-attribute">emptyView</span>: List.Empty</div></div></div></div></body></html>

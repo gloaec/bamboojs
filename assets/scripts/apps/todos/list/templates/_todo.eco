@@ -2,12 +2,12 @@
 <div class="panel-toolbar">
   <div class="input-group">
     <span class="input-group-btn">
-      <button class="btn btn-outline btn-info toggle">
+      <button class="btn btn-outline btn-primary toggle">
           <i class="fa fa-fw fa-bars"></i>
           <i class="fa fa-fw fa<%= "-check" if @done %>-square-o"></i>
       </button>
     </span>
-    <input type="text" class="form-control content <%= 'text-line-through text-info' if @done %> border-x-0" aria-label="...">
+    <input type="text" class="form-control content text-primary <%= 'text-line-through text-muted' if @done %> border-x-0" aria-label="...">
     <span class="input-group-btn">
       <button class="btn btn-outline btn-danger destroy" type="button">
         <i class="fa fa-fw fa-times"></i>

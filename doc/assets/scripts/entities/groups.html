@@ -1,0 +1,39 @@
+<!DOCTYPE html><html lang="en"><head><title>assets/scripts/entities/groups</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../../"><meta name="groc-document-path" content="assets/scripts/entities/groups"><meta name="groc-project-path" content="assets/scripts/entities/groups.coffee"><link rel="stylesheet" type="text/css" media="all" href="../../../assets/style.css"><script type="text/javascript" src="../../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/entities/groups.coffee</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-property">@Bamboo</span>.<span class="hljs-built_in">module</span> <span class="hljs-string">"Entities"</span>, <span class="hljs-function"><span class="hljs-params">(Entities, App, Backbone, Marionette, $, _)</span> -&gt;</span>
+	
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Entities</span>.<span class="hljs-title">Group</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Entities</span>.<span class="hljs-title">Model</span></span>
+
+    <span class="hljs-attribute">urlRoot</span>:<span class="hljs-function"> -&gt;</span> <span class="hljs-string">"/groups"</span>
+
+    <span class="hljs-attribute">relations</span>: [
+      <span class="hljs-attribute">type</span>: Backbone.Many
+      <span class="hljs-attribute">key</span>: <span class="hljs-string">'users'</span>
+      <span class="hljs-attribute">relatedModel</span>: <span class="hljs-string">'Bamboo.Entities.User'</span>
+    ]
+
+    <span class="hljs-attribute">toJSON</span>:<span class="hljs-function"> -&gt;</span>
+      json = <span class="hljs-keyword">super</span>
+      json
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Entities</span>.<span class="hljs-title">GroupsCollection</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Entities</span>.<span class="hljs-title">Collection</span></span>
+
+    <span class="hljs-attribute">model</span>: Entities.Group
+
+    <span class="hljs-attribute">url</span>:<span class="hljs-function"> -&gt;</span> <span class="hljs-string">"/groups"</span>
+	
+
+  API =
+    <span class="hljs-attribute">getGroups</span>:<span class="hljs-function"> -&gt;</span>
+      groups = <span class="hljs-keyword">new</span> Entities.GroupsCollection
+      groups.fetch()
+      groups
+
+    <span class="hljs-attribute">getGroup</span>: <span class="hljs-function"><span class="hljs-params">(id)</span> -&gt;</span>
+      group = <span class="hljs-keyword">new</span> Entities.Group <span class="hljs-attribute">id</span>: id
+      group.fetch()
+      group
+	
+  App.reqres.setHandler <span class="hljs-string">"group:entities"</span>,<span class="hljs-function"> -&gt;</span>
+    API.getGroups()
+
+  App.reqres.setHandler <span class="hljs-string">"group:entity"</span>, <span class="hljs-function"><span class="hljs-params">(id)</span> -&gt;</span>
+    API.getGroup(id)</div></div></div></div></body></html>

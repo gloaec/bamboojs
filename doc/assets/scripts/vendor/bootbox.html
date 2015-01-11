@@ -1,0 +1,671 @@
+<!DOCTYPE html><html lang="en"><head><title>assets/scripts/vendor/bootbox</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../../"><meta name="groc-document-path" content="assets/scripts/vendor/bootbox"><meta name="groc-project-path" content="assets/scripts/vendor/bootbox.js"><link rel="stylesheet" type="text/css" media="all" href="../../../assets/style.css"><script type="text/javascript" src="../../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/vendor/bootbox.js</div></div><div id="document"><div class="segment"><div class="comments "><div class="wrapper"><p>bootbox.js [v4.3.0]</p>
+<p><a href="http://bootboxjs.com/license.txt">http://bootboxjs.com/license.txt</a></p></div></div></div><div class="segment"><div class="comments doc-section"><div class="wrapper"><p><span class='doc-section-header'> see <a href="https://github.com/makeusabrew/bootbox/issues/180">https://github.com/makeusabrew/bootbox/issues/180</a> and see <a href="https://github.com/makeusabrew/bootbox/issues/186">https://github.com/makeusabrew/bootbox/issues/186</a></span></p></div></div><div class="code"><div class="wrapper">(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(root, factory)</span> {</span>
+<span class="hljs-pi">
+  "use strict"</span>;
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> define === <span class="hljs-string">"function"</span> &amp;&amp; define.amd) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>AMD. Register as an anonymous module.</p></div></div><div class="code"><div class="wrapper">    define([<span class="hljs-string">"jquery"</span>], factory);
+  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> exports === <span class="hljs-string">"object"</span>) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Node. Does not work with strict CommonJS, but
+only CommonJS-like environments that support module.exports,
+like Node.</p></div></div><div class="code"><div class="wrapper">    module.exports = factory(<span class="hljs-built_in">require</span>(<span class="hljs-string">"jquery"</span>));
+  } <span class="hljs-keyword">else</span> {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Browser globals (root is window)</p></div></div><div class="code"><div class="wrapper">    root.bootbox = factory(root.jQuery);
+  }
+
+}(<span class="hljs-keyword">this</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">init</span><span class="hljs-params">($, undefined)</span> {</span>
+<span class="hljs-pi">
+  "use strict"</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>the base DOM structure needed to create a modal</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> templates = {
+    dialog:
+      <span class="hljs-string">"&lt;div class='bootbox modal' tabindex='-1' role='dialog'&gt;"</span> +
+        <span class="hljs-string">"&lt;div class='modal-dialog'&gt;"</span> +
+          <span class="hljs-string">"&lt;div class='modal-content'&gt;"</span> +
+            <span class="hljs-string">"&lt;div class='modal-body'&gt;&lt;div class='bootbox-body'&gt;&lt;/div&gt;&lt;/div&gt;"</span> +
+          <span class="hljs-string">"&lt;/div&gt;"</span> +
+        <span class="hljs-string">"&lt;/div&gt;"</span> +
+      <span class="hljs-string">"&lt;/div&gt;"</span>,
+    header:
+      <span class="hljs-string">"&lt;div class='modal-header'&gt;"</span> +
+        <span class="hljs-string">"&lt;h4 class='modal-title'&gt;&lt;/h4&gt;"</span> +
+      <span class="hljs-string">"&lt;/div&gt;"</span>,
+    footer:
+      <span class="hljs-string">"&lt;div class='modal-footer'&gt;&lt;/div&gt;"</span>,
+    closeButton:
+      <span class="hljs-string">"&lt;button type='button' class='bootbox-close-button close' data-dismiss='modal' aria-hidden='true'&gt;&amp;times;&lt;/button&gt;"</span>,
+    form:
+      <span class="hljs-string">"&lt;form class='bootbox-form'&gt;&lt;/form&gt;"</span>,
+    inputs: {
+      text:
+        <span class="hljs-string">"&lt;input class='bootbox-input bootbox-input-text form-control' autocomplete=off type=text /&gt;"</span>,
+      textarea:
+        <span class="hljs-string">"&lt;textarea class='bootbox-input bootbox-input-textarea form-control'&gt;&lt;/textarea&gt;"</span>,
+      email:
+        <span class="hljs-string">"&lt;input class='bootbox-input bootbox-input-email form-control' autocomplete='off' type='email' /&gt;"</span>,
+      select:
+        <span class="hljs-string">"&lt;select class='bootbox-input bootbox-input-select form-control'&gt;&lt;/select&gt;"</span>,
+      checkbox:
+        <span class="hljs-string">"&lt;div class='checkbox'&gt;&lt;label&gt;&lt;input class='bootbox-input bootbox-input-checkbox' type='checkbox' /&gt;&lt;/label&gt;&lt;/div&gt;"</span>,
+      date:
+        <span class="hljs-string">"&lt;input class='bootbox-input bootbox-input-date form-control' autocomplete=off type='date' /&gt;"</span>,
+      time:
+        <span class="hljs-string">"&lt;input class='bootbox-input bootbox-input-time form-control' autocomplete=off type='time' /&gt;"</span>,
+      number:
+        <span class="hljs-string">"&lt;input class='bootbox-input bootbox-input-number form-control' autocomplete=off type='number' /&gt;"</span>,
+      password:
+        <span class="hljs-string">"&lt;input class='bootbox-input bootbox-input-password form-control' autocomplete='off' type='password' /&gt;"</span>
+    }
+  };
+
+  <span class="hljs-keyword">var</span> defaults = {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>default language</p></div></div><div class="code"><div class="wrapper">    locale: <span class="hljs-string">"en"</span>,</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>show backdrop or not</p></div></div><div class="code"><div class="wrapper">    backdrop: <span class="hljs-literal">true</span>,</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>animate the modal in/out</p></div></div><div class="code"><div class="wrapper">    animate: <span class="hljs-literal">true</span>,</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>additional class string applied to the top level dialog</p></div></div><div class="code"><div class="wrapper">    className: <span class="hljs-literal">null</span>,</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>whether or not to include a close button</p></div></div><div class="code"><div class="wrapper">    closeButton: <span class="hljs-literal">true</span>,</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>show the dialog immediately by default</p></div></div><div class="code"><div class="wrapper">    show: <span class="hljs-literal">true</span>,</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>dialog container</p></div></div><div class="code"><div class="wrapper">    container: <span class="hljs-string">"body"</span>
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>our public object; augmented after our private API</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> exports = {};</div></div></div><div class="segment"><div class="comments doc-section doc-section-private"><div class="wrapper"><p><span class='doc-section-header'>Private</span></p></div></div><div class="code"><div class="wrapper">  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">_t</span><span class="hljs-params">(key)</span> {</span>
+    <span class="hljs-keyword">var</span> locale = locales[defaults.locale];
+    <span class="hljs-keyword">return</span> locale ? locale[key] : locales.en[key];
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">processCallback</span><span class="hljs-params">(e, dialog, callback)</span> {</span>
+    e.stopPropagation();
+    e.preventDefault();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>by default we assume a callback will get rid of the dialog,
+although it is given the opportunity to override this</p></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>so, if the callback can be invoked and it <em>explicitly returns false</em>
+then we&#39;ll set a flag to keep the dialog active...</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> preserveDialog = $.isFunction(callback) &amp;&amp; callback(e) === <span class="hljs-literal">false</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>... otherwise we&#39;ll bin it</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (!preserveDialog) {
+      dialog.modal(<span class="hljs-string">"hide"</span>);
+    }
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getKeyLength</span><span class="hljs-params">(obj)</span> {</span></div></div></div><div class="segment"><div class="comments doc-section"><div class="wrapper"><p><span class='doc-section-header'> TODO defer to Object.keys(x).length if available?</span></p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> k, t = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">for</span> (k <span class="hljs-keyword">in</span> obj) {
+      t ++;
+    }
+    <span class="hljs-keyword">return</span> t;
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">each</span><span class="hljs-params">(collection, iterator)</span> {</span>
+    <span class="hljs-keyword">var</span> index = <span class="hljs-number">0</span>;
+    $.each(collection, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(key, value)</span> {</span>
+      iterator(key, value, index++);
+    });
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">sanitize</span><span class="hljs-params">(options)</span> {</span>
+    <span class="hljs-keyword">var</span> buttons;
+    <span class="hljs-keyword">var</span> total;
+
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> options !== <span class="hljs-string">"object"</span>) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"Please supply an object of options"</span>);
+    }
+
+    <span class="hljs-keyword">if</span> (!options.message) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"Please specify a message"</span>);
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>make sure any supplied options take precedence over defaults</p></div></div><div class="code"><div class="wrapper">    options = $.extend({}, defaults, options);
+
+    <span class="hljs-keyword">if</span> (!options.buttons) {
+      options.buttons = {};
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>we only support Bootstrap&#39;s &quot;static&quot; and false backdrop args
+supporting true would mean you could dismiss the dialog without
+explicitly interacting with it</p></div></div><div class="code"><div class="wrapper">    options.backdrop = options.backdrop ? <span class="hljs-string">"static"</span> : <span class="hljs-literal">false</span>;
+
+    buttons = options.buttons;
+
+    total = getKeyLength(buttons);
+
+    each(buttons, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(key, button, index)</span> {</span>
+
+      <span class="hljs-keyword">if</span> ($.isFunction(button)) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>short form, assume value is our callback. Since button
+isn&#39;t an object it isn&#39;t a reference either so re-assign it</p></div></div><div class="code"><div class="wrapper">        button = buttons[key] = {
+          callback: button
+        };
+      }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>before any further checks make sure by now button is the correct type</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">if</span> ($.type(button) !== <span class="hljs-string">"object"</span>) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"button with key "</span> + key + <span class="hljs-string">" must be an object"</span>);
+      }
+
+      <span class="hljs-keyword">if</span> (!button.label) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>the lack of an explicit label means we&#39;ll assume the key is good enough</p></div></div><div class="code"><div class="wrapper">        button.label = key;
+      }
+
+      <span class="hljs-keyword">if</span> (!button.className) {
+        <span class="hljs-keyword">if</span> (total &lt;= <span class="hljs-number">2</span> &amp;&amp; index === total-<span class="hljs-number">1</span>) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>always add a primary to the main option in a two-button dialog</p></div></div><div class="code"><div class="wrapper">          button.className = <span class="hljs-string">"btn-primary"</span>;
+        } <span class="hljs-keyword">else</span> {
+          button.className = <span class="hljs-string">"btn-default"</span>;
+        }
+      }
+    });
+
+    <span class="hljs-keyword">return</span> options;
+  }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>map a flexible set of arguments into a single returned object
+if args.length is already one just return it, otherwise
+use the properties argument to map the unnamed args to
+object properties
+so in the latter case:
+mapArguments([&quot;foo&quot;, $.noop], [&quot;message&quot;, &quot;callback&quot;])
+-&gt; { message: &quot;foo&quot;, callback: $.noop }</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">mapArguments</span><span class="hljs-params">(args, properties)</span> {</span>
+    <span class="hljs-keyword">var</span> argn = args.length;
+    <span class="hljs-keyword">var</span> options = {};
+
+    <span class="hljs-keyword">if</span> (argn &lt; <span class="hljs-number">1</span> || argn &gt; <span class="hljs-number">2</span>) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"Invalid argument length"</span>);
+    }
+
+    <span class="hljs-keyword">if</span> (argn === <span class="hljs-number">2</span> || <span class="hljs-keyword">typeof</span> args[<span class="hljs-number">0</span>] === <span class="hljs-string">"string"</span>) {
+      options[properties[<span class="hljs-number">0</span>]] = args[<span class="hljs-number">0</span>];
+      options[properties[<span class="hljs-number">1</span>]] = args[<span class="hljs-number">1</span>];
+    } <span class="hljs-keyword">else</span> {
+      options = args[<span class="hljs-number">0</span>];
+    }
+
+    <span class="hljs-keyword">return</span> options;
+  }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>merge a set of default dialog options with user supplied arguments</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">mergeArguments</span><span class="hljs-params">(defaults, args, properties)</span> {</span>
+    <span class="hljs-keyword">return</span> $.extend(</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>deep merge</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-literal">true</span>,</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>ensure the target is an empty, unreferenced object</p></div></div><div class="code"><div class="wrapper">      {},</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>the base options object for this type of dialog (often just buttons)</p></div></div><div class="code"><div class="wrapper">      defaults,</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>args could be an object or array; if it&#39;s an array properties will
+map it to a proper options object</p></div></div><div class="code"><div class="wrapper">      mapArguments(
+        args,
+        properties
+      )
+    );
+  }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>this entry-level method makes heavy use of composition to take a simple
+range of inputs and return valid options suitable for passing to bootbox.dialog</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">mergeDialogOptions</span><span class="hljs-params">(className, labels, properties, args)</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p> build up a base set of dialog properties</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> baseOptions = {
+      className: <span class="hljs-string">"bootbox-"</span> + className,
+      buttons: createLabels.apply(<span class="hljs-literal">null</span>, labels)
+    };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>ensure the buttons properties generated, <em>after</em> merging
+with user args are still valid against the supplied labels</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">return</span> validateButtons(</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>merge the generated base properties with user supplied arguments</p></div></div><div class="code"><div class="wrapper">      mergeArguments(
+        baseOptions,
+        args,</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>if args.length &gt; 1, properties specify how each arg maps to an object key</p></div></div><div class="code"><div class="wrapper">        properties
+      ),
+      labels
+    );
+  }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>from a given list of arguments return a suitable object of button labels
+all this does is normalise the given labels and translate them where possible
+e.g. &quot;ok&quot;, &quot;confirm&quot; -&gt; { ok: &quot;OK, cancel: &quot;Annuleren&quot; }</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">createLabels</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">var</span> buttons = {};
+
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>, j = <span class="hljs-built_in">arguments</span>.length; i &lt; j; i++) {
+      <span class="hljs-keyword">var</span> argument = <span class="hljs-built_in">arguments</span>[i];
+      <span class="hljs-keyword">var</span> key = argument.toLowerCase();
+      <span class="hljs-keyword">var</span> value = argument.toUpperCase();
+
+      buttons[key] = {
+        label: _t(value)
+      };
+    }
+
+    <span class="hljs-keyword">return</span> buttons;
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">validateButtons</span><span class="hljs-params">(options, buttons)</span> {</span>
+    <span class="hljs-keyword">var</span> allowedButtons = {};
+    each(buttons, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(key, value)</span> {</span>
+      allowedButtons[value] = <span class="hljs-literal">true</span>;
+    });
+
+    each(options.buttons, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(key)</span> {</span>
+      <span class="hljs-keyword">if</span> (allowedButtons[key] === <span class="hljs-literal">undefined</span>) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"button key "</span> + key + <span class="hljs-string">" is not allowed (options are "</span> + buttons.join(<span class="hljs-string">"\n"</span>) + <span class="hljs-string">")"</span>);
+      }
+    });
+
+    <span class="hljs-keyword">return</span> options;
+  }
+
+  exports.alert = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">var</span> options;
+
+    options = mergeDialogOptions(<span class="hljs-string">"alert"</span>, [<span class="hljs-string">"ok"</span>], [<span class="hljs-string">"message"</span>, <span class="hljs-string">"callback"</span>], <span class="hljs-built_in">arguments</span>);
+
+    <span class="hljs-keyword">if</span> (options.callback &amp;&amp; !$.isFunction(options.callback)) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"alert requires callback property to be a function when provided"</span>);
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>overrides</p></div></div><div class="code"><div class="wrapper">    options.buttons.ok.callback = options.onEscape = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+      <span class="hljs-keyword">if</span> ($.isFunction(options.callback)) {
+        <span class="hljs-keyword">return</span> options.callback();
+      }
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    };
+
+    <span class="hljs-keyword">return</span> exports.dialog(options);
+  };
+
+  exports.confirm = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">var</span> options;
+
+    options = mergeDialogOptions(<span class="hljs-string">"confirm"</span>, [<span class="hljs-string">"cancel"</span>, <span class="hljs-string">"confirm"</span>], [<span class="hljs-string">"message"</span>, <span class="hljs-string">"callback"</span>], <span class="hljs-built_in">arguments</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>overrides; undo anything the user tried to set they shouldn&#39;t have</p></div></div><div class="code"><div class="wrapper">    options.buttons.cancel.callback = options.onEscape = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+      <span class="hljs-keyword">return</span> options.callback(<span class="hljs-literal">false</span>);
+    };
+
+    options.buttons.confirm.callback = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+      <span class="hljs-keyword">return</span> options.callback(<span class="hljs-literal">true</span>);
+    };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>confirm specific validation</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (!$.isFunction(options.callback)) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"confirm requires a callback"</span>);
+    }
+
+    <span class="hljs-keyword">return</span> exports.dialog(options);
+  };
+
+  exports.prompt = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">var</span> options;
+    <span class="hljs-keyword">var</span> defaults;
+    <span class="hljs-keyword">var</span> dialog;
+    <span class="hljs-keyword">var</span> form;
+    <span class="hljs-keyword">var</span> input;
+    <span class="hljs-keyword">var</span> shouldShow;
+    <span class="hljs-keyword">var</span> inputOptions;</div></div></div><div class="segment"><div class="comments doc-section"><div class="wrapper"><p><span class='doc-section-header'> TODO this could be solved by allowing message to
+be a function instead...</span></p>
+<p>we have to create our form first otherwise
+its value is undefined when gearing up our options</p></div></div><div class="code"><div class="wrapper">    form = $(templates.form);</div></div></div><div class="segment"><div class="comments doc-section"><div class="wrapper"><p><span class='doc-section-header'> TODO I don&#39;t like that prompt has to do a lot of heavy
+lifting which mergeDialogOptions can <em>almost</em> support already
+just because of &#39;value&#39; and &#39;inputType&#39; - can we refactor?</span></p>
+<p>prompt defaults are more complex than others in that
+users can override more defaults</p></div></div><div class="code"><div class="wrapper">    defaults = {
+      className: <span class="hljs-string">"bootbox-prompt"</span>,
+      buttons: createLabels(<span class="hljs-string">"cancel"</span>, <span class="hljs-string">"confirm"</span>),
+      value: <span class="hljs-string">""</span>,
+      inputType: <span class="hljs-string">"text"</span>
+    };
+
+    options = validateButtons(
+      mergeArguments(defaults, <span class="hljs-built_in">arguments</span>, [<span class="hljs-string">"title"</span>, <span class="hljs-string">"callback"</span>]),
+      [<span class="hljs-string">"cancel"</span>, <span class="hljs-string">"confirm"</span>]
+    );</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>capture the user&#39;s show value; we always set this to false before
+spawning the dialog to give us a chance to attach some handlers to
+it, but we need to make sure we respect a preference not to show it</p></div></div><div class="code"><div class="wrapper">    shouldShow = (options.show === <span class="hljs-literal">undefined</span>) ? <span class="hljs-literal">true</span> : options.show;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>overrides; undo anything the user tried to set they shouldn&#39;t have</p></div></div><div class="code"><div class="wrapper">    options.message = form;
+
+    options.buttons.cancel.callback = options.onEscape = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+      <span class="hljs-keyword">return</span> options.callback(<span class="hljs-literal">null</span>);
+    };
+
+    options.buttons.confirm.callback = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+      <span class="hljs-keyword">var</span> value;
+
+      <span class="hljs-keyword">switch</span> (options.inputType) {
+        <span class="hljs-keyword">case</span> <span class="hljs-string">"text"</span>:
+        <span class="hljs-keyword">case</span> <span class="hljs-string">"textarea"</span>:
+        <span class="hljs-keyword">case</span> <span class="hljs-string">"email"</span>:
+        <span class="hljs-keyword">case</span> <span class="hljs-string">"select"</span>:
+        <span class="hljs-keyword">case</span> <span class="hljs-string">"date"</span>:
+        <span class="hljs-keyword">case</span> <span class="hljs-string">"time"</span>:
+        <span class="hljs-keyword">case</span> <span class="hljs-string">"number"</span>:
+        <span class="hljs-keyword">case</span> <span class="hljs-string">"password"</span>:
+          value = input.val();
+          <span class="hljs-keyword">break</span>;
+
+        <span class="hljs-keyword">case</span> <span class="hljs-string">"checkbox"</span>:
+          <span class="hljs-keyword">var</span> checkedItems = input.find(<span class="hljs-string">"input:checked"</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>we assume that checkboxes are always multiple,
+hence we default to an empty array</p></div></div><div class="code"><div class="wrapper">          value = [];
+
+          each(checkedItems, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(_, item)</span> {</span>
+            value.push($(item).val());
+          });
+          <span class="hljs-keyword">break</span>;
+      }
+
+      <span class="hljs-keyword">return</span> options.callback(value);
+    };
+
+    options.show = <span class="hljs-literal">false</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>prompt specific validation</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (!options.title) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"prompt requires a title"</span>);
+    }
+
+    <span class="hljs-keyword">if</span> (!$.isFunction(options.callback)) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"prompt requires a callback"</span>);
+    }
+
+    <span class="hljs-keyword">if</span> (!templates.inputs[options.inputType]) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"invalid prompt type"</span>);
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>create the input based on the supplied type</p></div></div><div class="code"><div class="wrapper">    input = $(templates.inputs[options.inputType]);
+
+    <span class="hljs-keyword">switch</span> (options.inputType) {
+      <span class="hljs-keyword">case</span> <span class="hljs-string">"text"</span>:
+      <span class="hljs-keyword">case</span> <span class="hljs-string">"textarea"</span>:
+      <span class="hljs-keyword">case</span> <span class="hljs-string">"email"</span>:
+      <span class="hljs-keyword">case</span> <span class="hljs-string">"date"</span>:
+      <span class="hljs-keyword">case</span> <span class="hljs-string">"time"</span>:
+      <span class="hljs-keyword">case</span> <span class="hljs-string">"number"</span>:
+      <span class="hljs-keyword">case</span> <span class="hljs-string">"password"</span>:
+        input.val(options.value);
+        <span class="hljs-keyword">break</span>;
+
+      <span class="hljs-keyword">case</span> <span class="hljs-string">"select"</span>:
+        <span class="hljs-keyword">var</span> groups = {};
+        inputOptions = options.inputOptions || [];
+
+        <span class="hljs-keyword">if</span> (!inputOptions.length) {
+          <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"prompt with select requires options"</span>);
+        }
+
+        each(inputOptions, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(_, option)</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>assume the element to attach to is the input...</p></div></div><div class="code"><div class="wrapper">          <span class="hljs-keyword">var</span> elem = input;
+
+          <span class="hljs-keyword">if</span> (option.value === <span class="hljs-literal">undefined</span> || option.text === <span class="hljs-literal">undefined</span>) {
+            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"given options in wrong format"</span>);
+          }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>... but override that element if this option sits in a group</p></div></div><div class="code"><div class="wrapper">          <span class="hljs-keyword">if</span> (option.group) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>initialise group if necessary</p></div></div><div class="code"><div class="wrapper">            <span class="hljs-keyword">if</span> (!groups[option.group]) {
+              groups[option.group] = $(<span class="hljs-string">"&lt;optgroup/&gt;"</span>).attr(<span class="hljs-string">"label"</span>, option.group);
+            }
+
+            elem = groups[option.group];
+          }
+
+          elem.append(<span class="hljs-string">"&lt;option value='"</span> + option.value + <span class="hljs-string">"'&gt;"</span> + option.text + <span class="hljs-string">"&lt;/option&gt;"</span>);
+        });
+
+        each(groups, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(_, group)</span> {</span>
+          input.append(group);
+        });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>safe to set a select&#39;s value as per a normal input</p></div></div><div class="code"><div class="wrapper">        input.val(options.value);
+        <span class="hljs-keyword">break</span>;
+
+      <span class="hljs-keyword">case</span> <span class="hljs-string">"checkbox"</span>:
+        <span class="hljs-keyword">var</span> values   = $.isArray(options.value) ? options.value : [options.value];
+        inputOptions = options.inputOptions || [];
+
+        <span class="hljs-keyword">if</span> (!inputOptions.length) {
+          <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"prompt with checkbox requires options"</span>);
+        }
+
+        <span class="hljs-keyword">if</span> (!inputOptions[<span class="hljs-number">0</span>].value || !inputOptions[<span class="hljs-number">0</span>].text) {
+          <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"given options in wrong format"</span>);
+        }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>checkboxes have to nest within a containing element, so
+they break the rules a bit and we end up re-assigning
+our &#39;input&#39; element to this container instead</p></div></div><div class="code"><div class="wrapper">        input = $(<span class="hljs-string">"&lt;div/&gt;"</span>);
+
+        each(inputOptions, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(_, option)</span> {</span>
+          <span class="hljs-keyword">var</span> checkbox = $(templates.inputs[options.inputType]);
+
+          checkbox.find(<span class="hljs-string">"input"</span>).attr(<span class="hljs-string">"value"</span>, option.value);
+          checkbox.find(<span class="hljs-string">"label"</span>).append(option.text);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>we&#39;ve ensured values is an array so we can always iterate over it</p></div></div><div class="code"><div class="wrapper">          each(values, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(_, value)</span> {</span>
+            <span class="hljs-keyword">if</span> (value === option.value) {
+              checkbox.find(<span class="hljs-string">"input"</span>).prop(<span class="hljs-string">"checked"</span>, <span class="hljs-literal">true</span>);
+            }
+          });
+
+          input.append(checkbox);
+        });
+        <span class="hljs-keyword">break</span>;
+    }
+
+    <span class="hljs-keyword">if</span> (options.placeholder) {
+      input.attr(<span class="hljs-string">"placeholder"</span>, options.placeholder);
+    }
+
+    <span class="hljs-keyword">if</span>(options.pattern){
+      input.attr(<span class="hljs-string">"pattern"</span>, options.pattern);
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>now place it in our form</p></div></div><div class="code"><div class="wrapper">    form.append(input);
+
+    form.on(<span class="hljs-string">"submit"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+      e.preventDefault();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Fix for SammyJS (or similar JS routing library) hijacking the form post.</p></div></div><div class="code"><div class="wrapper">      e.stopPropagation();</div></div></div><div class="segment"><div class="comments doc-section"><div class="wrapper"><p><span class='doc-section-header'> TODO can we actually click <em>the</em> button object instead?
+e.g. buttons.confirm.click() or similar</span></p></div></div><div class="code"><div class="wrapper">      dialog.find(<span class="hljs-string">".btn-primary"</span>).click();
+    });
+
+    dialog = exports.dialog(options);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>clear the existing handler focusing the submit button...</p></div></div><div class="code"><div class="wrapper">    dialog.off(<span class="hljs-string">"shown.bs.modal"</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>...and replace it with one focusing our input, if possible</p></div></div><div class="code"><div class="wrapper">    dialog.on(<span class="hljs-string">"shown.bs.modal"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+      input.focus();
+    });
+
+    <span class="hljs-keyword">if</span> (shouldShow === <span class="hljs-literal">true</span>) {
+      dialog.modal(<span class="hljs-string">"show"</span>);
+    }
+
+    <span class="hljs-keyword">return</span> dialog;
+  };
+
+  exports.dialog = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(options)</span> {</span>
+    options = sanitize(options);
+
+    <span class="hljs-keyword">var</span> dialog = $(templates.dialog);
+    <span class="hljs-keyword">var</span> innerDialog = dialog.find(<span class="hljs-string">".modal-dialog"</span>);
+    <span class="hljs-keyword">var</span> body = dialog.find(<span class="hljs-string">".modal-body"</span>);
+    <span class="hljs-keyword">var</span> buttons = options.buttons;
+    <span class="hljs-keyword">var</span> buttonStr = <span class="hljs-string">""</span>;
+    <span class="hljs-keyword">var</span> callbacks = {
+      onEscape: options.onEscape
+    };
+
+    each(buttons, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(key, button)</span> {</span></div></div></div><div class="segment"><div class="comments doc-section"><div class="wrapper"><p><span class='doc-section-header'> TODO I don&#39;t like this string appending to itself; bit dirty. Needs reworking
+can we just build up button elements instead? slower but neater. Then button
+can just become a template too</span></p></div></div><div class="code"><div class="wrapper">      buttonStr += <span class="hljs-string">"&lt;button data-bb-handler='"</span> + key + <span class="hljs-string">"' type='button' class='btn "</span> + button.className + <span class="hljs-string">"'&gt;"</span> + button.label + <span class="hljs-string">"&lt;/button&gt;"</span>;
+      callbacks[key] = button.callback;
+    });
+
+    body.find(<span class="hljs-string">".bootbox-body"</span>).html(options.message);
+
+    <span class="hljs-keyword">if</span> (options.animate === <span class="hljs-literal">true</span>) {
+      dialog.addClass(<span class="hljs-string">"fade"</span>);
+    }
+
+    <span class="hljs-keyword">if</span> (options.className) {
+      dialog.addClass(options.className);
+    }
+
+    <span class="hljs-keyword">if</span> (options.size === <span class="hljs-string">"large"</span>) {
+      innerDialog.addClass(<span class="hljs-string">"modal-lg"</span>);
+    }
+
+    <span class="hljs-keyword">if</span> (options.size === <span class="hljs-string">"small"</span>) {
+      innerDialog.addClass(<span class="hljs-string">"modal-sm"</span>);
+    }
+
+    <span class="hljs-keyword">if</span> (options.title) {
+      body.before(templates.header);
+    }
+
+    <span class="hljs-keyword">if</span> (options.closeButton) {
+      <span class="hljs-keyword">var</span> closeButton = $(templates.closeButton);
+
+      <span class="hljs-keyword">if</span> (options.title) {
+        dialog.find(<span class="hljs-string">".modal-header"</span>).prepend(closeButton);
+      } <span class="hljs-keyword">else</span> {
+        closeButton.css(<span class="hljs-string">"margin-top"</span>, <span class="hljs-string">"-10px"</span>).prependTo(body);
+      }
+    }
+
+    <span class="hljs-keyword">if</span> (options.title) {
+      dialog.find(<span class="hljs-string">".modal-title"</span>).html(options.title);
+    }
+
+    <span class="hljs-keyword">if</span> (buttonStr.length) {
+      body.after(templates.footer);
+      dialog.find(<span class="hljs-string">".modal-footer"</span>).html(buttonStr);
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Bootstrap event listeners; used handle extra
+setup &amp; teardown required after the underlying
+modal has performed certain actions</p></div></div><div class="code"><div class="wrapper">    dialog.on(<span class="hljs-string">"hidden.bs.modal"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>ensure we don&#39;t accidentally intercept hidden events triggered
+by children of the current dialog. We shouldn&#39;t anymore now BS
+namespaces its events; but still worth doing</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">if</span> (e.target === <span class="hljs-keyword">this</span>) {
+        dialog.remove();
+      }
+    });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>dialog.on(&quot;show.bs.modal&quot;, function() {
+  // sadly this doesn&#39;t work; show is called <em>just</em> before
+  // the backdrop is added so we&#39;d need a setTimeout hack or
+  // otherwise... leaving in as would be nice
+  if (options.backdrop) {
+    dialog.next(&quot;.modal-backdrop&quot;).addClass(&quot;bootbox-backdrop&quot;);
+  }
+});</p></div></div><div class="code"><div class="wrapper">    dialog.on(<span class="hljs-string">"shown.bs.modal"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+      dialog.find(<span class="hljs-string">".btn-primary:first"</span>).focus();
+    });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Bootbox event listeners; experimental and may not last
+just an attempt to decouple some behaviours from their
+respective triggers</p></div></div><div class="code"><div class="wrapper">    dialog.on(<span class="hljs-string">"escape.close.bb"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+      <span class="hljs-keyword">if</span> (callbacks.onEscape) {
+        processCallback(e, dialog, callbacks.onEscape);
+      }
+    });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Standard jQuery event listeners; used to handle user
+interaction with our dialog</p></div></div><div class="code"><div class="wrapper">    dialog.on(<span class="hljs-string">"click"</span>, <span class="hljs-string">".modal-footer button"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+      <span class="hljs-keyword">var</span> callbackKey = $(<span class="hljs-keyword">this</span>).data(<span class="hljs-string">"bb-handler"</span>);
+
+      processCallback(e, dialog, callbacks[callbackKey]);
+
+    });
+
+    dialog.on(<span class="hljs-string">"click"</span>, <span class="hljs-string">".bootbox-close-button"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>onEscape might be falsy but that&#39;s fine; the fact is
+if the user has managed to click the close button we
+have to close the dialog, callback or not</p></div></div><div class="code"><div class="wrapper">      processCallback(e, dialog, callbacks.onEscape);
+    });
+
+    dialog.on(<span class="hljs-string">"keyup"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+      <span class="hljs-keyword">if</span> (e.which === <span class="hljs-number">27</span>) {
+        dialog.trigger(<span class="hljs-string">"escape.close.bb"</span>);
+      }
+    });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>the remainder of this method simply deals with adding our
+dialogent to the DOM, augmenting it with Bootstrap&#39;s modal
+functionality and then giving the resulting object back
+to our caller</p></div></div><div class="code"><div class="wrapper">    $(options.container).append(dialog);
+
+    dialog.modal({
+      backdrop: options.backdrop,
+      keyboard: <span class="hljs-literal">false</span>,
+      show: <span class="hljs-literal">false</span>
+    });
+
+    <span class="hljs-keyword">if</span> (options.show) {
+      dialog.modal(<span class="hljs-string">"show"</span>);
+    }</div></div></div><div class="segment"><div class="comments doc-section"><div class="wrapper"><p><span class='doc-section-header'> TODO should we return the raw element here or should
+we wrap it in an object on which we can expose some neater
+methods, e.g. var d = bootbox.alert(); d.hide(); instead
+of d.modal(&quot;hide&quot;);</span></p></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p> function BBDialog(elem) {
+   this.elem = elem;
+ }</p>
+<p> BBDialog.prototype = {
+   hide: function() {
+     return this.elem.modal(&quot;hide&quot;);
+   },
+   show: function() {
+     return this.elem.modal(&quot;show&quot;);
+   }
+ };</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">return</span> dialog;
+
+  };
+
+  exports.setDefaults = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">var</span> values = {};
+
+    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">arguments</span>.length === <span class="hljs-number">2</span>) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>allow passing of single key/value...</p></div></div><div class="code"><div class="wrapper">      values[<span class="hljs-built_in">arguments</span>[<span class="hljs-number">0</span>]] = <span class="hljs-built_in">arguments</span>[<span class="hljs-number">1</span>];
+    } <span class="hljs-keyword">else</span> {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>... and as an object too</p></div></div><div class="code"><div class="wrapper">      values = <span class="hljs-built_in">arguments</span>[<span class="hljs-number">0</span>];
+    }
+
+    $.extend(defaults, values);
+  };
+
+  exports.hideAll = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    $(<span class="hljs-string">".bootbox"</span>).modal(<span class="hljs-string">"hide"</span>);
+
+    <span class="hljs-keyword">return</span> exports;
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>standard locales. Please add more according to ISO 639-1 standard. Multiple language variants are
+unlikely to be required. If this gets too large it can be split out into separate JS files.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> locales = {
+    br : {
+      OK      : <span class="hljs-string">"OK"</span>,
+      CANCEL  : <span class="hljs-string">"Cancelar"</span>,
+      CONFIRM : <span class="hljs-string">"Sim"</span>
+    },
+    cs : {
+      OK      : <span class="hljs-string">"OK"</span>,
+      CANCEL  : <span class="hljs-string">"Zrušit"</span>,
+      CONFIRM : <span class="hljs-string">"Potvrdit"</span>
+    },
+    da : {
+      OK      : <span class="hljs-string">"OK"</span>,
+      CANCEL  : <span class="hljs-string">"Annuller"</span>,
+      CONFIRM : <span class="hljs-string">"Accepter"</span>
+    },
+    de : {
+      OK      : <span class="hljs-string">"OK"</span>,
+      CANCEL  : <span class="hljs-string">"Abbrechen"</span>,
+      CONFIRM : <span class="hljs-string">"Akzeptieren"</span>
+    },
+    el : {
+      OK      : <span class="hljs-string">"Εντάξει"</span>,
+      CANCEL  : <span class="hljs-string">"Ακύρωση"</span>,
+      CONFIRM : <span class="hljs-string">"Επιβεβαίωση"</span>
+    },
+    en : {
+      OK      : <span class="hljs-string">"OK"</span>,
+      CANCEL  : <span class="hljs-string">"Cancel"</span>,
+      CONFIRM : <span class="hljs-string">"OK"</span>
+    },
+    es : {
+      OK      : <span class="hljs-string">"OK"</span>,
+      CANCEL  : <span class="hljs-string">"Cancelar"</span>,
+      CONFIRM : <span class="hljs-string">"Aceptar"</span>
+    },
+    et : {
+      OK      : <span class="hljs-string">"OK"</span>,
+      CANCEL  : <span class="hljs-string">"Katkesta"</span>,
+      CONFIRM : <span class="hljs-string">"OK"</span>
+    },
+    fi : {
+      OK      : <span class="hljs-string">"OK"</span>,
+      CANCEL  : <span class="hljs-string">"Peruuta"</span>,
+      CONFIRM : <span class="hljs-string">"OK"</span>
+    },
+    fr : {
+      OK      : <span class="hljs-string">"OK"</span>,
+      CANCEL  : <span class="hljs-string">"Annuler"</span>,
+      CONFIRM : <span class="hljs-string">"D'accord"</span>
+    },
+    he : {
+      OK      : <span class="hljs-string">"אישור"</span>,
+      CANCEL  : <span class="hljs-string">"ביטול"</span>,
+      CONFIRM : <span class="hljs-string">"אישור"</span>
+    },
+    id : {
+      OK      : <span class="hljs-string">"OK"</span>,
+      CANCEL  : <span class="hljs-string">"Batal"</span>,
+      CONFIRM : <span class="hljs-string">"OK"</span>
+    },
+    it : {
+      OK      : <span class="hljs-string">"OK"</span>,
+      CANCEL  : <span class="hljs-string">"Annulla"</span>,
+      CONFIRM : <span class="hljs-string">"Conferma"</span>
+    },
+    ja : {
+      OK      : <span class="hljs-string">"OK"</span>,
+      CANCEL  : <span class="hljs-string">"キャンセル"</span>,
+      CONFIRM : <span class="hljs-string">"確認"</span>
+    },
+    lt : {
+      OK      : <span class="hljs-string">"Gerai"</span>,
+      CANCEL  : <span class="hljs-string">"Atšaukti"</span>,
+      CONFIRM : <span class="hljs-string">"Patvirtinti"</span>
+    },
+    lv : {
+      OK      : <span class="hljs-string">"Labi"</span>,
+      CANCEL  : <span class="hljs-string">"Atcelt"</span>,
+      CONFIRM : <span class="hljs-string">"Apstiprināt"</span>
+    },
+    nl : {
+      OK      : <span class="hljs-string">"OK"</span>,
+      CANCEL  : <span class="hljs-string">"Annuleren"</span>,
+      CONFIRM : <span class="hljs-string">"Accepteren"</span>
+    },
+    no : {
+      OK      : <span class="hljs-string">"OK"</span>,
+      CANCEL  : <span class="hljs-string">"Avbryt"</span>,
+      CONFIRM : <span class="hljs-string">"OK"</span>
+    },
+    pl : {
+      OK      : <span class="hljs-string">"OK"</span>,
+      CANCEL  : <span class="hljs-string">"Anuluj"</span>,
+      CONFIRM : <span class="hljs-string">"Potwierdź"</span>
+    },
+    pt : {
+      OK      : <span class="hljs-string">"OK"</span>,
+      CANCEL  : <span class="hljs-string">"Cancelar"</span>,
+      CONFIRM : <span class="hljs-string">"Confirmar"</span>
+    },
+    ru : {
+      OK      : <span class="hljs-string">"OK"</span>,
+      CANCEL  : <span class="hljs-string">"Отмена"</span>,
+      CONFIRM : <span class="hljs-string">"Применить"</span>
+    },
+    sv : {
+      OK      : <span class="hljs-string">"OK"</span>,
+      CANCEL  : <span class="hljs-string">"Avbryt"</span>,
+      CONFIRM : <span class="hljs-string">"OK"</span>
+    },
+    tr : {
+      OK      : <span class="hljs-string">"Tamam"</span>,
+      CANCEL  : <span class="hljs-string">"İptal"</span>,
+      CONFIRM : <span class="hljs-string">"Onayla"</span>
+    },
+    zh_CN : {
+      OK      : <span class="hljs-string">"OK"</span>,
+      CANCEL  : <span class="hljs-string">"取消"</span>,
+      CONFIRM : <span class="hljs-string">"确认"</span>
+    },
+    zh_TW : {
+      OK      : <span class="hljs-string">"OK"</span>,
+      CANCEL  : <span class="hljs-string">"取消"</span>,
+      CONFIRM : <span class="hljs-string">"確認"</span>
+    }
+  };
+
+  exports.init = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(_$)</span> {</span>
+    <span class="hljs-keyword">return</span> init(_$ || $);
+  };
+
+  <span class="hljs-keyword">return</span> exports;
+}));</div></div></div></div></body></html>

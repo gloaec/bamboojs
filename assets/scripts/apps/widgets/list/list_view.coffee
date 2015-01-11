@@ -8,6 +8,7 @@
 
     regions:
       widgetRegion: '.widget-region'
+      setttingsRegion: '.settings-region'
 
     attributes: ->
       class: """
@@ -176,9 +177,10 @@
       "click .edit"   : -> @trigger "edit:widget:clicked", @model
       "click .delete" : -> @trigger "delete:widget:clicked", @model
       "dblclick .name": "onEditWidgetNameClicked"
-      "blur .input-command": "onCommandBlur"
+      #"blur .input-command": "onCommandBlur"
 
     modelEvents:
+      "change:command": "onCommandChange"
       "change:colxs": -> @$el.attr @attributes()
       "change:colsm": -> @$el.attr @attributes()
       "change:colmd": -> @$el.attr @attributes()
@@ -218,8 +220,17 @@
     initialize: ->
       $(window).on 'resize', @onResize
 
-    onCommandBlur:(e) ->
-      @render()
+    onCommandChange:(e) =>
+      if @model.get('command').startsWith '//' or
+          @model.get('command').startsWith 'http://' or
+          @model.get('command').startsWith 'https://'
+        App.execute "widget:default:show",
+          widget: @model
+          region: @widgetRegion
+      else
+        App.execute @model.get('command'),
+          widget: @model
+          region: @widgetRegion
 
     onResize: (e) =>
       if @ui.widget.width() < 300
@@ -266,13 +277,9 @@
             $(e.target).button('toggle')
             @closemenu()
       @stickit()
-      unless @model.get('command').startsWith '//' or
-          @model.get('command').startsWith 'http://' or
-          @model.get('command').startsWith 'https://'
-        App.execute @model.get('command'),
-          widget: @model
-          region: @widgetRegion
-      
+      @onCommandChange()
+
+
   class List.Widgets extends App.Views.CompositeView
     template: "widgets/list/widgets"
     itemView: List.Widget

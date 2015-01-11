@@ -11,7 +11,7 @@
       todosFooterRegion:  ".todos-footer-region"
 
   class List.Todo extends App.Views.ItemView
-    template: "todos/list/_widget_todo"
+    template: "todos/list/_todo"
     tagName: "li"
     className: "bottom-0 top-0 clearfix"
 

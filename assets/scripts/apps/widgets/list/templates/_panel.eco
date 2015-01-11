@@ -30,16 +30,9 @@
     </div>
   </div>
   <div class="widget-body list-group">
-    <div class="widget-<%= @id %> panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+    <div class="widget-<%= @id %> panel-collapse collapse settings-region" role="tabpanel" aria-labelledby="headingOne">
       <%= @render 'widgets/list/_settings', form: 'panel' %>
     </div>
-    <div class="widget-<%= @id %> panel-collapse collapse in widget-region">
-      <% if @command and (@command.startsWith '//' or @command.startsWith 'http://' or @command.startsWith 'https://'): %>
-        <div class="embed-responsive embed-responsive-16by9">
-          <iframe src="<%= @command %>" class="embed-responsive-item border-0 frame embed" style="margin-bottom: -5px; width: 100%"
-          frameborder="0" allowfullscreen/>
-        </div>
-      <% end %>
-    </div>
+    <div class="widget-<%= @id %> panel-collapse collapse in widget-region"></div>
   </div>
 </div>

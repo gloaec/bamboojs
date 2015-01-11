@@ -7,6 +7,6 @@
       frame: '.frame'
 
     modelEvents:
-      'change:link': ->
+      'change:command': ->
         clearTimeout @timer
         @timer = setTimeout @render, 2000

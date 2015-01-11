@@ -1,6 +1,6 @@
-<% if @link and (@link.startsWith '//' or @link.startsWith 'http://' or @link.startsWith 'https://'): %>
+<% if @command and (@command.startsWith '//' or @command.startsWith 'http://' or @command.startsWith 'https://'): %>
 <div class="embed-responsive embed-responsive-16by9">
-  <iframe src="<%= @link %>" class="embed-responsive-item border-0 frame embed" style="margin-bottom: -5px; width: 100%"
+  <iframe src="<%= @command %>" class="embed-responsive-item border-0 frame embed" style="margin-bottom: -5px; width: 100%"
   frameborder="0" allowfullscreen/>
 </div>
 <% else: %>

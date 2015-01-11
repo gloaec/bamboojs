@@ -31,6 +31,9 @@ h6 small,
 .h6 small {
     font-family: "titilliumlight";
 }*/
+.empty {
+    padding: 50px 20px;
+}
 * {
     margin: 0;
 }

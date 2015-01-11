@@ -1,0 +1,12 @@
+<!DOCTYPE html><html lang="en"><head><title>assets/scripts/apps/widget_default/show/show_view</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../../../../"><meta name="groc-document-path" content="assets/scripts/apps/widget_default/show/show_view"><meta name="groc-project-path" content="assets/scripts/apps/widget_default/show/show_view.coffee"><link rel="stylesheet" type="text/css" media="all" href="../../../../../assets/style.css"><script type="text/javascript" src="../../../../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/apps/widget_default/show/show_view.coffee</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-property">@Bamboo</span>.<span class="hljs-built_in">module</span> <span class="hljs-string">"WidgetDefaultApp.Show"</span>, <span class="hljs-function"><span class="hljs-params">(Show, App, Backbone, Marionette, $, _)</span> -&gt;</span>
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Show</span>.<span class="hljs-title">Widget</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">App</span>.<span class="hljs-title">Views</span>.<span class="hljs-title">ItemView</span></span>
+    <span class="hljs-attribute">template</span>: <span class="hljs-string">"widget_default/show/widget"</span>
+
+    <span class="hljs-attribute">ui</span>:
+      <span class="hljs-attribute">frame</span>: <span class="hljs-string">'.frame'</span>
+
+    <span class="hljs-attribute">modelEvents</span>:
+      <span class="hljs-string">'change:command'</span>:<span class="hljs-function"> -&gt;</span>
+        clearTimeout <span class="hljs-property">@timer</span>
+        <span class="hljs-property">@timer</span> = setTimeout <span class="hljs-property">@render</span>, <span class="hljs-number">2000</span></div></div></div></div></body></html>

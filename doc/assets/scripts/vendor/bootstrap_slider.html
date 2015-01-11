@@ -1,0 +1,1052 @@
+<!DOCTYPE html><html lang="en"><head><title>assets/scripts/vendor/bootstrap_slider</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../../"><meta name="groc-document-path" content="assets/scripts/vendor/bootstrap_slider"><meta name="groc-project-path" content="assets/scripts/vendor/bootstrap_slider.js"><link rel="stylesheet" type="text/css" media="all" href="../../../assets/style.css"><script type="text/javascript" src="../../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/vendor/bootstrap_slider.js</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-comment">/*! =========================================================
+ * bootstrap-slider.js
+ *
+ * Maintainers:
+ *		Kyle Kemp
+ *			- Twitter: @seiyria
+ *			- Github:  seiyria
+ *		Rohit Kalkur
+ *			- Twitter: @Rovolutionary
+ *			- Github:  rovolution
+ *
+ * =========================================================
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ========================================================= */</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Bridget makes jQuery widgets
+v1.0.1
+MIT license</p></div></div><div class="code"><div class="wrapper">(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(root, factory)</span> {</span>
+	<span class="hljs-keyword">if</span>(<span class="hljs-keyword">typeof</span> define === <span class="hljs-string">"function"</span> &amp;&amp; define.amd) {
+		define([<span class="hljs-string">"jquery"</span>], factory);
+	} <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(<span class="hljs-keyword">typeof</span> module === <span class="hljs-string">"object"</span> &amp;&amp; module.exports) {
+		<span class="hljs-keyword">var</span> jQuery;
+		<span class="hljs-keyword">try</span> {
+			jQuery = <span class="hljs-built_in">require</span>(<span class="hljs-string">"jquery"</span>);
+		} <span class="hljs-keyword">catch</span> (err) {
+			jQuery = <span class="hljs-literal">null</span>;
+		}
+		module.exports = factory(jQuery);
+	} <span class="hljs-keyword">else</span> {
+		root.Slider = factory(root.jQuery);
+	}
+}(<span class="hljs-keyword">this</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">($)</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Reference to Slider constructor</p></div></div><div class="code"><div class="wrapper">	<span class="hljs-keyword">var</span> Slider;
+
+
+	(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( $ )</span> {</span>
+<span class="hljs-pi">
+		'use strict'</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>-------------------------- utils -------------------------- //</p></div></div><div class="code"><div class="wrapper">		<span class="hljs-keyword">var</span> slice = <span class="hljs-built_in">Array</span>.prototype.slice;
+
+		<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">noop</span><span class="hljs-params">()</span> {</span>}</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>-------------------------- definition -------------------------- //</p></div></div><div class="code"><div class="wrapper">		<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">defineBridget</span><span class="hljs-params">( $ )</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>bail if no jQuery</p></div></div><div class="code"><div class="wrapper">			<span class="hljs-keyword">if</span> ( !$ ) {
+				<span class="hljs-keyword">return</span>;
+			}</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>-------------------------- addOptionMethod -------------------------- //</p></div></div></div><div class="segment"><div class="comments doc-section"><div class="wrapper"><p>adds option method -&gt; $().plugin(&#39;option&#39;, {...})</p>
+<p>Parameters:</p>
+<ul>
+<li><strong>PluginClass must be a Function.</strong><br/>(- constructor class)</li>
+</ul></div></div><div class="code"><div class="wrapper">			<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">addOptionMethod</span><span class="hljs-params">( PluginClass )</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>don&#39;t overwrite original option method</p></div></div><div class="code"><div class="wrapper">				<span class="hljs-keyword">if</span> ( PluginClass.prototype.option ) {
+					<span class="hljs-keyword">return</span>;
+				}</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>option setter</p></div></div><div class="code"><div class="wrapper">			  PluginClass.prototype.option = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( opts )</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>bail out if not an object</p></div></div><div class="code"><div class="wrapper">			    <span class="hljs-keyword">if</span> ( !$.isPlainObject( opts ) ){
+			      <span class="hljs-keyword">return</span>;
+			    }
+			    <span class="hljs-keyword">this</span>.options = $.extend( <span class="hljs-literal">true</span>, <span class="hljs-keyword">this</span>.options, opts );
+			  };
+			}</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>-------------------------- plugin bridge -------------------------- //</p></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>helper function for logging errors
+$.error breaks jQuery chaining</p></div></div><div class="code"><div class="wrapper">			<span class="hljs-keyword">var</span> logError = <span class="hljs-keyword">typeof</span> console === <span class="hljs-string">'undefined'</span> ? noop :
+			  <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( message )</span> {</span>
+			    console.error( message );
+			  };</div></div></div><div class="segment"><div class="comments doc-section"><div class="wrapper"><p>jQuery plugin bridge, access methods like $elem.plugin(&#39;method&#39;)</p>
+<p>Parameters:</p>
+<ul>
+<li><p><strong>namespace must be a String.</strong><br/>(- plugin name)</p>
+</li>
+<li><p><strong>PluginClass must be a Function.</strong><br/>(- constructor class)</p>
+</li>
+</ul></div></div><div class="code"><div class="wrapper">			<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">bridge</span><span class="hljs-params">( namespace, PluginClass )</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>add to jQuery fn namespace</p></div></div><div class="code"><div class="wrapper">			  $.fn[ namespace ] = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( options )</span> {</span>
+			    <span class="hljs-keyword">if</span> ( <span class="hljs-keyword">typeof</span> options === <span class="hljs-string">'string'</span> ) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>call plugin method when first argument is a string
+get arguments for method</p></div></div><div class="code"><div class="wrapper">			      <span class="hljs-keyword">var</span> args = slice.call( <span class="hljs-built_in">arguments</span>, <span class="hljs-number">1</span> );
+
+			      <span class="hljs-keyword">for</span> ( <span class="hljs-keyword">var</span> i=<span class="hljs-number">0</span>, len = <span class="hljs-keyword">this</span>.length; i &lt; len; i++ ) {
+			        <span class="hljs-keyword">var</span> elem = <span class="hljs-keyword">this</span>[i];
+			        <span class="hljs-keyword">var</span> instance = $.data( elem, namespace );
+			        <span class="hljs-keyword">if</span> ( !instance ) {
+			          logError( <span class="hljs-string">"cannot call methods on "</span> + namespace + <span class="hljs-string">" prior to initialization; "</span> +
+			            <span class="hljs-string">"attempted to call '"</span> + options + <span class="hljs-string">"'"</span> );
+			          <span class="hljs-keyword">continue</span>;
+			        }
+			        <span class="hljs-keyword">if</span> ( !$.isFunction( instance[options] ) || options.charAt(<span class="hljs-number">0</span>) === <span class="hljs-string">'_'</span> ) {
+			          logError( <span class="hljs-string">"no such method '"</span> + options + <span class="hljs-string">"' for "</span> + namespace + <span class="hljs-string">" instance"</span> );
+			          <span class="hljs-keyword">continue</span>;
+			        }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>trigger method with arguments</p></div></div><div class="code"><div class="wrapper">			        <span class="hljs-keyword">var</span> returnValue = instance[ options ].apply( instance, args);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>break look and return first value if provided</p></div></div><div class="code"><div class="wrapper">			        <span class="hljs-keyword">if</span> ( returnValue !== <span class="hljs-literal">undefined</span> &amp;&amp; returnValue !== instance) {
+			          <span class="hljs-keyword">return</span> returnValue;
+			        }
+			      }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>return this if no return value</p></div></div><div class="code"><div class="wrapper">			      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+			    } <span class="hljs-keyword">else</span> {
+			      <span class="hljs-keyword">var</span> objects = <span class="hljs-keyword">this</span>.map( <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+			        <span class="hljs-keyword">var</span> instance = $.data( <span class="hljs-keyword">this</span>, namespace );
+			        <span class="hljs-keyword">if</span> ( instance ) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>apply options &amp; init</p></div></div><div class="code"><div class="wrapper">			          instance.option( options );
+			          instance._init();
+			        } <span class="hljs-keyword">else</span> {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>initialize new instance</p></div></div><div class="code"><div class="wrapper">			          instance = <span class="hljs-keyword">new</span> PluginClass( <span class="hljs-keyword">this</span>, options );
+			          $.data( <span class="hljs-keyword">this</span>, namespace, instance );
+			        }
+			        <span class="hljs-keyword">return</span> $(<span class="hljs-keyword">this</span>);
+			      });
+
+			      <span class="hljs-keyword">if</span>(!objects || objects.length &gt; <span class="hljs-number">1</span>) {
+			      	<span class="hljs-keyword">return</span> objects;
+			      } <span class="hljs-keyword">else</span> {
+			      	<span class="hljs-keyword">return</span> objects[<span class="hljs-number">0</span>];
+			      }
+			    }
+			  };
+
+			}</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>-------------------------- bridget -------------------------- //</p></div></div></div><div class="segment"><div class="comments doc-section"><div class="wrapper"><p>converts a Prototypical class into a proper jQuery plugin
+  the class must have a ._init method</p>
+<p>Parameters:</p>
+<ul>
+<li><p><strong>namespace must be a String.</strong><br/>(- plugin name, used in $().pluginName)</p>
+</li>
+<li><p><strong>PluginClass must be a Function.</strong><br/>(- constructor class)</p>
+</li>
+</ul></div></div><div class="code"><div class="wrapper">			$.bridget = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( namespace, PluginClass )</span> {</span>
+			  addOptionMethod( PluginClass );
+			  bridge( namespace, PluginClass );
+			};
+
+			<span class="hljs-keyword">return</span> $.bridget;
+
+		}</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>get jquery from browser global</p></div></div><div class="code"><div class="wrapper">	  	defineBridget( $ );
+
+	})( $ );
+
+
+	<span class="hljs-comment">/*************************************************
+
+			BOOTSTRAP-SLIDER SOURCE CODE
+
+	**************************************************/</span>
+
+	(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">($)</span> {</span>
+
+		<span class="hljs-keyword">var</span> ErrorMsgs = {
+			formatInvalidInputErrorMsg : <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(input)</span> {</span>
+				<span class="hljs-keyword">return</span> <span class="hljs-string">"Invalid input value '"</span> + input + <span class="hljs-string">"' passed in"</span>;
+			},
+			callingContextNotSliderInstance : <span class="hljs-string">"Calling context element does not have instance of Slider bound to it. Check your code to make sure the JQuery object returned from the call to the slider() initializer is calling the method"</span>
+		};
+
+
+
+		<span class="hljs-comment">/*************************************************
+
+							CONSTRUCTOR
+
+		**************************************************/</span>
+		Slider = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(element, options)</span> {</span>
+			createNewSlider.call(<span class="hljs-keyword">this</span>, element, options);
+			<span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+		};
+
+		<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">createNewSlider</span><span class="hljs-params">(element, options)</span> {</span>
+			<span class="hljs-comment">/*************************************************
+
+							Create Markup
+
+			**************************************************/</span>
+			<span class="hljs-keyword">if</span>(<span class="hljs-keyword">typeof</span> element === <span class="hljs-string">"string"</span>) {
+				<span class="hljs-keyword">this</span>.element = document.querySelector(element);
+			} <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(element <span class="hljs-keyword">instanceof</span> HTMLElement) {
+				<span class="hljs-keyword">this</span>.element = element;
+			}
+
+			<span class="hljs-keyword">var</span> origWidth = <span class="hljs-keyword">this</span>.element.style.width;
+			<span class="hljs-keyword">var</span> updateSlider = <span class="hljs-literal">false</span>;
+			<span class="hljs-keyword">var</span> parent = <span class="hljs-keyword">this</span>.element.parentNode;
+			<span class="hljs-keyword">var</span> sliderTrackSelection;
+			<span class="hljs-keyword">var</span> sliderMinHandle;
+			<span class="hljs-keyword">var</span> sliderMaxHandle;
+
+			<span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.sliderElem) {
+				updateSlider = <span class="hljs-literal">true</span>;
+			} <span class="hljs-keyword">else</span> {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Create elements needed for slider </p></div></div><div class="code"><div class="wrapper">				<span class="hljs-keyword">this</span>.sliderElem = document.createElement(<span class="hljs-string">"div"</span>);
+				<span class="hljs-keyword">this</span>.sliderElem.className = <span class="hljs-string">"slider"</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Create slider track elements </p></div></div><div class="code"><div class="wrapper">				<span class="hljs-keyword">var</span> sliderTrack = document.createElement(<span class="hljs-string">"div"</span>);
+				sliderTrack.className = <span class="hljs-string">"slider-track"</span>;
+
+				sliderTrackSelection = document.createElement(<span class="hljs-string">"div"</span>);
+				sliderTrackSelection.className = <span class="hljs-string">"slider-selection"</span>;
+
+				sliderMinHandle = document.createElement(<span class="hljs-string">"div"</span>);
+				sliderMinHandle.className = <span class="hljs-string">"slider-handle min-slider-handle"</span>;
+
+				sliderMaxHandle = document.createElement(<span class="hljs-string">"div"</span>);
+				sliderMaxHandle.className = <span class="hljs-string">"slider-handle max-slider-handle"</span>;
+
+				sliderTrack.appendChild(sliderTrackSelection);
+				sliderTrack.appendChild(sliderMinHandle);
+				sliderTrack.appendChild(sliderMaxHandle);
+
+				<span class="hljs-keyword">var</span> createAndAppendTooltipSubElements = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(tooltipElem)</span> {</span>
+					<span class="hljs-keyword">var</span> arrow = document.createElement(<span class="hljs-string">"div"</span>);
+					arrow.className = <span class="hljs-string">"tooltip-arrow"</span>;
+
+					<span class="hljs-keyword">var</span> inner = document.createElement(<span class="hljs-string">"div"</span>);
+					inner.className = <span class="hljs-string">"tooltip-inner"</span>;
+
+					tooltipElem.appendChild(arrow);
+					tooltipElem.appendChild(inner);
+				};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Create tooltip elements </p></div></div><div class="code"><div class="wrapper">				<span class="hljs-keyword">var</span> sliderTooltip = document.createElement(<span class="hljs-string">"div"</span>);
+				sliderTooltip.className = <span class="hljs-string">"tooltip tooltip-main"</span>;
+				createAndAppendTooltipSubElements(sliderTooltip);
+
+				<span class="hljs-keyword">var</span> sliderTooltipMin = document.createElement(<span class="hljs-string">"div"</span>);
+				sliderTooltipMin.className = <span class="hljs-string">"tooltip tooltip-min"</span>;
+				createAndAppendTooltipSubElements(sliderTooltipMin);
+
+				<span class="hljs-keyword">var</span> sliderTooltipMax = document.createElement(<span class="hljs-string">"div"</span>);
+				sliderTooltipMax.className = <span class="hljs-string">"tooltip tooltip-max"</span>;
+				createAndAppendTooltipSubElements(sliderTooltipMax);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Append components to sliderElem </p></div></div><div class="code"><div class="wrapper">				<span class="hljs-keyword">this</span>.sliderElem.appendChild(sliderTrack);
+				<span class="hljs-keyword">this</span>.sliderElem.appendChild(sliderTooltip);
+				<span class="hljs-keyword">this</span>.sliderElem.appendChild(sliderTooltipMin);
+				<span class="hljs-keyword">this</span>.sliderElem.appendChild(sliderTooltipMax);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Append slider element to parent container, right before the original <input> element </p></div></div><div class="code"><div class="wrapper">				parent.insertBefore(<span class="hljs-keyword">this</span>.sliderElem, <span class="hljs-keyword">this</span>.element);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Hide original <input> element </p></div></div><div class="code"><div class="wrapper">				<span class="hljs-keyword">this</span>.element.style.display = <span class="hljs-string">"none"</span>;
+			}</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>If JQuery exists, cache JQ references </p></div></div><div class="code"><div class="wrapper">			<span class="hljs-keyword">if</span>($) {
+				<span class="hljs-keyword">this</span>.$element = $(<span class="hljs-keyword">this</span>.element);
+				<span class="hljs-keyword">this</span>.$sliderElem = $(<span class="hljs-keyword">this</span>.sliderElem);
+			}
+
+			<span class="hljs-comment">/*************************************************
+
+							Process Options
+
+			**************************************************/</span>
+			options = options ? options : {};
+			<span class="hljs-keyword">var</span> optionTypes = <span class="hljs-built_in">Object</span>.keys(<span class="hljs-keyword">this</span>.defaultOptions);
+
+			<span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; optionTypes.length; i++) {
+				<span class="hljs-keyword">var</span> optName = optionTypes[i];</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>First check if an option was passed in via the constructor</p></div></div><div class="code"><div class="wrapper">				<span class="hljs-keyword">var</span> val = options[optName];</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>If no data attrib, then check data atrributes</p></div></div><div class="code"><div class="wrapper">				val = (<span class="hljs-keyword">typeof</span> val !== <span class="hljs-string">'undefined'</span>) ? val : getDataAttrib(<span class="hljs-keyword">this</span>.element, optName);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Finally, if nothing was specified, use the defaults</p></div></div><div class="code"><div class="wrapper">				val = (val !== <span class="hljs-literal">null</span>) ? val : <span class="hljs-keyword">this</span>.defaultOptions[optName];</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Set all options on the instance of the Slider</p></div></div><div class="code"><div class="wrapper">				<span class="hljs-keyword">if</span>(!<span class="hljs-keyword">this</span>.options) {
+					<span class="hljs-keyword">this</span>.options = {};
+				}
+				<span class="hljs-keyword">this</span>.options[optName] = val;
+			}
+
+			<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getDataAttrib</span><span class="hljs-params">(element, optName)</span> {</span>
+				<span class="hljs-keyword">var</span> dataName = <span class="hljs-string">"data-slider-"</span> + optName;
+				<span class="hljs-keyword">var</span> dataValString = element.getAttribute(dataName);
+
+				<span class="hljs-keyword">try</span> {
+					<span class="hljs-keyword">return</span> <span class="hljs-built_in">JSON</span>.parse(dataValString);
+				}
+				<span class="hljs-keyword">catch</span>(err) {
+					<span class="hljs-keyword">return</span> dataValString;
+				}
+			}
+
+			<span class="hljs-comment">/*************************************************
+
+								Setup
+
+			**************************************************/</span>
+			<span class="hljs-keyword">this</span>.eventToCallbackMap = {};
+			<span class="hljs-keyword">this</span>.sliderElem.id = <span class="hljs-keyword">this</span>.options.id;
+
+			<span class="hljs-keyword">this</span>.touchCapable = <span class="hljs-string">'ontouchstart'</span> <span class="hljs-keyword">in</span> window || (window.DocumentTouch &amp;&amp; document <span class="hljs-keyword">instanceof</span> window.DocumentTouch);
+
+			<span class="hljs-keyword">this</span>.tooltip = <span class="hljs-keyword">this</span>.sliderElem.querySelector(<span class="hljs-string">'.tooltip-main'</span>);
+			<span class="hljs-keyword">this</span>.tooltipInner = <span class="hljs-keyword">this</span>.tooltip.querySelector(<span class="hljs-string">'.tooltip-inner'</span>);
+
+			<span class="hljs-keyword">this</span>.tooltip_min = <span class="hljs-keyword">this</span>.sliderElem.querySelector(<span class="hljs-string">'.tooltip-min'</span>);
+			<span class="hljs-keyword">this</span>.tooltipInner_min = <span class="hljs-keyword">this</span>.tooltip_min.querySelector(<span class="hljs-string">'.tooltip-inner'</span>);
+
+			<span class="hljs-keyword">this</span>.tooltip_max = <span class="hljs-keyword">this</span>.sliderElem.querySelector(<span class="hljs-string">'.tooltip-max'</span>);
+			<span class="hljs-keyword">this</span>.tooltipInner_max= <span class="hljs-keyword">this</span>.tooltip_max.querySelector(<span class="hljs-string">'.tooltip-inner'</span>);
+
+			<span class="hljs-keyword">if</span> (updateSlider === <span class="hljs-literal">true</span>) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Reset classes</p></div></div><div class="code"><div class="wrapper">				<span class="hljs-keyword">this</span>._removeClass(<span class="hljs-keyword">this</span>.sliderElem, <span class="hljs-string">'slider-horizontal'</span>);
+				<span class="hljs-keyword">this</span>._removeClass(<span class="hljs-keyword">this</span>.sliderElem, <span class="hljs-string">'slider-vertical'</span>);
+				<span class="hljs-keyword">this</span>._removeClass(<span class="hljs-keyword">this</span>.tooltip, <span class="hljs-string">'hide'</span>);
+				<span class="hljs-keyword">this</span>._removeClass(<span class="hljs-keyword">this</span>.tooltip_min, <span class="hljs-string">'hide'</span>);
+				<span class="hljs-keyword">this</span>._removeClass(<span class="hljs-keyword">this</span>.tooltip_max, <span class="hljs-string">'hide'</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Undo existing inline styles for track</p></div></div><div class="code"><div class="wrapper">				[<span class="hljs-string">"left"</span>, <span class="hljs-string">"top"</span>, <span class="hljs-string">"width"</span>, <span class="hljs-string">"height"</span>].forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(prop)</span> {</span>
+					<span class="hljs-keyword">this</span>._removeProperty(<span class="hljs-keyword">this</span>.trackSelection, prop);
+				}, <span class="hljs-keyword">this</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Undo inline styles on handles</p></div></div><div class="code"><div class="wrapper">				[<span class="hljs-keyword">this</span>.handle1, <span class="hljs-keyword">this</span>.handle2].forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(handle)</span> {</span>
+					<span class="hljs-keyword">this</span>._removeProperty(handle, <span class="hljs-string">'left'</span>);
+					<span class="hljs-keyword">this</span>._removeProperty(handle, <span class="hljs-string">'top'</span>);
+				}, <span class="hljs-keyword">this</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Undo inline styles and classes on tooltips</p></div></div><div class="code"><div class="wrapper">				[<span class="hljs-keyword">this</span>.tooltip, <span class="hljs-keyword">this</span>.tooltip_min, <span class="hljs-keyword">this</span>.tooltip_max].forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(tooltip)</span> {</span>
+					<span class="hljs-keyword">this</span>._removeProperty(tooltip, <span class="hljs-string">'left'</span>);
+					<span class="hljs-keyword">this</span>._removeProperty(tooltip, <span class="hljs-string">'top'</span>);
+					<span class="hljs-keyword">this</span>._removeProperty(tooltip, <span class="hljs-string">'margin-left'</span>);
+					<span class="hljs-keyword">this</span>._removeProperty(tooltip, <span class="hljs-string">'margin-top'</span>);
+
+					<span class="hljs-keyword">this</span>._removeClass(tooltip, <span class="hljs-string">'right'</span>);
+					<span class="hljs-keyword">this</span>._removeClass(tooltip, <span class="hljs-string">'top'</span>);
+				}, <span class="hljs-keyword">this</span>);
+			}
+
+			<span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span>.options.orientation === <span class="hljs-string">'vertical'</span>) {
+				<span class="hljs-keyword">this</span>._addClass(<span class="hljs-keyword">this</span>.sliderElem,<span class="hljs-string">'slider-vertical'</span>);
+
+				<span class="hljs-keyword">this</span>.stylePos = <span class="hljs-string">'top'</span>;
+				<span class="hljs-keyword">this</span>.mousePos = <span class="hljs-string">'pageY'</span>;
+				<span class="hljs-keyword">this</span>.sizePos = <span class="hljs-string">'offsetHeight'</span>;
+
+				<span class="hljs-keyword">this</span>._addClass(<span class="hljs-keyword">this</span>.tooltip, <span class="hljs-string">'right'</span>);
+				<span class="hljs-keyword">this</span>.tooltip.style.left = <span class="hljs-string">'100%'</span>;
+
+				<span class="hljs-keyword">this</span>._addClass(<span class="hljs-keyword">this</span>.tooltip_min, <span class="hljs-string">'right'</span>);
+				<span class="hljs-keyword">this</span>.tooltip_min.style.left = <span class="hljs-string">'100%'</span>;
+
+				<span class="hljs-keyword">this</span>._addClass(<span class="hljs-keyword">this</span>.tooltip_max, <span class="hljs-string">'right'</span>);
+				<span class="hljs-keyword">this</span>.tooltip_max.style.left = <span class="hljs-string">'100%'</span>;
+			} <span class="hljs-keyword">else</span> {
+				<span class="hljs-keyword">this</span>._addClass(<span class="hljs-keyword">this</span>.sliderElem, <span class="hljs-string">'slider-horizontal'</span>);
+				<span class="hljs-keyword">this</span>.sliderElem.style.width = origWidth;
+
+				<span class="hljs-keyword">this</span>.options.orientation = <span class="hljs-string">'horizontal'</span>;
+				<span class="hljs-keyword">this</span>.stylePos = <span class="hljs-string">'left'</span>;
+				<span class="hljs-keyword">this</span>.mousePos = <span class="hljs-string">'pageX'</span>;
+				<span class="hljs-keyword">this</span>.sizePos = <span class="hljs-string">'offsetWidth'</span>;
+
+				<span class="hljs-keyword">this</span>._addClass(<span class="hljs-keyword">this</span>.tooltip, <span class="hljs-string">'top'</span>);
+				<span class="hljs-keyword">this</span>.tooltip.style.top = -<span class="hljs-keyword">this</span>.tooltip.outerHeight - <span class="hljs-number">14</span> + <span class="hljs-string">'px'</span>;
+
+				<span class="hljs-keyword">this</span>._addClass(<span class="hljs-keyword">this</span>.tooltip_min, <span class="hljs-string">'top'</span>);
+				<span class="hljs-keyword">this</span>.tooltip_min.style.top = -<span class="hljs-keyword">this</span>.tooltip_min.outerHeight - <span class="hljs-number">14</span> + <span class="hljs-string">'px'</span>;
+
+				<span class="hljs-keyword">this</span>._addClass(<span class="hljs-keyword">this</span>.tooltip_max, <span class="hljs-string">'top'</span>);
+				<span class="hljs-keyword">this</span>.tooltip_max.style.top = -<span class="hljs-keyword">this</span>.tooltip_max.outerHeight - <span class="hljs-number">14</span> + <span class="hljs-string">'px'</span>;
+			}
+
+			<span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.options.value <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">Array</span>) {
+				<span class="hljs-keyword">this</span>.options.range = <span class="hljs-literal">true</span>;
+			} <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.options.range) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>User wants a range, but value is not an array</p></div></div><div class="code"><div class="wrapper">				<span class="hljs-keyword">this</span>.options.value = [<span class="hljs-keyword">this</span>.options.value, <span class="hljs-keyword">this</span>.options.max];
+			}
+
+			<span class="hljs-keyword">this</span>.trackSelection = sliderTrackSelection || <span class="hljs-keyword">this</span>.trackSelection;
+			<span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.options.selection === <span class="hljs-string">'none'</span>) {
+				<span class="hljs-keyword">this</span>._addClass(<span class="hljs-keyword">this</span>.trackSelection, <span class="hljs-string">'hide'</span>);
+			}
+
+			<span class="hljs-keyword">this</span>.handle1 = sliderMinHandle || <span class="hljs-keyword">this</span>.handle1;
+			<span class="hljs-keyword">this</span>.handle2 = sliderMaxHandle || <span class="hljs-keyword">this</span>.handle2;
+
+			<span class="hljs-keyword">if</span> (updateSlider === <span class="hljs-literal">true</span>) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Reset classes</p></div></div><div class="code"><div class="wrapper">				<span class="hljs-keyword">this</span>._removeClass(<span class="hljs-keyword">this</span>.handle1, <span class="hljs-string">'round triangle'</span>);
+				<span class="hljs-keyword">this</span>._removeClass(<span class="hljs-keyword">this</span>.handle2, <span class="hljs-string">'round triangle hide'</span>);
+			}
+
+			<span class="hljs-keyword">var</span> availableHandleModifiers = [<span class="hljs-string">'round'</span>, <span class="hljs-string">'triangle'</span>, <span class="hljs-string">'custom'</span>];
+			<span class="hljs-keyword">var</span> isValidHandleType = availableHandleModifiers.indexOf(<span class="hljs-keyword">this</span>.options.handle) !== -<span class="hljs-number">1</span>;
+			<span class="hljs-keyword">if</span> (isValidHandleType) {
+				<span class="hljs-keyword">this</span>._addClass(<span class="hljs-keyword">this</span>.handle1, <span class="hljs-keyword">this</span>.options.handle);
+				<span class="hljs-keyword">this</span>._addClass(<span class="hljs-keyword">this</span>.handle2, <span class="hljs-keyword">this</span>.options.handle);
+			}
+
+			<span class="hljs-keyword">this</span>.offset = <span class="hljs-keyword">this</span>._offset(<span class="hljs-keyword">this</span>.sliderElem);
+			<span class="hljs-keyword">this</span>.size = <span class="hljs-keyword">this</span>.sliderElem[<span class="hljs-keyword">this</span>.sizePos];
+			<span class="hljs-keyword">this</span>.setValue(<span class="hljs-keyword">this</span>.options.value);
+
+			<span class="hljs-comment">/******************************************
+
+						Bind Event Listeners
+
+			******************************************/</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Bind keyboard handlers</p></div></div><div class="code"><div class="wrapper">			<span class="hljs-keyword">this</span>.handle1Keydown = <span class="hljs-keyword">this</span>._keydown.bind(<span class="hljs-keyword">this</span>, <span class="hljs-number">0</span>);
+			<span class="hljs-keyword">this</span>.handle1.addEventListener(<span class="hljs-string">"keydown"</span>, <span class="hljs-keyword">this</span>.handle1Keydown, <span class="hljs-literal">false</span>);
+
+			<span class="hljs-keyword">this</span>.handle2Keydown = <span class="hljs-keyword">this</span>._keydown.bind(<span class="hljs-keyword">this</span>, <span class="hljs-number">1</span>);
+			<span class="hljs-keyword">this</span>.handle2.addEventListener(<span class="hljs-string">"keydown"</span>, <span class="hljs-keyword">this</span>.handle2Keydown, <span class="hljs-literal">false</span>);
+
+			<span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.touchCapable) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Bind touch handlers</p></div></div><div class="code"><div class="wrapper">				<span class="hljs-keyword">this</span>.mousedown = <span class="hljs-keyword">this</span>._mousedown.bind(<span class="hljs-keyword">this</span>);
+				<span class="hljs-keyword">this</span>.sliderElem.addEventListener(<span class="hljs-string">"touchstart"</span>, <span class="hljs-keyword">this</span>.mousedown, <span class="hljs-literal">false</span>);
+			} <span class="hljs-keyword">else</span> {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Bind mouse handlers</p></div></div><div class="code"><div class="wrapper">				<span class="hljs-keyword">this</span>.mousedown = <span class="hljs-keyword">this</span>._mousedown.bind(<span class="hljs-keyword">this</span>);
+				<span class="hljs-keyword">this</span>.sliderElem.addEventListener(<span class="hljs-string">"mousedown"</span>, <span class="hljs-keyword">this</span>.mousedown, <span class="hljs-literal">false</span>);
+			}</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Bind tooltip-related handlers</p></div></div><div class="code"><div class="wrapper">			<span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span>.options.tooltip === <span class="hljs-string">'hide'</span>) {
+				<span class="hljs-keyword">this</span>._addClass(<span class="hljs-keyword">this</span>.tooltip, <span class="hljs-string">'hide'</span>);
+				<span class="hljs-keyword">this</span>._addClass(<span class="hljs-keyword">this</span>.tooltip_min, <span class="hljs-string">'hide'</span>);
+				<span class="hljs-keyword">this</span>._addClass(<span class="hljs-keyword">this</span>.tooltip_max, <span class="hljs-string">'hide'</span>);
+			} <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span>.options.tooltip === <span class="hljs-string">'always'</span>) {
+				<span class="hljs-keyword">this</span>._showTooltip();
+				<span class="hljs-keyword">this</span>._alwaysShowTooltip = <span class="hljs-literal">true</span>;
+			} <span class="hljs-keyword">else</span> {
+				<span class="hljs-keyword">this</span>.showTooltip = <span class="hljs-keyword">this</span>._showTooltip.bind(<span class="hljs-keyword">this</span>);
+				<span class="hljs-keyword">this</span>.hideTooltip = <span class="hljs-keyword">this</span>._hideTooltip.bind(<span class="hljs-keyword">this</span>);
+
+				<span class="hljs-keyword">this</span>.sliderElem.addEventListener(<span class="hljs-string">"mouseenter"</span>, <span class="hljs-keyword">this</span>.showTooltip, <span class="hljs-literal">false</span>);
+				<span class="hljs-keyword">this</span>.sliderElem.addEventListener(<span class="hljs-string">"mouseleave"</span>, <span class="hljs-keyword">this</span>.hideTooltip, <span class="hljs-literal">false</span>);
+
+				<span class="hljs-keyword">this</span>.handle1.addEventListener(<span class="hljs-string">"focus"</span>, <span class="hljs-keyword">this</span>.showTooltip, <span class="hljs-literal">false</span>);
+				<span class="hljs-keyword">this</span>.handle1.addEventListener(<span class="hljs-string">"blur"</span>, <span class="hljs-keyword">this</span>.hideTooltip, <span class="hljs-literal">false</span>);
+
+				<span class="hljs-keyword">this</span>.handle2.addEventListener(<span class="hljs-string">"focus"</span>, <span class="hljs-keyword">this</span>.showTooltip, <span class="hljs-literal">false</span>);
+				<span class="hljs-keyword">this</span>.handle2.addEventListener(<span class="hljs-string">"blur"</span>, <span class="hljs-keyword">this</span>.hideTooltip, <span class="hljs-literal">false</span>);
+			}
+
+			<span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span>.options.enabled) {
+				<span class="hljs-keyword">this</span>.enable();
+			} <span class="hljs-keyword">else</span> {
+				<span class="hljs-keyword">this</span>.disable();
+			}
+		}
+
+		<span class="hljs-comment">/*************************************************
+
+					INSTANCE PROPERTIES/METHODS
+
+		- Any methods bound to the prototype are considered
+		part of the plugin's `public` interface
+
+		**************************************************/</span>
+		Slider.prototype = {
+			_init: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>}, <span class="hljs-comment">// NOTE: Must exist to support bridget</span>
+
+			constructor: Slider,
+
+			defaultOptions: {
+				id: <span class="hljs-string">""</span>,
+			  	min: <span class="hljs-number">0</span>,
+				max: <span class="hljs-number">10</span>,
+				step: <span class="hljs-number">1</span>,
+				precision: <span class="hljs-number">0</span>,
+				orientation: <span class="hljs-string">'horizontal'</span>,
+				value: <span class="hljs-number">5</span>,
+				range: <span class="hljs-literal">false</span>,
+				selection: <span class="hljs-string">'before'</span>,
+				tooltip: <span class="hljs-string">'show'</span>,
+				tooltip_split: <span class="hljs-literal">false</span>,
+				handle: <span class="hljs-string">'round'</span>,
+				reversed: <span class="hljs-literal">false</span>,
+				enabled: <span class="hljs-literal">true</span>,
+				formatter: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(val)</span> {</span>
+					<span class="hljs-keyword">if</span>(val <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">Array</span>) {
+						<span class="hljs-keyword">return</span> val[<span class="hljs-number">0</span>] + <span class="hljs-string">" : "</span> + val[<span class="hljs-number">1</span>];
+					} <span class="hljs-keyword">else</span> {
+						<span class="hljs-keyword">return</span> val;
+					}
+				},
+				natural_arrow_keys: <span class="hljs-literal">false</span>
+			},
+
+			over: <span class="hljs-literal">false</span>,
+
+			inDrag: <span class="hljs-literal">false</span>,
+
+			getValue: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+				<span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.options.range) {
+					<span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.options.value;
+				}
+				<span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.options.value[<span class="hljs-number">0</span>];
+			},
+
+			setValue: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(val, triggerSlideEvent)</span> {</span>
+				<span class="hljs-keyword">if</span> (!val) {
+					val = <span class="hljs-number">0</span>;
+				}
+				<span class="hljs-keyword">var</span> oldValue = <span class="hljs-keyword">this</span>.getValue();
+				<span class="hljs-keyword">this</span>.options.value = <span class="hljs-keyword">this</span>._validateInputValue(val);
+				<span class="hljs-keyword">var</span> applyPrecision = <span class="hljs-keyword">this</span>._applyPrecision.bind(<span class="hljs-keyword">this</span>);
+
+				<span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.options.range) {
+					<span class="hljs-keyword">this</span>.options.value[<span class="hljs-number">0</span>] = applyPrecision(<span class="hljs-keyword">this</span>.options.value[<span class="hljs-number">0</span>]);
+					<span class="hljs-keyword">this</span>.options.value[<span class="hljs-number">1</span>] = applyPrecision(<span class="hljs-keyword">this</span>.options.value[<span class="hljs-number">1</span>]);
+
+					<span class="hljs-keyword">this</span>.options.value[<span class="hljs-number">0</span>] = <span class="hljs-built_in">Math</span>.max(<span class="hljs-keyword">this</span>.options.min, <span class="hljs-built_in">Math</span>.min(<span class="hljs-keyword">this</span>.options.max, <span class="hljs-keyword">this</span>.options.value[<span class="hljs-number">0</span>]));
+					<span class="hljs-keyword">this</span>.options.value[<span class="hljs-number">1</span>] = <span class="hljs-built_in">Math</span>.max(<span class="hljs-keyword">this</span>.options.min, <span class="hljs-built_in">Math</span>.min(<span class="hljs-keyword">this</span>.options.max, <span class="hljs-keyword">this</span>.options.value[<span class="hljs-number">1</span>]));
+				} <span class="hljs-keyword">else</span> {
+					<span class="hljs-keyword">this</span>.options.value = applyPrecision(<span class="hljs-keyword">this</span>.options.value);
+					<span class="hljs-keyword">this</span>.options.value = [ <span class="hljs-built_in">Math</span>.max(<span class="hljs-keyword">this</span>.options.min, <span class="hljs-built_in">Math</span>.min(<span class="hljs-keyword">this</span>.options.max, <span class="hljs-keyword">this</span>.options.value))];
+					<span class="hljs-keyword">this</span>._addClass(<span class="hljs-keyword">this</span>.handle2, <span class="hljs-string">'hide'</span>);
+					<span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.options.selection === <span class="hljs-string">'after'</span>) {
+						<span class="hljs-keyword">this</span>.options.value[<span class="hljs-number">1</span>] = <span class="hljs-keyword">this</span>.options.max;
+					} <span class="hljs-keyword">else</span> {
+						<span class="hljs-keyword">this</span>.options.value[<span class="hljs-number">1</span>] = <span class="hljs-keyword">this</span>.options.min;
+					}
+				}
+
+				<span class="hljs-keyword">this</span>.diff = <span class="hljs-keyword">this</span>.options.max - <span class="hljs-keyword">this</span>.options.min;
+				<span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.diff &gt; <span class="hljs-number">0</span>) {
+					<span class="hljs-keyword">this</span>.percentage = [
+						(<span class="hljs-keyword">this</span>.options.value[<span class="hljs-number">0</span>] - <span class="hljs-keyword">this</span>.options.min) * <span class="hljs-number">100</span> / <span class="hljs-keyword">this</span>.diff,
+						(<span class="hljs-keyword">this</span>.options.value[<span class="hljs-number">1</span>] - <span class="hljs-keyword">this</span>.options.min) * <span class="hljs-number">100</span> / <span class="hljs-keyword">this</span>.diff,
+						<span class="hljs-keyword">this</span>.options.step * <span class="hljs-number">100</span> / <span class="hljs-keyword">this</span>.diff
+					];
+				} <span class="hljs-keyword">else</span> {
+					<span class="hljs-keyword">this</span>.percentage = [<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">100</span>];
+				}
+
+				<span class="hljs-keyword">this</span>._layout();
+				<span class="hljs-keyword">var</span> newValue = <span class="hljs-keyword">this</span>.options.range ? <span class="hljs-keyword">this</span>.options.value : <span class="hljs-keyword">this</span>.options.value[<span class="hljs-number">0</span>];
+
+				<span class="hljs-keyword">if</span>(triggerSlideEvent === <span class="hljs-literal">true</span>) {
+					<span class="hljs-keyword">this</span>._trigger(<span class="hljs-string">'slide'</span>, newValue);
+				}
+				<span class="hljs-keyword">if</span>(oldValue !== newValue) {
+					<span class="hljs-keyword">this</span>._trigger(<span class="hljs-string">'change'</span>, {
+						oldValue: oldValue,
+						newValue: newValue
+					});
+				}
+				<span class="hljs-keyword">this</span>._setDataVal(newValue);
+
+				<span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+			},
+
+			destroy: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Remove event handlers on slider elements</p></div></div><div class="code"><div class="wrapper">				<span class="hljs-keyword">this</span>._removeSliderEventHandlers();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Remove the slider from the DOM</p></div></div><div class="code"><div class="wrapper">				<span class="hljs-keyword">this</span>.sliderElem.parentNode.removeChild(<span class="hljs-keyword">this</span>.sliderElem);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Show original <input> element </p></div></div><div class="code"><div class="wrapper">				<span class="hljs-keyword">this</span>.element.style.display = <span class="hljs-string">""</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Clear out custom event bindings</p></div></div><div class="code"><div class="wrapper">				<span class="hljs-keyword">this</span>._cleanUpEventCallbacksMap();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Remove data values</p></div></div><div class="code"><div class="wrapper">				<span class="hljs-keyword">this</span>.element.removeAttribute(<span class="hljs-string">"data"</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Remove JQuery handlers/data</p></div></div><div class="code"><div class="wrapper">				<span class="hljs-keyword">if</span>($) {
+					<span class="hljs-keyword">this</span>._unbindJQueryEventHandlers();
+					<span class="hljs-keyword">this</span>.$element.removeData(<span class="hljs-string">'slider'</span>);
+				}
+			},
+
+			disable: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+				<span class="hljs-keyword">this</span>.options.enabled = <span class="hljs-literal">false</span>;
+				<span class="hljs-keyword">this</span>.handle1.removeAttribute(<span class="hljs-string">"tabindex"</span>);
+				<span class="hljs-keyword">this</span>.handle2.removeAttribute(<span class="hljs-string">"tabindex"</span>);
+				<span class="hljs-keyword">this</span>._addClass(<span class="hljs-keyword">this</span>.sliderElem, <span class="hljs-string">'slider-disabled'</span>);
+				<span class="hljs-keyword">this</span>._trigger(<span class="hljs-string">'slideDisabled'</span>);
+
+				<span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+			},
+
+			enable: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+				<span class="hljs-keyword">this</span>.options.enabled = <span class="hljs-literal">true</span>;
+				<span class="hljs-keyword">this</span>.handle1.setAttribute(<span class="hljs-string">"tabindex"</span>, <span class="hljs-number">0</span>);
+				<span class="hljs-keyword">this</span>.handle2.setAttribute(<span class="hljs-string">"tabindex"</span>, <span class="hljs-number">0</span>);
+				<span class="hljs-keyword">this</span>._removeClass(<span class="hljs-keyword">this</span>.sliderElem, <span class="hljs-string">'slider-disabled'</span>);
+				<span class="hljs-keyword">this</span>._trigger(<span class="hljs-string">'slideEnabled'</span>);
+
+				<span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+			},
+
+			toggle: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+				<span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span>.options.enabled) {
+					<span class="hljs-keyword">this</span>.disable();
+				} <span class="hljs-keyword">else</span> {
+					<span class="hljs-keyword">this</span>.enable();
+				}
+
+				<span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+			},
+
+			isEnabled: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+				<span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.options.enabled;
+			},
+
+			on: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(evt, callback)</span> {</span>
+				<span class="hljs-keyword">if</span>($) {
+					<span class="hljs-keyword">this</span>.$element.on(evt, callback);
+					<span class="hljs-keyword">this</span>.$sliderElem.on(evt, callback);
+				} <span class="hljs-keyword">else</span> {
+					<span class="hljs-keyword">this</span>._bindNonQueryEventHandler(evt, callback);
+				}
+				<span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+			},
+
+			getAttribute: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(attribute)</span> {</span>
+				<span class="hljs-keyword">if</span>(attribute) {
+					<span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.options[attribute];
+				} <span class="hljs-keyword">else</span> {
+					<span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.options;
+				}
+			},
+
+			setAttribute: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(attribute, value)</span> {</span>
+				<span class="hljs-keyword">this</span>.options[attribute] = value;
+				<span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+			},
+
+			refresh: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+				<span class="hljs-keyword">this</span>._removeSliderEventHandlers();
+				createNewSlider.call(<span class="hljs-keyword">this</span>, <span class="hljs-keyword">this</span>.element, <span class="hljs-keyword">this</span>.options);
+				<span class="hljs-keyword">if</span>($) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Bind new instance of slider to the element</p></div></div><div class="code"><div class="wrapper">					$.data(<span class="hljs-keyword">this</span>.element, <span class="hljs-string">'slider'</span>, <span class="hljs-keyword">this</span>);
+				}
+				<span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+			},
+
+			relayout: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+				<span class="hljs-keyword">this</span>._layout();
+				<span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+			},
+
+			<span class="hljs-comment">/******************************+
+
+						HELPERS
+
+			- Any method that is not part of the public interface.
+			- Place it underneath this comment block and write its signature like so:
+
+			  					_fnName : function() {...}
+
+			********************************/</span>
+			_removeSliderEventHandlers: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Remove event listeners from handle1</p></div></div><div class="code"><div class="wrapper">				<span class="hljs-keyword">this</span>.handle1.removeEventListener(<span class="hljs-string">"keydown"</span>, <span class="hljs-keyword">this</span>.handle1Keydown, <span class="hljs-literal">false</span>);
+				<span class="hljs-keyword">this</span>.handle1.removeEventListener(<span class="hljs-string">"focus"</span>, <span class="hljs-keyword">this</span>.showTooltip, <span class="hljs-literal">false</span>);
+				<span class="hljs-keyword">this</span>.handle1.removeEventListener(<span class="hljs-string">"blur"</span>, <span class="hljs-keyword">this</span>.hideTooltip, <span class="hljs-literal">false</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Remove event listeners from handle2</p></div></div><div class="code"><div class="wrapper">				<span class="hljs-keyword">this</span>.handle2.removeEventListener(<span class="hljs-string">"keydown"</span>, <span class="hljs-keyword">this</span>.handle2Keydown, <span class="hljs-literal">false</span>);
+				<span class="hljs-keyword">this</span>.handle2.removeEventListener(<span class="hljs-string">"focus"</span>, <span class="hljs-keyword">this</span>.handle2Keydown, <span class="hljs-literal">false</span>);
+				<span class="hljs-keyword">this</span>.handle2.removeEventListener(<span class="hljs-string">"blur"</span>, <span class="hljs-keyword">this</span>.handle2Keydown, <span class="hljs-literal">false</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Remove event listeners from sliderElem</p></div></div><div class="code"><div class="wrapper">				<span class="hljs-keyword">this</span>.sliderElem.removeEventListener(<span class="hljs-string">"mouseenter"</span>, <span class="hljs-keyword">this</span>.showTooltip, <span class="hljs-literal">false</span>);
+				<span class="hljs-keyword">this</span>.sliderElem.removeEventListener(<span class="hljs-string">"mouseleave"</span>, <span class="hljs-keyword">this</span>.hideTooltip, <span class="hljs-literal">false</span>);
+				<span class="hljs-keyword">this</span>.sliderElem.removeEventListener(<span class="hljs-string">"touchstart"</span>, <span class="hljs-keyword">this</span>.mousedown, <span class="hljs-literal">false</span>);
+				<span class="hljs-keyword">this</span>.sliderElem.removeEventListener(<span class="hljs-string">"mousedown"</span>, <span class="hljs-keyword">this</span>.mousedown, <span class="hljs-literal">false</span>);
+			},
+			_bindNonQueryEventHandler: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(evt, callback)</span> {</span>
+				<span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span>.eventToCallbackMap[evt]===<span class="hljs-literal">undefined</span>) {
+					<span class="hljs-keyword">this</span>.eventToCallbackMap[evt] = [];
+				}
+				<span class="hljs-keyword">this</span>.eventToCallbackMap[evt].push(callback);
+			},
+			_cleanUpEventCallbacksMap: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+				<span class="hljs-keyword">var</span> eventNames = <span class="hljs-built_in">Object</span>.keys(<span class="hljs-keyword">this</span>.eventToCallbackMap);
+				<span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; eventNames.length; i++) {
+					<span class="hljs-keyword">var</span> eventName = eventNames[i];
+					<span class="hljs-keyword">this</span>.eventToCallbackMap[eventName] = <span class="hljs-literal">null</span>;
+				}
+			},
+			_showTooltip: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+				<span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.options.tooltip_split === <span class="hljs-literal">false</span> ){
+	            	<span class="hljs-keyword">this</span>._addClass(<span class="hljs-keyword">this</span>.tooltip, <span class="hljs-string">'in'</span>);
+		        } <span class="hljs-keyword">else</span> {
+		            <span class="hljs-keyword">this</span>._addClass(<span class="hljs-keyword">this</span>.tooltip_min, <span class="hljs-string">'in'</span>);
+		            <span class="hljs-keyword">this</span>._addClass(<span class="hljs-keyword">this</span>.tooltip_max, <span class="hljs-string">'in'</span>);
+		        }
+				<span class="hljs-keyword">this</span>.over = <span class="hljs-literal">true</span>;
+			},
+			_hideTooltip: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+				<span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.inDrag === <span class="hljs-literal">false</span> &amp;&amp; <span class="hljs-keyword">this</span>.alwaysShowTooltip !== <span class="hljs-literal">true</span>) {
+					<span class="hljs-keyword">this</span>._removeClass(<span class="hljs-keyword">this</span>.tooltip, <span class="hljs-string">'in'</span>);
+					<span class="hljs-keyword">this</span>._removeClass(<span class="hljs-keyword">this</span>.tooltip_min, <span class="hljs-string">'in'</span>);
+					<span class="hljs-keyword">this</span>._removeClass(<span class="hljs-keyword">this</span>.tooltip_max, <span class="hljs-string">'in'</span>);
+				}
+				<span class="hljs-keyword">this</span>.over = <span class="hljs-literal">false</span>;
+			},
+			_layout: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+				<span class="hljs-keyword">var</span> positionPercentages;
+
+				<span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span>.options.reversed) {
+					positionPercentages = [ <span class="hljs-number">100</span> - <span class="hljs-keyword">this</span>.percentage[<span class="hljs-number">0</span>], <span class="hljs-keyword">this</span>.percentage[<span class="hljs-number">1</span>] ];
+				} <span class="hljs-keyword">else</span> {
+					positionPercentages = [ <span class="hljs-keyword">this</span>.percentage[<span class="hljs-number">0</span>], <span class="hljs-keyword">this</span>.percentage[<span class="hljs-number">1</span>] ];
+				}
+
+				<span class="hljs-keyword">this</span>.handle1.style[<span class="hljs-keyword">this</span>.stylePos] = positionPercentages[<span class="hljs-number">0</span>]+<span class="hljs-string">'%'</span>;
+				<span class="hljs-keyword">this</span>.handle2.style[<span class="hljs-keyword">this</span>.stylePos] = positionPercentages[<span class="hljs-number">1</span>]+<span class="hljs-string">'%'</span>;
+
+				<span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.options.orientation === <span class="hljs-string">'vertical'</span>) {
+					<span class="hljs-keyword">this</span>.trackSelection.style.top = <span class="hljs-built_in">Math</span>.min(positionPercentages[<span class="hljs-number">0</span>], positionPercentages[<span class="hljs-number">1</span>]) +<span class="hljs-string">'%'</span>;
+					<span class="hljs-keyword">this</span>.trackSelection.style.height = <span class="hljs-built_in">Math</span>.abs(positionPercentages[<span class="hljs-number">0</span>] - positionPercentages[<span class="hljs-number">1</span>]) +<span class="hljs-string">'%'</span>;
+				} <span class="hljs-keyword">else</span> {
+					<span class="hljs-keyword">this</span>.trackSelection.style.left = <span class="hljs-built_in">Math</span>.min(positionPercentages[<span class="hljs-number">0</span>], positionPercentages[<span class="hljs-number">1</span>]) +<span class="hljs-string">'%'</span>;
+					<span class="hljs-keyword">this</span>.trackSelection.style.width = <span class="hljs-built_in">Math</span>.abs(positionPercentages[<span class="hljs-number">0</span>] - positionPercentages[<span class="hljs-number">1</span>]) +<span class="hljs-string">'%'</span>;
+
+			        <span class="hljs-keyword">var</span> offset_min = <span class="hljs-keyword">this</span>.tooltip_min.getBoundingClientRect();
+			        <span class="hljs-keyword">var</span> offset_max = <span class="hljs-keyword">this</span>.tooltip_max.getBoundingClientRect();
+
+			        <span class="hljs-keyword">if</span> (offset_min.right &gt; offset_max.left) {
+			            <span class="hljs-keyword">this</span>._removeClass(<span class="hljs-keyword">this</span>.tooltip_max, <span class="hljs-string">'top'</span>);
+			            <span class="hljs-keyword">this</span>._addClass(<span class="hljs-keyword">this</span>.tooltip_max, <span class="hljs-string">'bottom'</span>);
+			            <span class="hljs-keyword">this</span>.tooltip_max.style.top = <span class="hljs-number">18</span> + <span class="hljs-string">'px'</span>;
+			        } <span class="hljs-keyword">else</span> {
+			            <span class="hljs-keyword">this</span>._removeClass(<span class="hljs-keyword">this</span>.tooltip_max, <span class="hljs-string">'bottom'</span>);
+			            <span class="hljs-keyword">this</span>._addClass(<span class="hljs-keyword">this</span>.tooltip_max, <span class="hljs-string">'top'</span>);
+			            <span class="hljs-keyword">this</span>.tooltip_max.style.top = -<span class="hljs-number">30</span> + <span class="hljs-string">'px'</span>;
+			        }
+	 			}
+
+	 			<span class="hljs-keyword">var</span> formattedTooltipVal;
+
+				<span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.options.range) {
+					formattedTooltipVal = <span class="hljs-keyword">this</span>.options.formatter(<span class="hljs-keyword">this</span>.options.value);
+					<span class="hljs-keyword">this</span>._setText(<span class="hljs-keyword">this</span>.tooltipInner, formattedTooltipVal);
+					<span class="hljs-keyword">this</span>.tooltip.style[<span class="hljs-keyword">this</span>.stylePos] = (positionPercentages[<span class="hljs-number">1</span>] + positionPercentages[<span class="hljs-number">0</span>])/<span class="hljs-number">2</span> + <span class="hljs-string">'%'</span>;
+
+					<span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.options.orientation === <span class="hljs-string">'vertical'</span>) {
+						<span class="hljs-keyword">this</span>._css(<span class="hljs-keyword">this</span>.tooltip, <span class="hljs-string">'margin-top'</span>, -<span class="hljs-keyword">this</span>.tooltip.offsetHeight / <span class="hljs-number">2</span> + <span class="hljs-string">'px'</span>);
+					} <span class="hljs-keyword">else</span> {
+						<span class="hljs-keyword">this</span>._css(<span class="hljs-keyword">this</span>.tooltip, <span class="hljs-string">'margin-left'</span>, -<span class="hljs-keyword">this</span>.tooltip.offsetWidth / <span class="hljs-number">2</span> + <span class="hljs-string">'px'</span>);
+					}
+
+					<span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.options.orientation === <span class="hljs-string">'vertical'</span>) {
+						<span class="hljs-keyword">this</span>._css(<span class="hljs-keyword">this</span>.tooltip, <span class="hljs-string">'margin-top'</span>, -<span class="hljs-keyword">this</span>.tooltip.offsetHeight / <span class="hljs-number">2</span> + <span class="hljs-string">'px'</span>);
+					} <span class="hljs-keyword">else</span> {
+						<span class="hljs-keyword">this</span>._css(<span class="hljs-keyword">this</span>.tooltip, <span class="hljs-string">'margin-left'</span>, -<span class="hljs-keyword">this</span>.tooltip.offsetWidth / <span class="hljs-number">2</span> + <span class="hljs-string">'px'</span>);
+					}
+
+					<span class="hljs-keyword">var</span> innerTooltipMinText = <span class="hljs-keyword">this</span>.options.formatter(<span class="hljs-keyword">this</span>.options.value[<span class="hljs-number">0</span>]);
+					<span class="hljs-keyword">this</span>._setText(<span class="hljs-keyword">this</span>.tooltipInner_min, innerTooltipMinText);
+
+					<span class="hljs-keyword">var</span> innerTooltipMaxText = <span class="hljs-keyword">this</span>.options.formatter(<span class="hljs-keyword">this</span>.options.value[<span class="hljs-number">1</span>]);
+					<span class="hljs-keyword">this</span>._setText(<span class="hljs-keyword">this</span>.tooltipInner_max, innerTooltipMaxText);
+
+					<span class="hljs-keyword">this</span>.tooltip_min.style[<span class="hljs-keyword">this</span>.stylePos] = positionPercentages[<span class="hljs-number">0</span>] + <span class="hljs-string">'%'</span>;
+
+					<span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.options.orientation === <span class="hljs-string">'vertical'</span>) {
+						<span class="hljs-keyword">this</span>._css(<span class="hljs-keyword">this</span>.tooltip_min, <span class="hljs-string">'margin-top'</span>, -<span class="hljs-keyword">this</span>.tooltip_min.offsetHeight / <span class="hljs-number">2</span> + <span class="hljs-string">'px'</span>);
+					} <span class="hljs-keyword">else</span> {
+						<span class="hljs-keyword">this</span>._css(<span class="hljs-keyword">this</span>.tooltip_min, <span class="hljs-string">'margin-left'</span>, -<span class="hljs-keyword">this</span>.tooltip_min.offsetWidth / <span class="hljs-number">2</span> + <span class="hljs-string">'px'</span>);
+					}
+
+					<span class="hljs-keyword">this</span>.tooltip_max.style[<span class="hljs-keyword">this</span>.stylePos] = positionPercentages[<span class="hljs-number">1</span>] + <span class="hljs-string">'%'</span>;
+
+					<span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.options.orientation === <span class="hljs-string">'vertical'</span>) {
+						<span class="hljs-keyword">this</span>._css(<span class="hljs-keyword">this</span>.tooltip_max, <span class="hljs-string">'margin-top'</span>, -<span class="hljs-keyword">this</span>.tooltip_max.offsetHeight / <span class="hljs-number">2</span> + <span class="hljs-string">'px'</span>);
+					} <span class="hljs-keyword">else</span> {
+						<span class="hljs-keyword">this</span>._css(<span class="hljs-keyword">this</span>.tooltip_max, <span class="hljs-string">'margin-left'</span>, -<span class="hljs-keyword">this</span>.tooltip_max.offsetWidth / <span class="hljs-number">2</span> + <span class="hljs-string">'px'</span>);
+					}
+				} <span class="hljs-keyword">else</span> {
+					formattedTooltipVal = <span class="hljs-keyword">this</span>.options.formatter(<span class="hljs-keyword">this</span>.options.value[<span class="hljs-number">0</span>]);
+					<span class="hljs-keyword">this</span>._setText(<span class="hljs-keyword">this</span>.tooltipInner, formattedTooltipVal);
+
+					<span class="hljs-keyword">this</span>.tooltip.style[<span class="hljs-keyword">this</span>.stylePos] = positionPercentages[<span class="hljs-number">0</span>] + <span class="hljs-string">'%'</span>;
+					<span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.options.orientation === <span class="hljs-string">'vertical'</span>) {
+						<span class="hljs-keyword">this</span>._css(<span class="hljs-keyword">this</span>.tooltip, <span class="hljs-string">'margin-top'</span>, -<span class="hljs-keyword">this</span>.tooltip.offsetHeight / <span class="hljs-number">2</span> + <span class="hljs-string">'px'</span>);
+					} <span class="hljs-keyword">else</span> {
+						<span class="hljs-keyword">this</span>._css(<span class="hljs-keyword">this</span>.tooltip, <span class="hljs-string">'margin-left'</span>, -<span class="hljs-keyword">this</span>.tooltip.offsetWidth / <span class="hljs-number">2</span> + <span class="hljs-string">'px'</span>);
+					}
+				}
+			},
+			_removeProperty: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(element, prop)</span> {</span>
+				<span class="hljs-keyword">if</span> (element.style.removeProperty) {
+				    element.style.removeProperty(prop);
+				} <span class="hljs-keyword">else</span> {
+				    element.style.removeAttribute(prop);
+				}
+			},
+			_mousedown: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(ev)</span> {</span>
+				<span class="hljs-keyword">if</span>(!<span class="hljs-keyword">this</span>.options.enabled) {
+					<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+				}
+
+				<span class="hljs-keyword">this</span>._triggerFocusOnHandle();
+
+				<span class="hljs-keyword">this</span>.offset = <span class="hljs-keyword">this</span>._offset(<span class="hljs-keyword">this</span>.sliderElem);
+				<span class="hljs-keyword">this</span>.size = <span class="hljs-keyword">this</span>.sliderElem[<span class="hljs-keyword">this</span>.sizePos];
+
+				<span class="hljs-keyword">var</span> percentage = <span class="hljs-keyword">this</span>._getPercentage(ev);
+
+				<span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.options.range) {
+					<span class="hljs-keyword">var</span> diff1 = <span class="hljs-built_in">Math</span>.abs(<span class="hljs-keyword">this</span>.percentage[<span class="hljs-number">0</span>] - percentage);
+					<span class="hljs-keyword">var</span> diff2 = <span class="hljs-built_in">Math</span>.abs(<span class="hljs-keyword">this</span>.percentage[<span class="hljs-number">1</span>] - percentage);
+					<span class="hljs-keyword">this</span>.dragged = (diff1 &lt; diff2) ? <span class="hljs-number">0</span> : <span class="hljs-number">1</span>;
+				} <span class="hljs-keyword">else</span> {
+					<span class="hljs-keyword">this</span>.dragged = <span class="hljs-number">0</span>;
+				}
+
+				<span class="hljs-keyword">this</span>.percentage[<span class="hljs-keyword">this</span>.dragged] = <span class="hljs-keyword">this</span>.options.reversed ? <span class="hljs-number">100</span> - percentage : percentage;
+				<span class="hljs-keyword">this</span>._layout();
+
+				<span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.touchCapable) {
+					document.removeEventListener(<span class="hljs-string">"touchmove"</span>, <span class="hljs-keyword">this</span>.mousemove, <span class="hljs-literal">false</span>);
+					document.removeEventListener(<span class="hljs-string">"touchend"</span>, <span class="hljs-keyword">this</span>.mouseup, <span class="hljs-literal">false</span>);
+				}
+
+				<span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span>.mousemove){
+					document.removeEventListener(<span class="hljs-string">"mousemove"</span>, <span class="hljs-keyword">this</span>.mousemove, <span class="hljs-literal">false</span>);
+				}
+				<span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span>.mouseup){
+					document.removeEventListener(<span class="hljs-string">"mouseup"</span>, <span class="hljs-keyword">this</span>.mouseup, <span class="hljs-literal">false</span>);
+				}
+
+				<span class="hljs-keyword">this</span>.mousemove = <span class="hljs-keyword">this</span>._mousemove.bind(<span class="hljs-keyword">this</span>);
+				<span class="hljs-keyword">this</span>.mouseup = <span class="hljs-keyword">this</span>._mouseup.bind(<span class="hljs-keyword">this</span>);
+
+				<span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.touchCapable) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Touch: Bind touch events:</p></div></div><div class="code"><div class="wrapper">					document.addEventListener(<span class="hljs-string">"touchmove"</span>, <span class="hljs-keyword">this</span>.mousemove, <span class="hljs-literal">false</span>);
+					document.addEventListener(<span class="hljs-string">"touchend"</span>, <span class="hljs-keyword">this</span>.mouseup, <span class="hljs-literal">false</span>);
+				}</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Bind mouse events:</p></div></div><div class="code"><div class="wrapper">				document.addEventListener(<span class="hljs-string">"mousemove"</span>, <span class="hljs-keyword">this</span>.mousemove, <span class="hljs-literal">false</span>);
+				document.addEventListener(<span class="hljs-string">"mouseup"</span>, <span class="hljs-keyword">this</span>.mouseup, <span class="hljs-literal">false</span>);
+
+				<span class="hljs-keyword">this</span>.inDrag = <span class="hljs-literal">true</span>;
+				<span class="hljs-keyword">var</span> newValue = <span class="hljs-keyword">this</span>._calculateValue();
+
+				<span class="hljs-keyword">this</span>._trigger(<span class="hljs-string">'slideStart'</span>, newValue);
+
+				<span class="hljs-keyword">this</span>._setDataVal(newValue);
+				<span class="hljs-keyword">this</span>.setValue(newValue);
+
+				<span class="hljs-keyword">this</span>._pauseEvent(ev);
+
+				<span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+			},
+			_triggerFocusOnHandle: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(handleIdx)</span> {</span>
+				<span class="hljs-keyword">if</span>(handleIdx === <span class="hljs-number">0</span>) {
+					<span class="hljs-keyword">this</span>.handle1.focus();
+				}
+				<span class="hljs-keyword">if</span>(handleIdx === <span class="hljs-number">1</span>) {
+					<span class="hljs-keyword">this</span>.handle2.focus();
+				}
+			},
+			_keydown: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(handleIdx, ev)</span> {</span>
+				<span class="hljs-keyword">if</span>(!<span class="hljs-keyword">this</span>.options.enabled) {
+					<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+				}
+
+				<span class="hljs-keyword">var</span> dir;
+				<span class="hljs-keyword">switch</span> (ev.keyCode) {
+					<span class="hljs-keyword">case</span> <span class="hljs-number">37</span>: <span class="hljs-comment">// left</span>
+					<span class="hljs-keyword">case</span> <span class="hljs-number">40</span>: <span class="hljs-comment">// down</span>
+						dir = -<span class="hljs-number">1</span>;
+						<span class="hljs-keyword">break</span>;
+					<span class="hljs-keyword">case</span> <span class="hljs-number">39</span>: <span class="hljs-comment">// right</span>
+					<span class="hljs-keyword">case</span> <span class="hljs-number">38</span>: <span class="hljs-comment">// up</span>
+						dir = <span class="hljs-number">1</span>;
+						<span class="hljs-keyword">break</span>;
+				}
+				<span class="hljs-keyword">if</span> (!dir) {
+					<span class="hljs-keyword">return</span>;
+				}</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>use natural arrow keys instead of from min to max</p></div></div><div class="code"><div class="wrapper">				<span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.options.natural_arrow_keys) {
+					<span class="hljs-keyword">var</span> ifVerticalAndNotReversed = (<span class="hljs-keyword">this</span>.options.orientation === <span class="hljs-string">'vertical'</span> &amp;&amp; !<span class="hljs-keyword">this</span>.options.reversed);
+					<span class="hljs-keyword">var</span> ifHorizontalAndReversed = (<span class="hljs-keyword">this</span>.options.orientation === <span class="hljs-string">'horizontal'</span> &amp;&amp; <span class="hljs-keyword">this</span>.options.reversed);
+
+					<span class="hljs-keyword">if</span> (ifVerticalAndNotReversed || ifHorizontalAndReversed) {
+						dir = dir * -<span class="hljs-number">1</span>;
+					}
+				}
+
+				<span class="hljs-keyword">var</span> oneStepValuePercentageChange = dir * <span class="hljs-keyword">this</span>.percentage[<span class="hljs-number">2</span>];
+				<span class="hljs-keyword">var</span> percentage = <span class="hljs-keyword">this</span>.percentage[handleIdx] + oneStepValuePercentageChange;
+
+				<span class="hljs-keyword">if</span> (percentage &gt; <span class="hljs-number">100</span>) {
+					percentage = <span class="hljs-number">100</span>;
+				} <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (percentage &lt; <span class="hljs-number">0</span>) {
+					percentage = <span class="hljs-number">0</span>;
+				}
+
+				<span class="hljs-keyword">this</span>.dragged = handleIdx;
+				<span class="hljs-keyword">this</span>._adjustPercentageForRangeSliders(percentage);
+				<span class="hljs-keyword">this</span>.percentage[<span class="hljs-keyword">this</span>.dragged] = percentage;
+				<span class="hljs-keyword">this</span>._layout();
+
+				<span class="hljs-keyword">var</span> val = <span class="hljs-keyword">this</span>._calculateValue();
+
+				<span class="hljs-keyword">this</span>._trigger(<span class="hljs-string">'slideStart'</span>, val);
+				<span class="hljs-keyword">this</span>._setDataVal(val);
+				<span class="hljs-keyword">this</span>.setValue(val, <span class="hljs-literal">true</span>);
+
+				<span class="hljs-keyword">this</span>._trigger(<span class="hljs-string">'slideStop'</span>, val);
+				<span class="hljs-keyword">this</span>._setDataVal(val);
+
+				<span class="hljs-keyword">this</span>._pauseEvent(ev);
+
+				<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+			},
+			_pauseEvent: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(ev)</span> {</span>
+				<span class="hljs-keyword">if</span>(ev.stopPropagation) {
+					ev.stopPropagation();
+				}
+			    <span class="hljs-keyword">if</span>(ev.preventDefault) {
+			    	ev.preventDefault();
+			    }
+			    ev.cancelBubble=<span class="hljs-literal">true</span>;
+			    ev.returnValue=<span class="hljs-literal">false</span>;
+			},
+			_mousemove: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(ev)</span> {</span>
+				<span class="hljs-keyword">if</span>(!<span class="hljs-keyword">this</span>.options.enabled) {
+					<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+				}
+
+				<span class="hljs-keyword">var</span> percentage = <span class="hljs-keyword">this</span>._getPercentage(ev);
+				<span class="hljs-keyword">this</span>._adjustPercentageForRangeSliders(percentage);
+				<span class="hljs-keyword">this</span>.percentage[<span class="hljs-keyword">this</span>.dragged] = <span class="hljs-keyword">this</span>.options.reversed ? <span class="hljs-number">100</span> - percentage : percentage;
+				<span class="hljs-keyword">this</span>._layout();
+
+				<span class="hljs-keyword">var</span> val = <span class="hljs-keyword">this</span>._calculateValue();
+				<span class="hljs-keyword">this</span>.setValue(val, <span class="hljs-literal">true</span>);
+
+				<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+			},
+			_adjustPercentageForRangeSliders: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(percentage)</span> {</span>
+				<span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.options.range) {
+					<span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.dragged === <span class="hljs-number">0</span> &amp;&amp; <span class="hljs-keyword">this</span>.percentage[<span class="hljs-number">1</span>] &lt; percentage) {
+						<span class="hljs-keyword">this</span>.percentage[<span class="hljs-number">0</span>] = <span class="hljs-keyword">this</span>.percentage[<span class="hljs-number">1</span>];
+						<span class="hljs-keyword">this</span>.dragged = <span class="hljs-number">1</span>;
+					} <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.dragged === <span class="hljs-number">1</span> &amp;&amp; <span class="hljs-keyword">this</span>.percentage[<span class="hljs-number">0</span>] &gt; percentage) {
+						<span class="hljs-keyword">this</span>.percentage[<span class="hljs-number">1</span>] = <span class="hljs-keyword">this</span>.percentage[<span class="hljs-number">0</span>];
+						<span class="hljs-keyword">this</span>.dragged = <span class="hljs-number">0</span>;
+					}
+				}
+			},
+			_mouseup: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+				<span class="hljs-keyword">if</span>(!<span class="hljs-keyword">this</span>.options.enabled) {
+					<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+				}
+				<span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.touchCapable) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Touch: Unbind touch event handlers:</p></div></div><div class="code"><div class="wrapper">					document.removeEventListener(<span class="hljs-string">"touchmove"</span>, <span class="hljs-keyword">this</span>.mousemove, <span class="hljs-literal">false</span>);
+					document.removeEventListener(<span class="hljs-string">"touchend"</span>, <span class="hljs-keyword">this</span>.mouseup, <span class="hljs-literal">false</span>);
+				}</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Unbind mouse event handlers:</p></div></div><div class="code"><div class="wrapper">                document.removeEventListener(<span class="hljs-string">"mousemove"</span>, <span class="hljs-keyword">this</span>.mousemove, <span class="hljs-literal">false</span>);
+                document.removeEventListener(<span class="hljs-string">"mouseup"</span>, <span class="hljs-keyword">this</span>.mouseup, <span class="hljs-literal">false</span>);
+
+				<span class="hljs-keyword">this</span>.inDrag = <span class="hljs-literal">false</span>;
+				<span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.over === <span class="hljs-literal">false</span>) {
+					<span class="hljs-keyword">this</span>._hideTooltip();
+				}
+				<span class="hljs-keyword">var</span> val = <span class="hljs-keyword">this</span>._calculateValue();
+
+				<span class="hljs-keyword">this</span>._layout();
+				<span class="hljs-keyword">this</span>._trigger(<span class="hljs-string">'slideStop'</span>, val);
+				<span class="hljs-keyword">this</span>._setDataVal(val);
+
+				<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+			},
+			_calculateValue: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+				<span class="hljs-keyword">var</span> val;
+				<span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.options.range) {
+					val = [<span class="hljs-keyword">this</span>.options.min,<span class="hljs-keyword">this</span>.options.max];
+			        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.percentage[<span class="hljs-number">0</span>] !== <span class="hljs-number">0</span>){
+			            val[<span class="hljs-number">0</span>] = (<span class="hljs-built_in">Math</span>.max(<span class="hljs-keyword">this</span>.options.min, <span class="hljs-keyword">this</span>.options.min + <span class="hljs-built_in">Math</span>.round((<span class="hljs-keyword">this</span>.diff * <span class="hljs-keyword">this</span>.percentage[<span class="hljs-number">0</span>]/<span class="hljs-number">100</span>)/<span class="hljs-keyword">this</span>.options.step)*<span class="hljs-keyword">this</span>.options.step));
+			            val[<span class="hljs-number">0</span>] = <span class="hljs-keyword">this</span>._applyPrecision(val[<span class="hljs-number">0</span>]);
+			        }
+			        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.percentage[<span class="hljs-number">1</span>] !== <span class="hljs-number">100</span>){
+			            val[<span class="hljs-number">1</span>] = (<span class="hljs-built_in">Math</span>.min(<span class="hljs-keyword">this</span>.options.max, <span class="hljs-keyword">this</span>.options.min + <span class="hljs-built_in">Math</span>.round((<span class="hljs-keyword">this</span>.diff * <span class="hljs-keyword">this</span>.percentage[<span class="hljs-number">1</span>]/<span class="hljs-number">100</span>)/<span class="hljs-keyword">this</span>.options.step)*<span class="hljs-keyword">this</span>.options.step));
+			            val[<span class="hljs-number">1</span>] = <span class="hljs-keyword">this</span>._applyPrecision(val[<span class="hljs-number">1</span>]);
+			        }
+				} <span class="hljs-keyword">else</span> {
+					val = (<span class="hljs-keyword">this</span>.options.min + <span class="hljs-built_in">Math</span>.round((<span class="hljs-keyword">this</span>.diff * <span class="hljs-keyword">this</span>.percentage[<span class="hljs-number">0</span>]/<span class="hljs-number">100</span>)/<span class="hljs-keyword">this</span>.options.step)*<span class="hljs-keyword">this</span>.options.step);
+					<span class="hljs-keyword">if</span> (val &lt; <span class="hljs-keyword">this</span>.options.min) {
+						val = <span class="hljs-keyword">this</span>.options.min;
+					}
+					<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (val &gt; <span class="hljs-keyword">this</span>.options.max) {
+						val = <span class="hljs-keyword">this</span>.options.max;
+					}
+					val = <span class="hljs-built_in">parseFloat</span>(val);
+					val = <span class="hljs-keyword">this</span>._applyPrecision(val);
+				}
+				<span class="hljs-keyword">return</span> val;
+			},
+			_applyPrecision: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(val)</span> {</span>
+				<span class="hljs-keyword">var</span> precision = <span class="hljs-keyword">this</span>.options.precision || <span class="hljs-keyword">this</span>._getNumDigitsAfterDecimalPlace(<span class="hljs-keyword">this</span>.options.step);
+				<span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._applyToFixedAndParseFloat(val, precision);
+			},
+			_getNumDigitsAfterDecimalPlace: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(num)</span> {</span>
+				<span class="hljs-keyword">var</span> match = (<span class="hljs-string">''</span>+num).match(<span class="hljs-regexp">/(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/</span>);
+				<span class="hljs-keyword">if</span> (!match) { <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>; }
+				<span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.max(<span class="hljs-number">0</span>, (match[<span class="hljs-number">1</span>] ? match[<span class="hljs-number">1</span>].length : <span class="hljs-number">0</span>) - (match[<span class="hljs-number">2</span>] ? +match[<span class="hljs-number">2</span>] : <span class="hljs-number">0</span>));
+			},
+			_applyToFixedAndParseFloat: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(num, toFixedInput)</span> {</span>
+				<span class="hljs-keyword">var</span> truncatedNum = num.toFixed(toFixedInput);
+				<span class="hljs-keyword">return</span> <span class="hljs-built_in">parseFloat</span>(truncatedNum);
+			},</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><pre><code>Credits to Mike Samuel for the following method!
+Source: http://stackoverflow.com/questions/10454518/javascript-how-to-retrieve-the-number-of-decimals-of-a-string-number</code></pre></div></div><div class="code"><div class="wrapper">			_getPercentage: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(ev)</span> {</span>
+				<span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.touchCapable &amp;&amp; (ev.type === <span class="hljs-string">'touchstart'</span> || ev.type === <span class="hljs-string">'touchmove'</span>)) {
+					ev = ev.touches[<span class="hljs-number">0</span>];
+				}
+				<span class="hljs-keyword">var</span> percentage = (ev[<span class="hljs-keyword">this</span>.mousePos] - <span class="hljs-keyword">this</span>.offset[<span class="hljs-keyword">this</span>.stylePos])*<span class="hljs-number">100</span>/<span class="hljs-keyword">this</span>.size;
+				percentage = <span class="hljs-built_in">Math</span>.round(percentage/<span class="hljs-keyword">this</span>.percentage[<span class="hljs-number">2</span>])*<span class="hljs-keyword">this</span>.percentage[<span class="hljs-number">2</span>];
+				<span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.max(<span class="hljs-number">0</span>, <span class="hljs-built_in">Math</span>.min(<span class="hljs-number">100</span>, percentage));
+			},
+			_validateInputValue: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(val)</span> {</span>
+				<span class="hljs-keyword">if</span>(<span class="hljs-keyword">typeof</span> val === <span class="hljs-string">'number'</span>) {
+					<span class="hljs-keyword">return</span> val;
+				} <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(val <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">Array</span>) {
+					<span class="hljs-keyword">this</span>._validateArray(val);
+					<span class="hljs-keyword">return</span> val;
+				} <span class="hljs-keyword">else</span> {
+					<span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>( ErrorMsgs.formatInvalidInputErrorMsg(val) );
+				}
+			},
+			_validateArray: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(val)</span> {</span>
+				<span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; val.length; i++) {
+					<span class="hljs-keyword">var</span> input =  val[i];
+					<span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> input !== <span class="hljs-string">'number'</span>) { <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>( ErrorMsgs.formatInvalidInputErrorMsg(input) ); }
+				}
+			},
+			_setDataVal: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(val)</span> {</span>
+				<span class="hljs-keyword">var</span> value = <span class="hljs-string">"value: '"</span> + val + <span class="hljs-string">"'"</span>;
+				<span class="hljs-keyword">this</span>.element.setAttribute(<span class="hljs-string">'data'</span>, value);
+				<span class="hljs-keyword">this</span>.element.setAttribute(<span class="hljs-string">'value'</span>, val);
+			},
+			_trigger: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(evt, val)</span> {</span>
+				val = (val || val === <span class="hljs-number">0</span>) ? val : <span class="hljs-literal">undefined</span>;
+
+				<span class="hljs-keyword">var</span> callbackFnArray = <span class="hljs-keyword">this</span>.eventToCallbackMap[evt];
+				<span class="hljs-keyword">if</span>(callbackFnArray &amp;&amp; callbackFnArray.length) {
+					<span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; callbackFnArray.length; i++) {
+						<span class="hljs-keyword">var</span> callbackFn = callbackFnArray[i];
+						callbackFn(val);
+					}
+				}</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>If JQuery exists, trigger JQuery events </p></div></div><div class="code"><div class="wrapper">				<span class="hljs-keyword">if</span>($) {
+					<span class="hljs-keyword">this</span>._triggerJQueryEvent(evt, val);
+				}
+			},
+			_triggerJQueryEvent: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(evt, val)</span> {</span>
+				<span class="hljs-keyword">var</span> eventData = {
+					type: evt,
+					value: val
+				};
+				<span class="hljs-keyword">this</span>.$element.trigger(eventData);
+				<span class="hljs-keyword">this</span>.$sliderElem.trigger(eventData);
+			},
+			_unbindJQueryEventHandlers: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+				<span class="hljs-keyword">this</span>.$element.off();
+				<span class="hljs-keyword">this</span>.$sliderElem.off();
+			},
+			_setText: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(element, text)</span> {</span>
+				<span class="hljs-keyword">if</span>(<span class="hljs-keyword">typeof</span> element.innerText !== <span class="hljs-string">"undefined"</span>) {
+			 		element.innerText = text;
+			 	} <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(<span class="hljs-keyword">typeof</span> element.textContent !== <span class="hljs-string">"undefined"</span>) {
+			 		element.textContent = text;
+			 	}
+			},
+			_removeClass: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(element, classString)</span> {</span>
+				<span class="hljs-keyword">var</span> classes = classString.split(<span class="hljs-string">" "</span>);
+				<span class="hljs-keyword">var</span> newClasses = element.className;
+
+				<span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; classes.length; i++) {
+					<span class="hljs-keyword">var</span> classTag = classes[i];
+					<span class="hljs-keyword">var</span> regex = <span class="hljs-keyword">new</span> <span class="hljs-built_in">RegExp</span>(<span class="hljs-string">"(?:\\s|^)"</span> + classTag + <span class="hljs-string">"(?:\\s|$)"</span>);
+					newClasses = newClasses.replace(regex, <span class="hljs-string">" "</span>);
+				}
+
+				element.className = newClasses.trim();
+			},
+			_addClass: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(element, classString)</span> {</span>
+				<span class="hljs-keyword">var</span> classes = classString.split(<span class="hljs-string">" "</span>);
+				<span class="hljs-keyword">var</span> newClasses = element.className;
+
+				<span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; classes.length; i++) {
+					<span class="hljs-keyword">var</span> classTag = classes[i];
+					<span class="hljs-keyword">var</span> regex = <span class="hljs-keyword">new</span> <span class="hljs-built_in">RegExp</span>(<span class="hljs-string">"(?:\\s|^)"</span> + classTag + <span class="hljs-string">"(?:\\s|$)"</span>);
+					<span class="hljs-keyword">var</span> ifClassExists = regex.test(newClasses);
+
+					<span class="hljs-keyword">if</span>(!ifClassExists) {
+						newClasses += <span class="hljs-string">" "</span> + classTag;
+					}
+				}
+
+				element.className = newClasses.trim();
+			},
+			_offset: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(obj)</span> {</span>
+				<span class="hljs-keyword">var</span> ol = <span class="hljs-number">0</span>;
+				<span class="hljs-keyword">var</span> ot = <span class="hljs-number">0</span>;
+				<span class="hljs-keyword">if</span> (obj.offsetParent) {
+					<span class="hljs-keyword">do</span> {
+					  ol += obj.offsetLeft;
+					  ot += obj.offsetTop;
+					} <span class="hljs-keyword">while</span> (obj = obj.offsetParent);
+				}
+				<span class="hljs-keyword">return</span> {
+					left: ol,
+					top: ot
+				};
+			},
+			_css: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(elementRef, styleName, value)</span> {</span>
+                <span class="hljs-keyword">if</span> ($) {
+                    $.style(elementRef, styleName, value);
+                } <span class="hljs-keyword">else</span> {
+                    <span class="hljs-keyword">var</span> style = styleName.replace(<span class="hljs-regexp">/^-ms-/</span>, <span class="hljs-string">"ms-"</span>).replace(<span class="hljs-regexp">/-([\da-z])/gi</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(all, letter)</span> {</span>
+                        <span class="hljs-keyword">return</span> letter.toUpperCase();
+                    });
+                    elementRef.style[style] = value;
+                }
+			}
+		};
+
+		<span class="hljs-comment">/*********************************
+
+			Attach to global namespace
+
+		*********************************/</span>
+		<span class="hljs-keyword">if</span>($) {
+			<span class="hljs-keyword">var</span> namespace = $.fn.slider ? <span class="hljs-string">'bootstrapSlider'</span> : <span class="hljs-string">'slider'</span>;
+			$.bridget(namespace, Slider);
+		}
+
+	})( $ );
+
+	<span class="hljs-keyword">return</span> Slider;
+}));</div></div></div></div></body></html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html><html lang="en"><head><title>assets/scripts/vendor/jquery_dataTables_bootstrap</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../../"><meta name="groc-document-path" content="assets/scripts/vendor/jquery_dataTables_bootstrap"><meta name="groc-project-path" content="assets/scripts/vendor/jquery_dataTables_bootstrap.js"><link rel="stylesheet" type="text/css" media="all" href="../../../assets/style.css"><script type="text/javascript" src="../../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/vendor/jquery_dataTables_bootstrap.js</div></div><div id="document"><div class="segment"><div class="comments "><div class="wrapper"><p>Set the defaults for DataTables initialisation </p></div></div><div class="code"><div class="wrapper">$.extend(<span class="hljs-literal">true</span>, $.fn.dataTable.defaults, {
+    <span class="hljs-string">"sDom"</span>: <span class="hljs-string">"&lt;'row'&lt;'col-sm-6'l&gt;&lt;'col-sm-6'f&gt;r&gt;"</span> + <span class="hljs-string">"t"</span> + <span class="hljs-string">"&lt;'row'&lt;'col-sm-6'i&gt;&lt;'col-sm-6'p&gt;&gt;"</span>,
+    <span class="hljs-string">"oLanguage"</span>: {
+        <span class="hljs-string">"sLengthMenu"</span>:<span class="hljs-string">"_MENU_ &lt;span class='hidden-xs'&gt;records per page&lt;/span&gt;"</span>
+    }
+});</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Default class modification </p></div></div><div class="code"><div class="wrapper">$.extend($.fn.dataTableExt.oStdClasses, {
+    <span class="hljs-string">"sWrapper"</span>: <span class="hljs-string">"dataTables_wrapper form-inline"</span>,
+    <span class="hljs-string">"sFilterInput"</span>: <span class="hljs-string">"form-control"</span>,
+    <span class="hljs-string">"sLengthSelect"</span>: <span class="hljs-string">"form-control"</span>
+});</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>In 1.10 we use the pagination renderers to draw the Bootstrap paging,
+rather than  custom plug-in</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">if</span> ($.fn.dataTable.Api) {
+    $.fn.dataTable.defaults.renderer = <span class="hljs-string">'bootstrap'</span>;
+    $.fn.dataTable.ext.renderer.pageButton.bootstrap = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(settings, host, idx, buttons, page, pages)</span> {</span>
+        <span class="hljs-keyword">var</span> api = <span class="hljs-keyword">new</span> $.fn.dataTable.Api(settings);
+        <span class="hljs-keyword">var</span> classes = settings.oClasses;
+        <span class="hljs-keyword">var</span> lang = settings.oLanguage.oPaginate;
+        <span class="hljs-keyword">var</span> btnDisplay, btnClass;
+
+        <span class="hljs-keyword">var</span> attach = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(container, buttons)</span> {</span>
+            <span class="hljs-keyword">var</span> i, ien, node, button;
+            <span class="hljs-keyword">var</span> clickHandler = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+                e.preventDefault();
+                <span class="hljs-keyword">if</span> (e.data.action !== <span class="hljs-string">'ellipsis'</span>) {
+                    api.page(e.data.action).draw(<span class="hljs-literal">false</span>);
+                }
+            };
+
+            <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>, ien = buttons.length; i &lt; ien; i++) {
+                button = buttons[i];
+
+                <span class="hljs-keyword">if</span> ($.isArray(button)) {
+                    attach(container, button);
+                } <span class="hljs-keyword">else</span> {
+                    btnDisplay = <span class="hljs-string">''</span>;
+                    btnClass = <span class="hljs-string">''</span>;
+
+                    <span class="hljs-keyword">switch</span> (button) {
+                        <span class="hljs-keyword">case</span> <span class="hljs-string">'ellipsis'</span>:
+                            btnDisplay = <span class="hljs-string">'&amp;hellip;'</span>;
+                            btnClass = <span class="hljs-string">'disabled'</span>;
+                            <span class="hljs-keyword">break</span>;
+
+                        <span class="hljs-keyword">case</span> <span class="hljs-string">'first'</span>:
+                            btnDisplay = lang.sFirst;
+                            btnClass = button + (page &gt; <span class="hljs-number">0</span> ?
+                                <span class="hljs-string">''</span> : <span class="hljs-string">' disabled'</span>);
+                            <span class="hljs-keyword">break</span>;
+
+                        <span class="hljs-keyword">case</span> <span class="hljs-string">'previous'</span>:
+                            btnDisplay = lang.sPrevious;
+                            btnClass = button + (page &gt; <span class="hljs-number">0</span> ?
+                                <span class="hljs-string">''</span> : <span class="hljs-string">' disabled'</span>);
+                            <span class="hljs-keyword">break</span>;
+
+                        <span class="hljs-keyword">case</span> <span class="hljs-string">'next'</span>:
+                            btnDisplay = lang.sNext;
+                            btnClass = button + (page &lt; pages - <span class="hljs-number">1</span> ?
+                                <span class="hljs-string">''</span> : <span class="hljs-string">' disabled'</span>);
+                            <span class="hljs-keyword">break</span>;
+
+                        <span class="hljs-keyword">case</span> <span class="hljs-string">'last'</span>:
+                            btnDisplay = lang.sLast;
+                            btnClass = button + (page &lt; pages - <span class="hljs-number">1</span> ?
+                                <span class="hljs-string">''</span> : <span class="hljs-string">' disabled'</span>);
+                            <span class="hljs-keyword">break</span>;
+
+                        <span class="hljs-keyword">default</span>:
+                            btnDisplay = button + <span class="hljs-number">1</span>;
+                            btnClass = page === button ?
+                                <span class="hljs-string">'active'</span> : <span class="hljs-string">''</span>;
+                            <span class="hljs-keyword">break</span>;
+                    }
+
+                    <span class="hljs-keyword">if</span> (btnDisplay) {
+                        node = $(<span class="hljs-string">'&lt;li&gt;'</span>, {
+                            <span class="hljs-string">'class'</span>: classes.sPageButton + <span class="hljs-string">' '</span> + btnClass,
+                            <span class="hljs-string">'aria-controls'</span>: settings.sTableId,
+                            <span class="hljs-string">'tabindex'</span>: settings.iTabIndex,
+                            <span class="hljs-string">'id'</span>: idx === <span class="hljs-number">0</span> &amp;&amp; <span class="hljs-keyword">typeof</span> button === <span class="hljs-string">'string'</span> ? settings.sTableId + <span class="hljs-string">'_'</span> + button : <span class="hljs-literal">null</span>
+                        })
+                            .append($(<span class="hljs-string">'&lt;a&gt;'</span>, {
+                                    <span class="hljs-string">'href'</span>: <span class="hljs-string">'#'</span>
+                                })
+                                .html(btnDisplay)
+                        )
+                            .appendTo(container);
+
+                        settings.oApi._fnBindAction(
+                            node, {
+                                action: button
+                            }, clickHandler
+                        );
+                    }
+                }
+            }
+        };
+
+        attach(
+            $(host).empty().html(<span class="hljs-string">'&lt;ul class="pagination"/&gt;'</span>).children(<span class="hljs-string">'ul'</span>),
+            buttons
+        );
+    }
+} <span class="hljs-keyword">else</span> {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Integration for 1.9-</p></div></div><div class="code"><div class="wrapper">    $.fn.dataTable.defaults.sPaginationType = <span class="hljs-string">'bootstrap'</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>API method to get paging information </p></div></div><div class="code"><div class="wrapper">    $.fn.dataTableExt.oApi.fnPagingInfo = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(oSettings)</span> {</span>
+        <span class="hljs-keyword">return</span> {
+            <span class="hljs-string">"iStart"</span>: oSettings._iDisplayStart,
+            <span class="hljs-string">"iEnd"</span>: oSettings.fnDisplayEnd(),
+            <span class="hljs-string">"iLength"</span>: oSettings._iDisplayLength,
+            <span class="hljs-string">"iTotal"</span>: oSettings.fnRecordsTotal(),
+            <span class="hljs-string">"iFilteredTotal"</span>: oSettings.fnRecordsDisplay(),
+            <span class="hljs-string">"iPage"</span>: oSettings._iDisplayLength === -<span class="hljs-number">1</span> ? <span class="hljs-number">0</span> : <span class="hljs-built_in">Math</span>.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength),
+            <span class="hljs-string">"iTotalPages"</span>: oSettings._iDisplayLength === -<span class="hljs-number">1</span> ? <span class="hljs-number">0</span> : <span class="hljs-built_in">Math</span>.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength)
+        };
+    };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Bootstrap style pagination control </p></div></div><div class="code"><div class="wrapper">    $.extend($.fn.dataTableExt.oPagination, {
+        <span class="hljs-string">"bootstrap"</span>: {
+            <span class="hljs-string">"fnInit"</span>: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(oSettings, nPaging, fnDraw)</span> {</span>
+                <span class="hljs-keyword">var</span> oLang = oSettings.oLanguage.oPaginate;
+                <span class="hljs-keyword">var</span> fnClickHandler = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+                    e.preventDefault();
+                    <span class="hljs-keyword">if</span> (oSettings.oApi._fnPageChange(oSettings, e.data.action)) {
+                        fnDraw(oSettings);
+                    }
+                };
+
+                $(nPaging).append(
+                    <span class="hljs-string">'&lt;ul class="pagination"&gt;'</span> +
+                    <span class="hljs-string">'&lt;li class="prev disabled"&gt;&lt;a href="#"&gt;&amp;larr; '</span> + oLang.sPrevious + <span class="hljs-string">'&lt;/a&gt;&lt;/li&gt;'</span> +
+                    <span class="hljs-string">'&lt;li class="next disabled"&gt;&lt;a href="#"&gt;'</span> + oLang.sNext + <span class="hljs-string">' &amp;rarr; &lt;/a&gt;&lt;/li&gt;'</span> +
+                    <span class="hljs-string">'&lt;/ul&gt;'</span>
+                );
+                <span class="hljs-keyword">var</span> els = $(<span class="hljs-string">'a'</span>, nPaging);
+                $(els[<span class="hljs-number">0</span>]).bind(<span class="hljs-string">'click.DT'</span>, {
+                    action: <span class="hljs-string">"previous"</span>
+                }, fnClickHandler);
+                $(els[<span class="hljs-number">1</span>]).bind(<span class="hljs-string">'click.DT'</span>, {
+                    action: <span class="hljs-string">"next"</span>
+                }, fnClickHandler);
+            },
+
+            <span class="hljs-string">"fnUpdate"</span>: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(oSettings, fnDraw)</span> {</span>
+                <span class="hljs-keyword">var</span> iListLength = <span class="hljs-number">5</span>;
+                <span class="hljs-keyword">var</span> oPaging = oSettings.oInstance.fnPagingInfo();
+                <span class="hljs-keyword">var</span> an = oSettings.aanFeatures.p;
+                <span class="hljs-keyword">var</span> i, ien, j, sClass, iStart, iEnd, iHalf = <span class="hljs-built_in">Math</span>.floor(iListLength / <span class="hljs-number">2</span>);
+
+                <span class="hljs-keyword">if</span> (oPaging.iTotalPages &lt; iListLength) {
+                    iStart = <span class="hljs-number">1</span>;
+                    iEnd = oPaging.iTotalPages;
+                } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (oPaging.iPage &lt;= iHalf) {
+                    iStart = <span class="hljs-number">1</span>;
+                    iEnd = iListLength;
+                } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (oPaging.iPage &gt;= (oPaging.iTotalPages - iHalf)) {
+                    iStart = oPaging.iTotalPages - iListLength + <span class="hljs-number">1</span>;
+                    iEnd = oPaging.iTotalPages;
+                } <span class="hljs-keyword">else</span> {
+                    iStart = oPaging.iPage - iHalf + <span class="hljs-number">1</span>;
+                    iEnd = iStart + iListLength - <span class="hljs-number">1</span>;
+                }
+
+                <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>, ien = an.length; i &lt; ien; i++) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Remove the middle elements</p></div></div><div class="code"><div class="wrapper">                    $(<span class="hljs-string">'li:gt(0)'</span>, an[i]).filter(<span class="hljs-string">':not(:last)'</span>).remove();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Add the new list items and their event handlers</p></div></div><div class="code"><div class="wrapper">                    <span class="hljs-keyword">for</span> (j = iStart; j &lt;= iEnd; j++) {
+                        sClass = (j == oPaging.iPage + <span class="hljs-number">1</span>) ? <span class="hljs-string">'class="active"'</span> : <span class="hljs-string">''</span>;
+                        $(<span class="hljs-string">'&lt;li '</span> + sClass + <span class="hljs-string">'&gt;&lt;a href="#"&gt;'</span> + j + <span class="hljs-string">'&lt;/a&gt;&lt;/li&gt;'</span>)
+                            .insertBefore($(<span class="hljs-string">'li:last'</span>, an[i])[<span class="hljs-number">0</span>])
+                            .bind(<span class="hljs-string">'click'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+                                e.preventDefault();
+                                oSettings._iDisplayStart = (<span class="hljs-built_in">parseInt</span>($(<span class="hljs-string">'a'</span>, <span class="hljs-keyword">this</span>).text(), <span class="hljs-number">10</span>) - <span class="hljs-number">1</span>) * oPaging.iLength;
+                                fnDraw(oSettings);
+                            });
+                    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Add / remove disabled classes from the static elements</p></div></div><div class="code"><div class="wrapper">                    <span class="hljs-keyword">if</span> (oPaging.iPage === <span class="hljs-number">0</span>) {
+                        $(<span class="hljs-string">'li:first'</span>, an[i]).addClass(<span class="hljs-string">'disabled'</span>);
+                    } <span class="hljs-keyword">else</span> {
+                        $(<span class="hljs-string">'li:first'</span>, an[i]).removeClass(<span class="hljs-string">'disabled'</span>);
+                    }
+
+                    <span class="hljs-keyword">if</span> (oPaging.iPage === oPaging.iTotalPages - <span class="hljs-number">1</span> || oPaging.iTotalPages === <span class="hljs-number">0</span>) {
+                        $(<span class="hljs-string">'li:last'</span>, an[i]).addClass(<span class="hljs-string">'disabled'</span>);
+                    } <span class="hljs-keyword">else</span> {
+                        $(<span class="hljs-string">'li:last'</span>, an[i]).removeClass(<span class="hljs-string">'disabled'</span>);
+                    }
+                }
+            }
+        }
+    });
+}</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>TableTools Bootstrap compatibility
+Required TableTools 2.1+</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">if</span> ($.fn.DataTable.TableTools) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Set the classes that TableTools uses to something suitable for Bootstrap</p></div></div><div class="code"><div class="wrapper">    $.extend(<span class="hljs-literal">true</span>, $.fn.DataTable.TableTools.classes, {
+        <span class="hljs-string">"container"</span>: <span class="hljs-string">"DTTT btn-group"</span>,
+        <span class="hljs-string">"buttons"</span>: {
+            <span class="hljs-string">"normal"</span>: <span class="hljs-string">"btn btn-default"</span>,
+            <span class="hljs-string">"disabled"</span>: <span class="hljs-string">"disabled"</span>
+        },
+        <span class="hljs-string">"collection"</span>: {
+            <span class="hljs-string">"container"</span>: <span class="hljs-string">"DTTT_dropdown dropdown-menu"</span>,
+            <span class="hljs-string">"buttons"</span>: {
+                <span class="hljs-string">"normal"</span>: <span class="hljs-string">""</span>,
+                <span class="hljs-string">"disabled"</span>: <span class="hljs-string">"disabled"</span>
+            }
+        },
+        <span class="hljs-string">"print"</span>: {
+            <span class="hljs-string">"info"</span>: <span class="hljs-string">"DTTT_print_info modal"</span>
+        },
+        <span class="hljs-string">"select"</span>: {
+            <span class="hljs-string">"row"</span>: <span class="hljs-string">"active"</span>
+        }
+    });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Have the collection use a bootstrap compatible dropdown</p></div></div><div class="code"><div class="wrapper">    $.extend(<span class="hljs-literal">true</span>, $.fn.DataTable.TableTools.DEFAULTS.oTags, {
+        <span class="hljs-string">"collection"</span>: {
+            <span class="hljs-string">"container"</span>: <span class="hljs-string">"ul"</span>,
+            <span class="hljs-string">"button"</span>: <span class="hljs-string">"li"</span>,
+            <span class="hljs-string">"liner"</span>: <span class="hljs-string">"a"</span>
+        }
+    });
+}</div></div></div></div></body></html>

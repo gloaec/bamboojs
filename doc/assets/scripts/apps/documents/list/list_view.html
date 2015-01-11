@@ -1,0 +1,78 @@
+<!DOCTYPE html><html lang="en"><head><title>assets/scripts/apps/documents/list/list_view</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../../../../"><meta name="groc-document-path" content="assets/scripts/apps/documents/list/list_view"><meta name="groc-project-path" content="assets/scripts/apps/documents/list/list_view.coffee"><link rel="stylesheet" type="text/css" media="all" href="../../../../../assets/style.css"><script type="text/javascript" src="../../../../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/apps/documents/list/list_view.coffee</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-property">@Bamboo</span>.<span class="hljs-built_in">module</span> <span class="hljs-string">"DocumentsApp.List"</span>, <span class="hljs-function"><span class="hljs-params">(List, App, Backbone, Marionette, $, _)</span> -&gt;</span>
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">List</span>.<span class="hljs-title">Empty</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">App</span>.<span class="hljs-title">Views</span>.<span class="hljs-title">ItemView</span></span>
+    <span class="hljs-attribute">template</span>: <span class="hljs-string">"documents/list/_empty"</span>
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">List</span>.<span class="hljs-title">Document</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">App</span>.<span class="hljs-title">Views</span>.<span class="hljs-title">ItemView</span></span>
+    <span class="hljs-attribute">template</span>: <span class="hljs-string">"documents/list/_document"</span>
+    <span class="hljs-attribute">tagName</span>: <span class="hljs-string">'tr'</span>
+
+    <span class="hljs-attribute">initialize</span>:<span class="hljs-function"> -&gt;</span>
+      <span class="hljs-property">@timer</span> = setInterval<span class="hljs-function"> =&gt;</span>
+        <span class="hljs-property">@model</span>.trigger <span class="hljs-string">"change:updated_at"</span>, <span class="hljs-property">@model</span>
+        <span class="hljs-property">@model</span>.trigger <span class="hljs-string">"change:created_at"</span>, <span class="hljs-property">@model</span>
+      , <span class="hljs-number">30000</span>
+
+    <span class="hljs-attribute">bindings</span>:
+      <span class="hljs-string">".name"</span>       : <span class="hljs-string">"name"</span>
+      <span class="hljs-string">".size"</span>       :
+        <span class="hljs-attribute">observe</span>: <span class="hljs-string">"attachment_file_size"</span>
+        <span class="hljs-attribute">onGet</span>: <span class="hljs-function"><span class="hljs-params">(value)</span> -&gt;</span> value.fileSize()
+      <span class="hljs-string">".updated_at"</span> :
+        <span class="hljs-attribute">observe</span>: <span class="hljs-string">"updated_at"</span>
+        <span class="hljs-attribute">onGet</span>: <span class="hljs-function"><span class="hljs-params">(value)</span> -&gt;</span> <span class="hljs-string">"<span class="hljs-subst">#{moment(value).fromNow()}</span>"</span> <span class="hljs-keyword">if</span> value
+      <span class="hljs-string">".created_at"</span> :
+        <span class="hljs-attribute">observe</span>: <span class="hljs-string">"created_at"</span>
+        <span class="hljs-attribute">onGet</span>: <span class="hljs-function"><span class="hljs-params">(value)</span> -&gt;</span> <span class="hljs-string">"created <span class="hljs-subst">#{moment(value).fromNow()}</span>"</span>
+
+    <span class="hljs-attribute">events</span>:
+      <span class="hljs-string">"click"</span>         :<span class="hljs-function"> -&gt;</span> <span class="hljs-property">@trigger</span> <span class="hljs-string">"document:clicked"</span>, <span class="hljs-property">@model</span>
+      <span class="hljs-string">"click .edit"</span>   :<span class="hljs-function"> -&gt;</span> <span class="hljs-property">@trigger</span> <span class="hljs-string">"edit:document:clicked"</span>, <span class="hljs-property">@model</span>
+      <span class="hljs-string">"click .delete"</span> :<span class="hljs-function"> -&gt;</span> <span class="hljs-property">@trigger</span> <span class="hljs-string">"delete:document:clicked"</span>, <span class="hljs-property">@model</span>
+      <span class="hljs-string">"dblclick .name"</span>: <span class="hljs-string">"onEditDocumentNameClicked"</span>
+
+    <span class="hljs-attribute">onEditDocumentNameClicked</span>:<span class="hljs-function"> -&gt;</span>
+      <span class="hljs-built_in">console</span>.log <span class="hljs-string">'edit'</span>
+
+    <span class="hljs-attribute">onRender</span>:<span class="hljs-function"> -&gt;</span>
+      <span class="hljs-property">@stickit</span>()
+
+    <span class="hljs-attribute">onClose</span>:<span class="hljs-function"> -&gt;</span>
+      clearInterval(<span class="hljs-property">@timer</span>)
+
+    <span class="hljs-attribute">templateHelpers</span>:<span class="hljs-function"> -&gt;</span>
+
+      <span class="hljs-attribute">icon</span>:<span class="hljs-function"> -&gt;</span>
+        <span class="hljs-keyword">switch</span> <span class="hljs-property">@attachment_file_type</span>
+          <span class="hljs-keyword">when</span> <span class="hljs-string">"html"</span> <span class="hljs-keyword">then</span> <span class="hljs-string">"globe"</span>
+          <span class="hljs-keyword">else</span> <span class="hljs-string">"file"</span>
+
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">List</span>.<span class="hljs-title">Documents</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">App</span>.<span class="hljs-title">Views</span>.<span class="hljs-title">CompositeView</span></span>
+    <span class="hljs-attribute">template</span>: <span class="hljs-string">"documents/list/documents"</span>
+    <span class="hljs-attribute">itemView</span>: List.Document
+    <span class="hljs-attribute">emptyView</span>: List.Empty
+    <span class="hljs-attribute">itemViewContainer</span>: <span class="hljs-string">"tbody"</span>
+
+    <span class="hljs-attribute">ui</span>:
+      <span class="hljs-string">"documents"</span>  : <span class="hljs-string">"#documents &gt; table"</span>
+
+    <span class="hljs-attribute">events</span>:
+      <span class="hljs-string">"click .new_folder"</span>: <span class="hljs-string">"newFolder"</span>
+
+    <span class="hljs-attribute">newFolder</span>:<span class="hljs-function"> -&gt;</span>
+      <span class="hljs-property">@folder</span> = <span class="hljs-keyword">new</span> <span class="hljs-property">@collection</span>.model()
+      <span class="hljs-built_in">console</span>.log <span class="hljs-string">'new folder'</span>, <span class="hljs-property">@folder</span>
+      <span class="hljs-property">@collection</span>.add <span class="hljs-property">@folder</span>
+      <span class="hljs-property">@render</span>()
+
+    <span class="hljs-attribute">onRender</span>:<span class="hljs-function"> -&gt;</span>
+      <span class="hljs-property">@ui</span>.documents.dataTable
+        <span class="hljs-attribute">paging</span>: <span class="hljs-literal">true</span>
+        <span class="hljs-attribute">info</span>: <span class="hljs-literal">true</span>
+        <span class="hljs-attribute">language</span>:
+          <span class="hljs-attribute">search</span>: <span class="hljs-string">"_INPUT_"</span>
+          <span class="hljs-attribute">emptyTable</span>: <span class="hljs-string">"No files added"</span>
+          <span class="hljs-attribute">searchPlaceholder</span>: <span class="hljs-string">"Filter documents..."</span>
+          <span class="hljs-attribute">zeroRecords</span>: <span class="hljs-string">"No files matching"</span>
+      <span class="hljs-property">@validateit</span>()</div></div></div></div></body></html>

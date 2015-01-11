@@ -1,0 +1,594 @@
+<!DOCTYPE html><html lang="en"><head><title>assets/scripts/vendor/metronic</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../../"><meta name="groc-document-path" content="assets/scripts/vendor/metronic"><meta name="groc-project-path" content="assets/scripts/vendor/metronic.js"><link rel="stylesheet" type="text/css" media="all" href="../../../assets/style.css"><script type="text/javascript" src="../../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/vendor/metronic.js</div></div><div id="document"><div class="segment"><div class="comments "><div class="wrapper"><p>Core script to handle the entire theme and core functions
+*</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> Metronic = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>IE mode</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> isRTL = <span class="hljs-literal">false</span>;
+    <span class="hljs-keyword">var</span> isIE8 = <span class="hljs-literal">false</span>;
+    <span class="hljs-keyword">var</span> isIE9 = <span class="hljs-literal">false</span>;
+    <span class="hljs-keyword">var</span> isIE10 = <span class="hljs-literal">false</span>;
+
+    <span class="hljs-keyword">var</span> resizeHandlers = [];
+
+    <span class="hljs-keyword">var</span> assetsPath = <span class="hljs-string">'../../assets/'</span>;
+
+    <span class="hljs-keyword">var</span> globalImgPath = assetsPath + <span class="hljs-string">'global/img/'</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>theme layout color set</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> brandColors = {
+        <span class="hljs-string">'blue'</span>: <span class="hljs-string">'#89C4F4'</span>,
+        <span class="hljs-string">'red'</span>: <span class="hljs-string">'#F3565D'</span>,
+        <span class="hljs-string">'green'</span>: <span class="hljs-string">'#1bbc9b'</span>,
+        <span class="hljs-string">'purple'</span>: <span class="hljs-string">'#9b59b6'</span>,
+        <span class="hljs-string">'grey'</span>: <span class="hljs-string">'#95a5a6'</span>,
+        <span class="hljs-string">'yellow'</span>: <span class="hljs-string">'#F8CB00'</span>
+    };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>initializes main settings</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> handleInit = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+
+        <span class="hljs-keyword">if</span> ($(<span class="hljs-string">'body'</span>).css(<span class="hljs-string">'direction'</span>) === <span class="hljs-string">'rtl'</span>) {
+            isRTL = <span class="hljs-literal">true</span>;
+        }
+
+        isIE8 = !! navigator.userAgent.match(<span class="hljs-regexp">/MSIE 8.0/</span>);
+        isIE9 = !! navigator.userAgent.match(<span class="hljs-regexp">/MSIE 9.0/</span>);
+        isIE10 = !! navigator.userAgent.match(<span class="hljs-regexp">/MSIE 10.0/</span>);
+
+        <span class="hljs-keyword">if</span> (isIE10) {
+            $(<span class="hljs-string">'html'</span>).addClass(<span class="hljs-string">'ie10'</span>); <span class="hljs-comment">// detect IE10 version</span>
+        }
+        
+        <span class="hljs-keyword">if</span> (isIE10 || isIE9 || isIE8) {
+            $(<span class="hljs-string">'html'</span>).addClass(<span class="hljs-string">'ie'</span>); <span class="hljs-comment">// detect IE10 version</span>
+        }
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>runs callback functions set by Metronic.addResponsiveHandler().</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> _runResizeHandlers = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>reinitialize other subscribed elements</p></div></div><div class="code"><div class="wrapper">        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; resizeHandlers.length; i++) {
+            <span class="hljs-keyword">var</span> each = resizeHandlers[i];
+            each.call();
+        }
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>handle the layout reinitialization on window resize</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> handleOnResize = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+        <span class="hljs-keyword">var</span> resize;
+        <span class="hljs-keyword">if</span> (isIE8) {
+            <span class="hljs-keyword">var</span> currheight;
+            $(window).resize(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+                <span class="hljs-keyword">if</span> (currheight == document.documentElement.clientHeight) {
+                    <span class="hljs-keyword">return</span>; <span class="hljs-comment">//quite event since only body resized not window.</span>
+                }
+                <span class="hljs-keyword">if</span> (resize) {
+                    clearTimeout(resize);
+                }
+                resize = setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+                    _runResizeHandlers();
+                }, <span class="hljs-number">50</span>); <span class="hljs-comment">// wait 50ms until window resize finishes.                </span>
+                currheight = document.documentElement.clientHeight; <span class="hljs-comment">// store last body client height</span>
+            });
+        } <span class="hljs-keyword">else</span> {
+            $(window).resize(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+                <span class="hljs-keyword">if</span> (resize) {
+                    clearTimeout(resize);
+                }
+                resize = setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+                    _runResizeHandlers();
+                }, <span class="hljs-number">50</span>); <span class="hljs-comment">// wait 50ms until window resize finishes.</span>
+            });
+        }
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Handles portlet tools &amp; actions</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> handlePortletTools = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+        $(<span class="hljs-string">'body'</span>).on(<span class="hljs-string">'click'</span>, <span class="hljs-string">'.portlet &gt; .portlet-title &gt; .tools &gt; a.remove'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(e)</span> {</span>
+            e.preventDefault();
+            $(<span class="hljs-keyword">this</span>).closest(<span class="hljs-string">".portlet"</span>).remove();
+        });
+
+        $(<span class="hljs-string">'body'</span>).on(<span class="hljs-string">'click'</span>, <span class="hljs-string">'.portlet &gt; .portlet-title &gt; .tools &gt; a.reload'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(e)</span> {</span>
+            e.preventDefault();
+            <span class="hljs-keyword">var</span> el = $(<span class="hljs-keyword">this</span>).closest(<span class="hljs-string">".portlet"</span>).children(<span class="hljs-string">".portlet-body"</span>);
+            <span class="hljs-keyword">var</span> url = $(<span class="hljs-keyword">this</span>).attr(<span class="hljs-string">"data-url"</span>);
+            <span class="hljs-keyword">var</span> error = $(<span class="hljs-keyword">this</span>).attr(<span class="hljs-string">"data-error-display"</span>);
+            <span class="hljs-keyword">if</span> (url) {
+                Metronic.blockUI({target: el, iconOnly: <span class="hljs-literal">true</span>});
+                $.ajax({
+                    type: <span class="hljs-string">"GET"</span>,
+                    cache: <span class="hljs-literal">false</span>,
+                    url: url,
+                    dataType: <span class="hljs-string">"html"</span>,
+                    success: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(res)</span> 
+                    {</span>                        
+                        Metronic.unblockUI(el);
+                        el.html(res);
+                    },
+                    error: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(xhr, ajaxOptions, thrownError)</span>
+                    {</span>
+                        Metronic.unblockUI(el);
+                        <span class="hljs-keyword">var</span> msg = <span class="hljs-string">'Error on reloading the content. Please check your connection and try again.'</span>;
+                        <span class="hljs-keyword">if</span> (error == <span class="hljs-string">"toastr"</span> &amp;&amp; toastr) {
+                            toastr.error(msg);
+                        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (error == <span class="hljs-string">"notific8"</span> &amp;&amp; $.notific8) {
+                            $.notific8(<span class="hljs-string">'zindex'</span>, <span class="hljs-number">11500</span>);
+                            $.notific8(msg, {theme: <span class="hljs-string">'ruby'</span>, life: <span class="hljs-number">3000</span>});
+                        } <span class="hljs-keyword">else</span> {
+                            alert(msg);
+                        }
+                    }
+                });
+            } <span class="hljs-keyword">else</span> {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>for demo purpose</p></div></div><div class="code"><div class="wrapper">                Metronic.blockUI({target: el, iconOnly: <span class="hljs-literal">true</span>});
+                window.setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+                    Metronic.unblockUI(el);
+                }, <span class="hljs-number">1000</span>);
+            }            
+        });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>load ajax data on page init</p></div></div><div class="code"><div class="wrapper">        $(<span class="hljs-string">'.portlet .portlet-title a.reload[data-load="true"]'</span>).click();
+
+        $(<span class="hljs-string">'body'</span>).on(<span class="hljs-string">'click'</span>, <span class="hljs-string">'.portlet &gt; .portlet-title &gt; .tools &gt; .collapse, .portlet .portlet-title &gt; .tools &gt; .expand'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(e)</span> {</span>
+            e.preventDefault();
+            <span class="hljs-keyword">var</span> el = $(<span class="hljs-keyword">this</span>).closest(<span class="hljs-string">".portlet"</span>).children(<span class="hljs-string">".portlet-body"</span>);
+            <span class="hljs-keyword">if</span> ($(<span class="hljs-keyword">this</span>).hasClass(<span class="hljs-string">"collapse"</span>)) {
+                $(<span class="hljs-keyword">this</span>).removeClass(<span class="hljs-string">"collapse"</span>).addClass(<span class="hljs-string">"expand"</span>);
+                el.slideUp(<span class="hljs-number">200</span>);
+            } <span class="hljs-keyword">else</span> {
+                $(<span class="hljs-keyword">this</span>).removeClass(<span class="hljs-string">"expand"</span>).addClass(<span class="hljs-string">"collapse"</span>);
+                el.slideDown(<span class="hljs-number">200</span>);
+            }
+        });
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Handles custom checkboxes &amp; radios using jQuery Uniform plugin</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> handleUniform = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+        <span class="hljs-keyword">if</span> (!$().uniform) {
+            <span class="hljs-keyword">return</span>;
+        }
+        <span class="hljs-keyword">var</span> test = $(<span class="hljs-string">"input[type=checkbox]:not(.toggle, .make-switch), input[type=radio]:not(.toggle, .star, .make-switch)"</span>);
+        <span class="hljs-keyword">if</span> (test.size() &gt; <span class="hljs-number">0</span>) {
+            test.each(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+                <span class="hljs-keyword">if</span> ($(<span class="hljs-keyword">this</span>).parents(<span class="hljs-string">".checker"</span>).size() == <span class="hljs-number">0</span>) {
+                    $(<span class="hljs-keyword">this</span>).show();
+                    $(<span class="hljs-keyword">this</span>).uniform();
+                }
+            });
+        }
+    }
+
+    <span class="hljs-keyword">var</span> handleBootstrapSwitch = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+        <span class="hljs-keyword">if</span> (!$().bootstrapSwitch) {
+            <span class="hljs-keyword">return</span>;
+        }
+        $(<span class="hljs-string">'.make-switch'</span>).bootstrapSwitch();
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Handles Bootstrap Accordions.</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> handleAccordions = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+        $(<span class="hljs-string">'body'</span>).on(<span class="hljs-string">'shown.bs.collapse'</span>, <span class="hljs-string">'.accordion.scrollable'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(e)</span> {</span>
+            Metronic.scrollTo($(e.target));
+        });
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Handles Bootstrap Tabs.</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> handleTabs = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+        <span class="hljs-comment">//activate tab if tab id provided in the URL</span>
+        <span class="hljs-keyword">if</span> (location.hash) {
+            <span class="hljs-keyword">var</span> tabid = location.hash.substr(<span class="hljs-number">1</span>);
+            $(<span class="hljs-string">'a[href="#'</span> + tabid + <span class="hljs-string">'"]'</span>).parents(<span class="hljs-string">'.tab-pane:hidden'</span>).each(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+                <span class="hljs-keyword">var</span> tabid = $(<span class="hljs-keyword">this</span>).attr(<span class="hljs-string">"id"</span>);
+                $(<span class="hljs-string">'a[href="#'</span> + tabid + <span class="hljs-string">'"]'</span>).click();    
+            });            
+            $(<span class="hljs-string">'a[href="#'</span> + tabid + <span class="hljs-string">'"]'</span>).click();
+        }
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Handles Bootstrap Modals.</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> handleModals = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>fix stackable modal issue: when 2 or more modals opened, closing one of modal will remove .modal-open class. </p></div></div><div class="code"><div class="wrapper">        $(<span class="hljs-string">'body'</span>).on(<span class="hljs-string">'hide.bs.modal'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+           <span class="hljs-keyword">if</span> ($(<span class="hljs-string">'.modal:visible'</span>).size() &gt; <span class="hljs-number">1</span> &amp;&amp; $(<span class="hljs-string">'html'</span>).hasClass(<span class="hljs-string">'modal-open'</span>) == <span class="hljs-literal">false</span>) {
+              $(<span class="hljs-string">'html'</span>).addClass(<span class="hljs-string">'modal-open'</span>);
+           } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ($(<span class="hljs-string">'.modal:visible'</span>).size() &lt;= <span class="hljs-number">1</span>) {
+              $(<span class="hljs-string">'html'</span>).removeClass(<span class="hljs-string">'modal-open'</span>);
+           }
+        });
+            
+        $(<span class="hljs-string">'body'</span>).on(<span class="hljs-string">'show.bs.modal'</span>, <span class="hljs-string">'.modal'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+            <span class="hljs-keyword">if</span> ($(<span class="hljs-keyword">this</span>).hasClass(<span class="hljs-string">"modal-scroll"</span>)) {
+                $(<span class="hljs-string">'body'</span>).addClass(<span class="hljs-string">"modal-open-noscroll"</span>);
+            } 
+        });
+
+        $(<span class="hljs-string">'body'</span>).on(<span class="hljs-string">'hide.bs.modal'</span>, <span class="hljs-string">'.modal'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+            $(<span class="hljs-string">'body'</span>).removeClass(<span class="hljs-string">"modal-open-noscroll"</span>);
+        });
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Handles Bootstrap Tooltips.</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> handleTooltips = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+       $(<span class="hljs-string">'.tooltips'</span>).tooltip();
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Handles Bootstrap Dropdowns</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> handleDropdowns = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>  Hold dropdown on click  </p></div></div><div class="code"><div class="wrapper">        $(<span class="hljs-string">'body'</span>).on(<span class="hljs-string">'click'</span>, <span class="hljs-string">'.dropdown-menu.hold-on-click'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(e)</span> {</span>
+            e.stopPropagation();
+        });
+    }
+
+    <span class="hljs-keyword">var</span> handleAlerts = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+        $(<span class="hljs-string">'body'</span>).on(<span class="hljs-string">'click'</span>, <span class="hljs-string">'[data-close="alert"]'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
+            $(<span class="hljs-keyword">this</span>).parent(<span class="hljs-string">'.alert'</span>).hide();
+            e.preventDefault();
+        });
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Handle Hower Dropdowns</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> handleDropdownHover = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+        $(<span class="hljs-string">'[data-hover="dropdown"]'</span>).dropdownHover();
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Handles Bootstrap Popovers</p></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>last popep popover</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> lastPopedPopover;
+
+    <span class="hljs-keyword">var</span> handlePopovers = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+        $(<span class="hljs-string">'.popovers'</span>).popover();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>close last displayed popover</p></div></div><div class="code"><div class="wrapper">        $(document).on(<span class="hljs-string">'click.bs.popover.data-api'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(e)</span> {</span>
+            <span class="hljs-keyword">if</span> (lastPopedPopover) {
+                lastPopedPopover.popover(<span class="hljs-string">'hide'</span>);
+            }
+        });
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Handles scrollable contents using jQuery SlimScroll plugin.</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> handleScrollers = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+        Metronic.initSlimScroll(<span class="hljs-string">'.scroller'</span>);
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Handles Image Preview using jQuery Fancybox plugin</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> handleFancybox = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+        <span class="hljs-keyword">if</span> (!jQuery.fancybox) {
+            <span class="hljs-keyword">return</span>;
+        }
+
+        <span class="hljs-keyword">if</span> ($(<span class="hljs-string">".fancybox-button"</span>).size() &gt; <span class="hljs-number">0</span>) {
+            $(<span class="hljs-string">".fancybox-button"</span>).fancybox({
+                groupAttr: <span class="hljs-string">'data-rel'</span>,
+                prevEffect: <span class="hljs-string">'none'</span>,
+                nextEffect: <span class="hljs-string">'none'</span>,
+                closeBtn: <span class="hljs-literal">true</span>,
+                helpers: {
+                    title: {
+                        type: <span class="hljs-string">'inside'</span>
+                    }
+                }
+            });
+        }
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Fix input placeholder issue for IE8 and IE9</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> handleFixInputPlaceholderForIE = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+        <span class="hljs-comment">//fix html5 placeholder attribute for ie7 &amp; ie8</span>
+        <span class="hljs-keyword">if</span> (isIE8 || isIE9) { <span class="hljs-comment">// ie8 &amp; ie9</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>this is html5 placeholder fix for inputs, inputs with placeholder-no-fix class will be skipped(e.g: we need this for password fields)</p></div></div><div class="code"><div class="wrapper">            $(<span class="hljs-string">'input[placeholder]:not(.placeholder-no-fix), textarea[placeholder]:not(.placeholder-no-fix)'</span>).each(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+                <span class="hljs-keyword">var</span> input = $(<span class="hljs-keyword">this</span>);
+
+                <span class="hljs-keyword">if</span> (input.val() == <span class="hljs-string">''</span> &amp;&amp; input.attr(<span class="hljs-string">"placeholder"</span>) != <span class="hljs-string">''</span>) {
+                    input.addClass(<span class="hljs-string">"placeholder"</span>).val(input.attr(<span class="hljs-string">'placeholder'</span>));
+                }
+
+                input.focus(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+                    <span class="hljs-keyword">if</span> (input.val() == input.attr(<span class="hljs-string">'placeholder'</span>)) {
+                        input.val(<span class="hljs-string">''</span>);
+                    }
+                });
+
+                input.blur(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+                    <span class="hljs-keyword">if</span> (input.val() == <span class="hljs-string">''</span> || input.val() == input.attr(<span class="hljs-string">'placeholder'</span>)) {
+                        input.val(input.attr(<span class="hljs-string">'placeholder'</span>));
+                    }
+                });
+            });
+        }
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Handle Select2 Dropdowns</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> handleSelect2 = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+        <span class="hljs-keyword">if</span> ($().select2) {
+            $(<span class="hljs-string">'.select2me'</span>).select2({
+                placeholder: <span class="hljs-string">"Select"</span>,
+                allowClear: <span class="hljs-literal">true</span>
+            });
+        }
+    }
+
+    <span class="hljs-comment">//* END:CORE HANDLERS *//</span>
+
+    <span class="hljs-keyword">return</span> {
+
+        <span class="hljs-comment">//main function to initiate the theme</span>
+        init: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+            <span class="hljs-comment">//IMPORTANT!!!: Do not modify the core handlers call order.</span>
+
+            <span class="hljs-comment">//Core handlers</span>
+            handleInit(); <span class="hljs-comment">// initialize core variables</span>
+            handleOnResize(); <span class="hljs-comment">// set and handle responsive    </span>
+            
+            <span class="hljs-comment">//UI Component handlers            </span>
+            handleUniform(); <span class="hljs-comment">// hanfle custom radio &amp; checkboxes</span>
+            handleBootstrapSwitch(); <span class="hljs-comment">// handle bootstrap switch plugin</span>
+            handleScrollers(); <span class="hljs-comment">// handles slim scrolling contents </span>
+            handleFancybox() <span class="hljs-comment">// handle fancy box</span>
+            handleSelect2(); <span class="hljs-comment">// handle custom Select2 dropdowns</span>
+            handlePortletTools(); <span class="hljs-comment">// handles portlet action bar functionality(refresh, configure, toggle, remove)</span>
+            handleAlerts(); <span class="hljs-comment">//handle closabled alerts</span>
+            handleDropdowns(); <span class="hljs-comment">// handle dropdowns</span>
+            handleTabs(); <span class="hljs-comment">// handle tabs</span>
+            handleTooltips(); <span class="hljs-comment">// handle bootstrap tooltips</span>
+            handlePopovers(); <span class="hljs-comment">// handles bootstrap popovers</span>
+            handleAccordions(); <span class="hljs-comment">//handles accordions </span>
+            handleModals(); <span class="hljs-comment">// handle modals</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Hacks</p></div></div><div class="code"><div class="wrapper">            handleFixInputPlaceholderForIE(); <span class="hljs-comment">//IE8 &amp; IE9 input placeholder issue fix</span>
+        },
+
+        <span class="hljs-comment">//main function to initiate core javascript after ajax complete</span>
+        initAjax: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+            handleScrollers(); <span class="hljs-comment">// handles slim scrolling contents </span>
+            handleSelect2(); <span class="hljs-comment">// handle custom Select2 dropdowns</span>
+            handleDropdowns(); <span class="hljs-comment">// handle dropdowns</span>
+            handleTooltips(); <span class="hljs-comment">// handle bootstrap tooltips</span>
+            handlePopovers(); <span class="hljs-comment">// handles bootstrap popovers</span>
+            handleAccordions(); <span class="hljs-comment">//handles accordions </span>
+            handleUniform(); <span class="hljs-comment">// hanfle custom radio &amp; checkboxes     </span>
+            handleBootstrapSwitch(); <span class="hljs-comment">// handle bootstrap switch plugin</span>
+            handleDropdownHover() <span class="hljs-comment">// handles dropdown hover       </span>
+        },
+        
+        <span class="hljs-comment">//public function to remember last opened popover that needs to be closed on click</span>
+        setLastPopedPopover: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(el)</span> {</span>
+            lastPopedPopover = el;
+        },
+
+        <span class="hljs-comment">//public function to add callback a function which will be called on window resize</span>
+        addResizeHandler: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(func)</span> {</span>
+            resizeHandlers.push(func);
+        },
+
+        <span class="hljs-comment">//public functon to call _runresizeHandlers</span>
+        runResizeHandlers: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+            _runResizeHandlers();   
+        },
+        </div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>wrMetronicer function to scroll(focus) to an element</p></div></div><div class="code"><div class="wrapper">        scrollTo: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(el, offeset)</span> {</span>
+            <span class="hljs-keyword">var</span> pos = (el &amp;&amp; el.size() &gt; <span class="hljs-number">0</span>) ? el.offset().top : <span class="hljs-number">0</span>;
+
+             <span class="hljs-keyword">if</span> (el) {
+                <span class="hljs-keyword">if</span> ($(<span class="hljs-string">'body'</span>).hasClass(<span class="hljs-string">'page-header-fixed'</span>)) { 
+                    pos = pos - $(<span class="hljs-string">'.page-header'</span>).height(); 
+                }            
+                pos = pos + (offeset ? offeset : -<span class="hljs-number">1</span> * el.height());
+            }
+
+            $(<span class="hljs-string">'html,body'</span>).animate({
+                scrollTop: pos
+            }, <span class="hljs-string">'slow'</span>);
+        }, 
+
+        initSlimScroll: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(el)</span> {</span>
+            $(el).each(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+                <span class="hljs-keyword">if</span> ($(<span class="hljs-keyword">this</span>).attr(<span class="hljs-string">"data-initialized"</span>)) {
+                    <span class="hljs-keyword">return</span>; <span class="hljs-comment">// exit</span>
+                }
+                <span class="hljs-keyword">var</span> height;
+                <span class="hljs-keyword">if</span> ($(<span class="hljs-keyword">this</span>).attr(<span class="hljs-string">"data-height"</span>)) {
+                    height = $(<span class="hljs-keyword">this</span>).attr(<span class="hljs-string">"data-height"</span>);
+                } <span class="hljs-keyword">else</span> {
+                    height = $(<span class="hljs-keyword">this</span>).css(<span class="hljs-string">'height'</span>);
+                }
+
+                $(<span class="hljs-keyword">this</span>).slimScroll({
+                    allowPageScroll: <span class="hljs-literal">true</span>, <span class="hljs-comment">// allow page scroll when the element scroll is ended</span>
+                    size: <span class="hljs-string">'7px'</span>,
+                    color: ($(<span class="hljs-keyword">this</span>).attr(<span class="hljs-string">"data-handle-color"</span>)  ? $(<span class="hljs-keyword">this</span>).attr(<span class="hljs-string">"data-handle-color"</span>) : <span class="hljs-string">'#bbb'</span>),
+                    wrapperClass: ($(<span class="hljs-keyword">this</span>).attr(<span class="hljs-string">"data-wrapper-class"</span>)  ? $(<span class="hljs-keyword">this</span>).attr(<span class="hljs-string">"data-wrapper-class"</span>) : <span class="hljs-string">'slimScrollDiv'</span>),
+                    railColor: ($(<span class="hljs-keyword">this</span>).attr(<span class="hljs-string">"data-rail-color"</span>)  ? $(<span class="hljs-keyword">this</span>).attr(<span class="hljs-string">"data-rail-color"</span>) : <span class="hljs-string">'#eaeaea'</span>),
+                    position: isRTL ? <span class="hljs-string">'left'</span> : <span class="hljs-string">'right'</span>,
+                    height: height,
+                    alwaysVisible: ($(<span class="hljs-keyword">this</span>).attr(<span class="hljs-string">"data-always-visible"</span>) == <span class="hljs-string">"1"</span> ? <span class="hljs-literal">true</span> : <span class="hljs-literal">false</span>),
+                    railVisible: ($(<span class="hljs-keyword">this</span>).attr(<span class="hljs-string">"data-rail-visible"</span>) == <span class="hljs-string">"1"</span> ? <span class="hljs-literal">true</span> : <span class="hljs-literal">false</span>),
+                    disableFadeOut: <span class="hljs-literal">true</span>
+                });
+                $(<span class="hljs-keyword">this</span>).attr(<span class="hljs-string">"data-initialized"</span>, <span class="hljs-string">"1"</span>);
+            });
+        },
+
+        destroySlimScroll: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(el)</span> {</span>
+            $(el).each(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+                <span class="hljs-keyword">if</span> ($(<span class="hljs-keyword">this</span>).attr(<span class="hljs-string">"data-initialized"</span>) === <span class="hljs-string">"1"</span>) { <span class="hljs-comment">// destroy existing instance before updating the height</span>
+                    $(<span class="hljs-keyword">this</span>).removeAttr(<span class="hljs-string">"data-initialized"</span>);
+                    $(<span class="hljs-keyword">this</span>).removeAttr(<span class="hljs-string">"style"</span>); 
+ 
+                    <span class="hljs-keyword">var</span> attrList = {};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>store the custom attribures so later we will reassign.</p></div></div><div class="code"><div class="wrapper">                    <span class="hljs-keyword">if</span> ($(<span class="hljs-keyword">this</span>).attr(<span class="hljs-string">"data-handle-color"</span>)) {
+                        attrList[<span class="hljs-string">"data-handle-color"</span>] = $(<span class="hljs-keyword">this</span>).attr(<span class="hljs-string">"data-handle-color"</span>);
+                    }
+                    <span class="hljs-keyword">if</span> ($(<span class="hljs-keyword">this</span>).attr(<span class="hljs-string">"data-wrapper-class"</span>)) {
+                        attrList[<span class="hljs-string">"data-wrapper-class"</span>] = $(<span class="hljs-keyword">this</span>).attr(<span class="hljs-string">"data-wrapper-class"</span>);
+                    }
+                    <span class="hljs-keyword">if</span> ($(<span class="hljs-keyword">this</span>).attr(<span class="hljs-string">"data-rail-color"</span>)) {
+                        attrList[<span class="hljs-string">"data-rail-color"</span>] = $(<span class="hljs-keyword">this</span>).attr(<span class="hljs-string">"data-rail-color"</span>);
+                    }
+                    <span class="hljs-keyword">if</span> ($(<span class="hljs-keyword">this</span>).attr(<span class="hljs-string">"data-always-visible"</span>)) {
+                        attrList[<span class="hljs-string">"data-always-visible"</span>] = $(<span class="hljs-keyword">this</span>).attr(<span class="hljs-string">"data-always-visible"</span>);
+                    }
+                    <span class="hljs-keyword">if</span> ($(<span class="hljs-keyword">this</span>).attr(<span class="hljs-string">"data-rail-visible"</span>)) {
+                        attrList[<span class="hljs-string">"data-rail-visible"</span>] = $(<span class="hljs-keyword">this</span>).attr(<span class="hljs-string">"data-rail-visible"</span>);
+                    }
+
+                    $(<span class="hljs-keyword">this</span>).slimScroll({
+                        wrapperClass: ($(<span class="hljs-keyword">this</span>).attr(<span class="hljs-string">"data-wrapper-class"</span>)  ? $(<span class="hljs-keyword">this</span>).attr(<span class="hljs-string">"data-wrapper-class"</span>) : <span class="hljs-string">'slimScrollDiv'</span>),
+                        destroy: <span class="hljs-literal">true</span>
+                    });  
+
+                    <span class="hljs-keyword">var</span> the = $(<span class="hljs-keyword">this</span>);            
+                    </div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>reassign custom attributes</p></div></div><div class="code"><div class="wrapper">                    $.each(attrList, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(key, value)</span> {</span>
+                        the.attr(key, value);
+                    });      
+                }
+            });
+        },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>function to scroll to the top</p></div></div><div class="code"><div class="wrapper">        scrollTop: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+            Metronic.scrollTo();
+        },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>wrMetronicer function to  block element(indicate loading)</p></div></div><div class="code"><div class="wrapper">        blockUI: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(options)</span> {</span>
+            <span class="hljs-keyword">var</span> options = $.extend(<span class="hljs-literal">true</span>, {}, options);
+            <span class="hljs-keyword">var</span> html = <span class="hljs-string">''</span>;
+            <span class="hljs-keyword">if</span> (options.iconOnly) {
+                html = <span class="hljs-string">'&lt;div class="loading-message '</span> + (options.boxed ? <span class="hljs-string">'loading-message-boxed'</span> : <span class="hljs-string">''</span>)+<span class="hljs-string">'"&gt;&lt;img src="'</span> + <span class="hljs-keyword">this</span>.getGlobalImgPath() + <span class="hljs-string">'loading-spinner-grey.gif" align=""&gt;&lt;/div&gt;'</span>;
+            } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (options.textOnly) {
+                html = <span class="hljs-string">'&lt;div class="loading-message '</span> + (options.boxed ? <span class="hljs-string">'loading-message-boxed'</span> : <span class="hljs-string">''</span>)+<span class="hljs-string">'"&gt;&lt;span&gt;&amp;nbsp;&amp;nbsp;'</span> + (options.message ? options.message : <span class="hljs-string">'LOADING...'</span>) + <span class="hljs-string">'&lt;/span&gt;&lt;/div&gt;'</span>;
+            } <span class="hljs-keyword">else</span> {    
+                html = <span class="hljs-string">'&lt;div class="loading-message '</span> + (options.boxed ? <span class="hljs-string">'loading-message-boxed'</span> : <span class="hljs-string">''</span>)+<span class="hljs-string">'"&gt;&lt;img src="'</span> + <span class="hljs-keyword">this</span>.getGlobalImgPath() + <span class="hljs-string">'loading-spinner-grey.gif" align=""&gt;&lt;span&gt;&amp;nbsp;&amp;nbsp;'</span> + (options.message ? options.message : <span class="hljs-string">'LOADING...'</span>) + <span class="hljs-string">'&lt;/span&gt;&lt;/div&gt;'</span>;
+            }
+
+            <span class="hljs-keyword">if</span> (options.target) { <span class="hljs-comment">// element blocking</span>
+                <span class="hljs-keyword">var</span> el = $(options.target);
+                <span class="hljs-keyword">if</span> (el.height() &lt;= ($(window).height())) {
+                    options.cenrerY = <span class="hljs-literal">true</span>;
+                }            
+                el.block({
+                    message: html,
+                    baseZ: options.zIndex ? options.zIndex : <span class="hljs-number">1000</span>,
+                    centerY: options.cenrerY != <span class="hljs-literal">undefined</span> ? options.cenrerY : <span class="hljs-literal">false</span>,
+                    css: {
+                        top: <span class="hljs-string">'10%'</span>,
+                        border: <span class="hljs-string">'0'</span>,
+                        padding: <span class="hljs-string">'0'</span>,
+                        backgroundColor: <span class="hljs-string">'none'</span>
+                    },
+                    overlayCSS: {
+                        backgroundColor: options.overlayColor ? options.overlayColor : <span class="hljs-string">'#000'</span>,
+                        opacity: options.boxed ? <span class="hljs-number">0.05</span> : <span class="hljs-number">0.1</span>, 
+                        cursor: <span class="hljs-string">'wait'</span>
+                    }
+                });
+            } <span class="hljs-keyword">else</span> { <span class="hljs-comment">// page blocking</span>
+                $.blockUI({
+                    message: html,
+                    baseZ: options.zIndex ? options.zIndex : <span class="hljs-number">1000</span>,
+                    css: {
+                        border: <span class="hljs-string">'0'</span>,
+                        padding: <span class="hljs-string">'0'</span>,
+                        backgroundColor: <span class="hljs-string">'none'</span>
+                    },
+                    overlayCSS: {
+                        backgroundColor: options.overlayColor ? options.overlayColor : <span class="hljs-string">'#000'</span>,
+                        opacity: options.boxed ? <span class="hljs-number">0.05</span> : <span class="hljs-number">0.1</span>,
+                        cursor: <span class="hljs-string">'wait'</span>
+                    }
+                });
+            }            
+        },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>wrMetronicer function to  un-block element(finish loading)</p></div></div><div class="code"><div class="wrapper">        unblockUI: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(target)</span> {</span>
+            <span class="hljs-keyword">if</span> (target) {
+                $(target).unblock({
+                    onUnblock: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+                        $(target).css(<span class="hljs-string">'position'</span>, <span class="hljs-string">''</span>);
+                        $(target).css(<span class="hljs-string">'zoom'</span>, <span class="hljs-string">''</span>);
+                    }
+                });
+            } <span class="hljs-keyword">else</span> {
+                $.unblockUI();
+            }
+        },
+
+        startPageLoading: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(message)</span> {</span>
+            $(<span class="hljs-string">'.page-loading'</span>).remove();
+            $(<span class="hljs-string">'body'</span>).append(<span class="hljs-string">'&lt;div class="page-loading"&gt;&lt;img src="'</span> + <span class="hljs-keyword">this</span>.getGlobalImgPath() + <span class="hljs-string">'loading-spinner-grey.gif"/&gt;&amp;nbsp;&amp;nbsp;&lt;span&gt;'</span> + (message ? message : <span class="hljs-string">'Loading...'</span>) + <span class="hljs-string">'&lt;/span&gt;&lt;/div&gt;'</span>);
+        },
+
+        stopPageLoading: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+            $(<span class="hljs-string">'.page-loading'</span>).remove();
+        },
+
+        alert: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(options)</span> {</span>
+
+            options = $.extend(<span class="hljs-literal">true</span>, {
+                container: <span class="hljs-string">""</span>, <span class="hljs-comment">// alerts parent container(by default placed after the page breadcrumbs)</span>
+                place: <span class="hljs-string">"append"</span>, <span class="hljs-comment">// append or prepent in container </span>
+                type: <span class="hljs-string">'success'</span>,  <span class="hljs-comment">// alert's type</span>
+                message: <span class="hljs-string">""</span>,  <span class="hljs-comment">// alert's message</span>
+                close: <span class="hljs-literal">true</span>, <span class="hljs-comment">// make alert closable</span>
+                reset: <span class="hljs-literal">true</span>, <span class="hljs-comment">// close all previouse alerts first</span>
+                focus: <span class="hljs-literal">true</span>, <span class="hljs-comment">// auto scroll to the alert after shown</span>
+                closeInSeconds: <span class="hljs-number">0</span>, <span class="hljs-comment">// auto close after defined seconds</span>
+                icon: <span class="hljs-string">""</span> <span class="hljs-comment">// put icon before the message</span>
+            }, options);
+
+            <span class="hljs-keyword">var</span> id = Metronic.getUniqueID(<span class="hljs-string">"Metronic_alert"</span>);
+
+            <span class="hljs-keyword">var</span> html = <span class="hljs-string">'&lt;div id="'</span>+id+<span class="hljs-string">'" class="Metronic-alerts alert alert-'</span>+options.type+<span class="hljs-string">' fade in"&gt;'</span> + (options.close ? <span class="hljs-string">'&lt;button type="button" class="close" data-dismiss="alert" aria-hidden="true"&gt;&lt;/button&gt;'</span> : <span class="hljs-string">''</span> ) + (options.icon != <span class="hljs-string">""</span> ? <span class="hljs-string">'&lt;i class="fa-lg fa fa-'</span>+options.icon + <span class="hljs-string">'"&gt;&lt;/i&gt;  '</span> : <span class="hljs-string">''</span>) + options.message+<span class="hljs-string">'&lt;/div&gt;'</span>
+
+            <span class="hljs-keyword">if</span> (options.reset) {<span class="hljs-number">0</span>
+                $(<span class="hljs-string">'.Metronic-alerts'</span>).remove();
+            }
+
+            <span class="hljs-keyword">if</span> (!options.container) {
+                <span class="hljs-keyword">if</span> ($(<span class="hljs-string">'body'</span>).hasClass(<span class="hljs-string">"page-container-bg-solid"</span>)) {
+                    $(<span class="hljs-string">'.page-title'</span>).after(html);
+                } <span class="hljs-keyword">else</span> {
+                    $(<span class="hljs-string">'.page-bar'</span>).after(html);
+                }
+            } <span class="hljs-keyword">else</span> {
+                <span class="hljs-keyword">if</span> (options.place == <span class="hljs-string">"append"</span>) {
+                    $(options.container).append(html);
+                } <span class="hljs-keyword">else</span> {
+                    $(options.container).prepend(html);
+                }
+            }
+
+            <span class="hljs-keyword">if</span> (options.focus) {
+                Metronic.scrollTo($(<span class="hljs-string">'#'</span> + id));
+            }
+
+            <span class="hljs-keyword">if</span> (options.closeInSeconds &gt; <span class="hljs-number">0</span>) {
+                setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+                    $(<span class="hljs-string">'#'</span> + id).remove();
+                }, options.closeInSeconds * <span class="hljs-number">1000</span>);
+            }
+
+            <span class="hljs-keyword">return</span> id;
+        },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>initializes uniform elements</p></div></div><div class="code"><div class="wrapper">        initUniform: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(els)</span> {</span>
+            <span class="hljs-keyword">if</span> (els) {
+                $(els).each(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+                    <span class="hljs-keyword">if</span> ($(<span class="hljs-keyword">this</span>).parents(<span class="hljs-string">".checker"</span>).size() == <span class="hljs-number">0</span>) {
+                        $(<span class="hljs-keyword">this</span>).show();
+                        $(<span class="hljs-keyword">this</span>).uniform();
+                    }
+                });
+            } <span class="hljs-keyword">else</span> {
+                handleUniform();
+            }
+        },
+
+        <span class="hljs-comment">//wrMetronicer function to update/sync jquery uniform checkbox &amp; radios</span>
+        updateUniform: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(els)</span> {</span>
+            $.uniform.update(els); <span class="hljs-comment">// update the uniform checkbox &amp; radios UI after the actual input control state changed</span>
+        },
+
+        <span class="hljs-comment">//public function to initialize the fancybox plugin</span>
+        initFancybox: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+            handleFancybox();
+        },
+
+        <span class="hljs-comment">//public helper function to get actual input value(used in IE9 and IE8 due to placeholder attribute not supported)</span>
+        getActualVal: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(el)</span> {</span>
+            <span class="hljs-keyword">var</span> el = $(el);
+            <span class="hljs-keyword">if</span> (el.val() === el.attr(<span class="hljs-string">"placeholder"</span>)) {
+                <span class="hljs-keyword">return</span> <span class="hljs-string">""</span>;
+            }
+            <span class="hljs-keyword">return</span> el.val();
+        },
+
+        <span class="hljs-comment">//public function to get a paremeter by name from URL</span>
+        getURLParameter: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(paramName)</span> {</span>
+            <span class="hljs-keyword">var</span> searchString = window.location.search.substring(<span class="hljs-number">1</span>),
+                i, val, params = searchString.split(<span class="hljs-string">"&amp;"</span>);
+
+            <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; params.length; i++) {
+                val = params[i].split(<span class="hljs-string">"="</span>);
+                <span class="hljs-keyword">if</span> (val[<span class="hljs-number">0</span>] == paramName) {
+                    <span class="hljs-keyword">return</span> <span class="hljs-built_in">unescape</span>(val[<span class="hljs-number">1</span>]);
+                }
+            }
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+        },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>check for device touch support</p></div></div><div class="code"><div class="wrapper">        isTouchDevice: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+            <span class="hljs-keyword">try</span> {
+                document.createEvent(<span class="hljs-string">"TouchEvent"</span>);
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+            } <span class="hljs-keyword">catch</span> (e) {
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+            }
+        },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>To get the correct viewport width based on  <a href="http://andylangton.co.uk/articles/javascript/get-viewport-size-javascript/">http://andylangton.co.uk/articles/javascript/get-viewport-size-javascript/</a></p></div></div><div class="code"><div class="wrapper">        getViewPort: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+            <span class="hljs-keyword">var</span> e = window, a = <span class="hljs-string">'inner'</span>;
+            <span class="hljs-keyword">if</span> (!(<span class="hljs-string">'innerWidth'</span> <span class="hljs-keyword">in</span> window)) {
+                a = <span class="hljs-string">'client'</span>;
+                e = document.documentElement || document.body;
+            }
+            <span class="hljs-keyword">return</span> {
+                width: e[a + <span class="hljs-string">'Width'</span>],
+                height: e[a + <span class="hljs-string">'Height'</span>]
+            }
+        },
+
+        getUniqueID: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(prefix)</span> {</span>
+            <span class="hljs-keyword">return</span> <span class="hljs-string">'prefix_'</span> + <span class="hljs-built_in">Math</span>.floor(<span class="hljs-built_in">Math</span>.random() * (<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>()).getTime());
+        },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>check IE8 mode</p></div></div><div class="code"><div class="wrapper">        isIE8: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+            <span class="hljs-keyword">return</span> isIE8;
+        },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>check IE9 mode</p></div></div><div class="code"><div class="wrapper">        isIE9: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+            <span class="hljs-keyword">return</span> isIE9;
+        },
+
+        <span class="hljs-comment">//check RTL mode</span>
+        isRTL: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+            <span class="hljs-keyword">return</span> isRTL;
+        },
+
+        getAssetsPath: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+            <span class="hljs-keyword">return</span> assetsPath;
+        },    
+
+        setAssetsPath: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(path)</span> {</span>
+            assetsPath = path;
+        },
+
+        setGlobalImgPath: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(path)</span> {</span>
+            globalImgPath = assetsPath + path;
+        },
+
+        getGlobalImgPath: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+            <span class="hljs-keyword">return</span> globalImgPath;
+        },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>get layout color code by color name</p></div></div><div class="code"><div class="wrapper">        getBrandColor: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(name)</span> {</span>
+            <span class="hljs-keyword">if</span> (brandColors[name]) {
+                <span class="hljs-keyword">return</span> brandColors[name];
+            } <span class="hljs-keyword">else</span> {
+                <span class="hljs-keyword">return</span> <span class="hljs-string">''</span>;
+            }
+        }
+
+    };
+
+}();</div></div></div></div></body></html>

@@ -1,5 +1,4 @@
 <h3 class="page-header">
-    <%= console.log "TEMPLATE", @ %>
     <i class="fa fa-list-ul"></i> Todos <span class="badge"><%= @remaining %> <span class="hidden-xs">remaining</span></span>
 
     <div aria-label="..." role="group" data-toggle="buttons" class="btn-group pull-right">

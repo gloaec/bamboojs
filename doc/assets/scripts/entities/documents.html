@@ -1,0 +1,98 @@
+<!DOCTYPE html><html lang="en"><head><title>assets/scripts/entities/documents</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../../"><meta name="groc-document-path" content="assets/scripts/entities/documents"><meta name="groc-project-path" content="assets/scripts/entities/documents.coffee"><link rel="stylesheet" type="text/css" media="all" href="../../../assets/style.css"><script type="text/javascript" src="../../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/entities/documents.coffee</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-property">@Bamboo</span>.<span class="hljs-built_in">module</span> <span class="hljs-string">"Entities"</span>, <span class="hljs-function"><span class="hljs-params">(Entities, App, Backbone, Marionette, $, _)</span> -&gt;</span>
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Entities</span>.<span class="hljs-title">Document</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Entities</span>.<span class="hljs-title">Model</span></span>
+
+    <span class="hljs-attribute">urlRoot</span>:<span class="hljs-function"> -&gt;</span>
+      <span class="hljs-keyword">if</span> <span class="hljs-property">@isNew</span>()
+        <span class="hljs-string">"/folders/<span class="hljs-subst">#{<span class="hljs-property">@get</span>(<span class="hljs-string">'folder'</span>).id}</span>/documents"</span>
+      <span class="hljs-keyword">else</span>
+        <span class="hljs-string">"/documents"</span>
+
+    <span class="hljs-attribute">defaults</span>:
+      <span class="hljs-attribute">status</span>: <span class="hljs-number">0</span>
+
+    <span class="hljs-attribute">relations</span>: [
+      <span class="hljs-attribute">type</span>: Backbone.One
+      <span class="hljs-attribute">key</span>: <span class="hljs-string">'folder'</span>
+      <span class="hljs-attribute">relatedModel</span>: <span class="hljs-string">'Bamboo.Entities.Folder'</span>
+    ]
+
+    <span class="hljs-attribute">whitelist</span>: [<span class="hljs-string">"name"</span>, <span class="hljs-string">"content"</span>, <span class="hljs-string">"attachment_file_name"</span>]
+
+    <span class="hljs-attribute">validation</span>:
+      <span class="hljs-attribute">name</span>:
+        <span class="hljs-attribute">required</span>: <span class="hljs-literal">true</span>
+        <span class="hljs-attribute">msg</span>: <span class="hljs-string">'Title is required'</span>
+      <span class="hljs-attribute">content</span>:
+        <span class="hljs-attribute">required</span>: <span class="hljs-literal">true</span>
+        <span class="hljs-attribute">msg</span>: <span class="hljs-string">'Document cannot be empty'</span>
+
+    <span class="hljs-attribute">icon</span>:<span class="hljs-function"> -&gt;</span>
+      <span class="hljs-keyword">switch</span> <span class="hljs-property">@get</span>(<span class="hljs-string">'attachment_file_type'</span>)
+        <span class="hljs-keyword">when</span> <span class="hljs-string">"html"</span> <span class="hljs-keyword">then</span> <span class="hljs-string">"globe"</span>
+        <span class="hljs-keyword">when</span> <span class="hljs-string">"pdf"</span> <span class="hljs-keyword">then</span> <span class="hljs-string">"file-pdf-o"</span>
+        <span class="hljs-keyword">when</span> <span class="hljs-string">"doc"</span> <span class="hljs-keyword">then</span> <span class="hljs-string">"file-doc-o"</span>
+        <span class="hljs-keyword">when</span> <span class="hljs-string">"txt"</span> <span class="hljs-keyword">then</span> <span class="hljs-string">"file-text-o"</span>
+        <span class="hljs-keyword">else</span> <span class="hljs-string">"file-o"</span>
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Entities</span>.<span class="hljs-title">DocumentsCollection</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Entities</span>.<span class="hljs-title">Collection</span></span>
+
+    <span class="hljs-attribute">model</span>: Entities.Document
+
+    <span class="hljs-attribute">initialize</span>: <span class="hljs-function"><span class="hljs-params">(models, options)</span> -&gt;</span>
+      <span class="hljs-property">@options</span> = options || {}
+
+    <span class="hljs-attribute">url</span>:<span class="hljs-function"> -&gt;</span>
+      <span class="hljs-keyword">if</span> <span class="hljs-property">@options</span>.folder_id?
+        <span class="hljs-string">"/folders/<span class="hljs-subst">#{<span class="hljs-property">@options</span>.folder_id}</span>/documents"</span>
+      <span class="hljs-keyword">else</span>
+        <span class="hljs-string">"/documents"</span>
+
+    <span class="hljs-attribute">comparator</span>: <span class="hljs-function"><span class="hljs-params">(m)</span> -&gt;</span>
+      -m.get <span class="hljs-string">"created_at"</span>
+
+    <span class="hljs-attribute">getByAuthorID</span>: <span class="hljs-function"><span class="hljs-params">(id)</span> -&gt;</span>
+      <span class="hljs-property">@where</span> <span class="hljs-attribute">author_id</span>: id
+
+    <span class="hljs-attribute">getPendingDocuments</span>:<span class="hljs-function"> -&gt;</span>
+      <span class="hljs-keyword">new</span> Entities.DocumentsCollection <span class="hljs-property">@filter</span> <span class="hljs-function"><span class="hljs-params">(<span class="hljs-built_in">document</span>)</span> -&gt;</span>
+        status = <span class="hljs-built_in">document</span>.get(<span class="hljs-string">'status'</span>)
+        status &lt; <span class="hljs-number">3</span> <span class="hljs-keyword">and</span> status &gt;= <span class="hljs-number">0</span>
+
+
+  API =
+    <span class="hljs-attribute">getDocuments</span>: <span class="hljs-function"><span class="hljs-params">(params = {})</span> -&gt;</span>
+      _.defaults params,
+        <span class="hljs-attribute">typeahead</span>: <span class="hljs-literal">false</span>
+      documents = <span class="hljs-keyword">new</span> Entities.DocumentsCollection
+      <span class="hljs-keyword">if</span> params.typeahead
+        documents.url = <span class="hljs-string">"/typeahead"</span>
+      <span class="hljs-keyword">else</span>
+        documents.url = <span class="hljs-string">"/documents"</span>
+      documents.fetch
+        <span class="hljs-attribute">reset</span>: <span class="hljs-literal">true</span>
+        <span class="hljs-attribute">data</span>:
+          <span class="hljs-attribute">limit</span>: params.limit
+          <span class="hljs-attribute">query</span>: params.query
+      documents
+
+    <span class="hljs-attribute">getDocument</span>: <span class="hljs-function"><span class="hljs-params">(id)</span> -&gt;</span>
+      <span class="hljs-built_in">document</span> = <span class="hljs-keyword">new</span> Entities.Document <span class="hljs-attribute">id</span>: id
+      <span class="hljs-built_in">document</span>.fetch()
+      <span class="hljs-built_in">document</span>
+    
+  App.reqres.setHandler <span class="hljs-string">"document:entity"</span>, <span class="hljs-function"><span class="hljs-params">(id)</span> -&gt;</span>
+    API.getDocument id
+
+  App.reqres.setHandler <span class="hljs-string">"document:entities"</span>,<span class="hljs-function"> -&gt;</span>
+    API.getDocuments()
+  
+  App.reqres.setHandler <span class="hljs-string">"latest:document:entities"</span>,<span class="hljs-function"> -&gt;</span>
+    API.getDocuments <span class="hljs-attribute">limit</span>: <span class="hljs-number">10</span>
+
+  App.reqres.setHandler <span class="hljs-string">"typeahead:document:entities"</span>, <span class="hljs-function"><span class="hljs-params">(searchTerm)</span> -&gt;</span>
+    API.getDocuments
+      <span class="hljs-attribute">typeahead</span>: <span class="hljs-literal">true</span>
+      <span class="hljs-attribute">query</span>: searchTerm
+    </div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Use this in your browser&#39;s console to initialize a JSONP request to see the API in action.
+$.getJSON(&quot;<a href="http://api.rottentomatoes.com/api/public/v1.0/documents.json?callback=?">http://api.rottentomatoes.com/api/public/v1.0/documents.json?callback=?</a>&quot;, {apikey: &quot;vzjnwecqq7av3mauck2238uj&quot;, q: &quot;shining&quot;})</p></div></div></div></div></body></html>

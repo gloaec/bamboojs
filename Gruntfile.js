@@ -157,6 +157,7 @@ module.exports = function (grunt) {
   grunt.loadTasks(depsPath + '/grunt-contrib-less/tasks');
   grunt.loadTasks(depsPath + '/grunt-contrib-coffee/tasks');
   grunt.loadNpmTasks('grunt-eco');
+  grunt.loadNpmTasks('grunt-groc');
 
   // Project configuration.
   grunt.initConfig({
@@ -228,6 +229,16 @@ module.exports = function (grunt) {
       }
     },
     
+    groc: {
+      coffeescript: [
+         "assets/scripts/*.coffee",
+         "assets/scripts/**/*.coffee"
+      ],
+      options: {
+        "out": "doc/"
+      }
+    },
+
     coffee: {
       dev: {
         options:{
@@ -486,6 +497,8 @@ module.exports = function (grunt) {
     'sails-linker:prodStylesJADE',
     'sails-linker:devTplJADE'
   ]);
+
+  grunt.registerTask('doc', ['groc']);
 
   // When API files are changed:
   // grunt.event.on('watch', function(action, filepath) {

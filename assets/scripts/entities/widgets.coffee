@@ -35,7 +35,7 @@
         name: "Mail"
         link: "/mail"
         icon: "fa-envelope"
-        color: "primary"
+        color: "info"
         badge: 5
         collg: 4
         colmd: 6
@@ -79,7 +79,7 @@
         command: "todos:widget:list"
         force: "panel"
         icon: "fa-list-ul"
-        color: "info"
+        color: "primary"
         collg: 6
         colmd: 6
         colsm: 12

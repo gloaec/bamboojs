@@ -2,6 +2,23 @@
 /*==================================================
  * Effect 2
  * ===============================================*/
+
+.form-control.text-primary {
+    color: #325d88;
+}
+.form-control.text-muted {
+    color: #98978b;
+}
+.todos-main-region .empty {
+  font: 25px "pacificoregular";
+}
+.todos-main-region .input-group .form-control {
+    background: none repeat scroll 0 0 transparent;
+    border-left: 1px solid #d9534f;
+    font: 18px/20px "pacificoregular";
+    overflow: visible;
+    padding: 0 10px;
+}
 .todo-main
 {
   position: relative;
@@ -66,9 +83,12 @@
   border-radius: 0 0 0 5px;
 }
 .widget .todos-main-region,
-.widget .todo-main {
+.widget .todo-main,
+.widget .list-group {
     margin: 0;
     padding: 0;
+    border-radius: 0;
+    -moz-border-radius: 0;
 }
 .widget .todos-main-region:before,
 .widget .todo-main:before,
@@ -77,6 +97,8 @@
     box-shadow: none;
     border: none;
     background: none;
+    -moz-border-radius: 0;
+    border-radius: 0;
 }
 .todos-main-region .input-group {
     background: url("/images/linedpaper.png") repeat scroll 0 15px rgba(0, 0, 0, 0);

@@ -1,0 +1,63 @@
+<!DOCTYPE html><html lang="en"><head><title>assets/scripts/entities/files</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../../"><meta name="groc-document-path" content="assets/scripts/entities/files"><meta name="groc-project-path" content="assets/scripts/entities/files.coffee"><link rel="stylesheet" type="text/css" media="all" href="../../../assets/style.css"><script type="text/javascript" src="../../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/entities/files.coffee</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-property">@Bamboo</span>.<span class="hljs-built_in">module</span> <span class="hljs-string">"Entities"</span>, <span class="hljs-function"><span class="hljs-params">(Entities, App, Backbone, Marionette, $, _)</span> -&gt;</span>
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Entities</span>.<span class="hljs-title">File</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Entities</span>.<span class="hljs-title">Document</span></span>
+
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Entities</span>.<span class="hljs-title">FilesCollection</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Entities</span>.<span class="hljs-title">Collection</span></span>
+
+    <span class="hljs-attribute">model</span>: Entities.File
+
+    <span class="hljs-attribute">initialize</span>: <span class="hljs-function"><span class="hljs-params">(models, options)</span> -&gt;</span>
+      <span class="hljs-property">@options</span> = options || {}
+
+    <span class="hljs-attribute">url</span>:<span class="hljs-function"> -&gt;</span>
+      <span class="hljs-keyword">if</span> <span class="hljs-property">@options</span>.folder?.id?
+        <span class="hljs-string">"/folders/<span class="hljs-subst">#{<span class="hljs-property">@options</span>.folder.id}</span>/files"</span>
+      <span class="hljs-keyword">else</span>
+        <span class="hljs-string">"/files"</span>
+
+    <span class="hljs-attribute">import</span>: <span class="hljs-function"><span class="hljs-params">(models, type)</span> -&gt;</span>
+      models = models.models <span class="hljs-keyword">if</span> models <span class="hljs-keyword">instanceof</span> Entities.Collection
+      <span class="hljs-keyword">if</span> _.isArray models
+        <span class="hljs-keyword">for</span> model <span class="hljs-keyword">in</span> models
+          _type = type <span class="hljs-keyword">or</span>=
+            <span class="hljs-keyword">if</span> model <span class="hljs-keyword">instanceof</span> Entities.Document <span class="hljs-keyword">then</span> <span class="hljs-string">'document'</span>
+            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> model <span class="hljs-keyword">instanceof</span> Entities.Folder <span class="hljs-keyword">then</span> <span class="hljs-string">'_folder'</span>
+            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> model <span class="hljs-keyword">instanceof</span> Entities.Scan <span class="hljs-keyword">then</span> <span class="hljs-string">'scan'</span>
+            <span class="hljs-keyword">else</span> <span class="hljs-string">'file'</span>
+          <span class="hljs-comment">#file = _.extend model.toJSON(), type: _type</span>
+          model.set <span class="hljs-attribute">type</span>: _type
+          <span class="hljs-property">@add</span> model
+
+    <span class="hljs-attribute">comparator</span>: <span class="hljs-function"><span class="hljs-params">(m)</span> -&gt;</span>
+      -m.get <span class="hljs-string">"created_at"</span>
+
+    <span class="hljs-attribute">getDocuments</span>:<span class="hljs-function"> -&gt;</span>
+      <span class="hljs-keyword">new</span> Entities.FilesCollection <span class="hljs-property">@where</span> <span class="hljs-attribute">type</span>: <span class="hljs-string">'document'</span>
+
+    <span class="hljs-attribute">getPendingDocuments</span>:<span class="hljs-function"> -&gt;</span>
+      <span class="hljs-keyword">new</span> Entities.FilesCollection <span class="hljs-property">@getDocuments</span><span class="hljs-function"><span class="hljs-params">()</span>.<span class="hljs-title">filter</span> <span class="hljs-params">(<span class="hljs-built_in">document</span>)</span> -&gt;</span>
+        <span class="hljs-built_in">document</span>.get(<span class="hljs-string">'status'</span>) &lt; <span class="hljs-number">3</span>
+
+    <span class="hljs-attribute">fetchPendingDocuments</span>:<span class="hljs-function"> -&gt;</span>
+      <span class="hljs-property">@fetch</span>
+        <span class="hljs-attribute">url</span>: <span class="hljs-string">"/documents/<span class="hljs-subst">#{<span class="hljs-property">@getPendingDocuments</span>().pluck(<span class="hljs-string">'id'</span>).join(<span class="hljs-string">';'</span>)}</span>"</span>
+
+    <span class="hljs-attribute">getFolders</span>:<span class="hljs-function"> -&gt;</span>
+      <span class="hljs-property">@where</span> <span class="hljs-attribute">type</span>: <span class="hljs-string">'_folder'</span>
+
+
+  API =
+    <span class="hljs-attribute">getFolderFiles</span>: <span class="hljs-function"><span class="hljs-params">(folder)</span> -&gt;</span>
+      <span class="hljs-keyword">unless</span> folder.get(<span class="hljs-string">'files'</span>)?
+        files = <span class="hljs-keyword">new</span> Entities.FilesCollection [], <span class="hljs-attribute">folder</span>: folder
+        folder.set(<span class="hljs-string">'files'</span>, files)
+      files = folder.get(<span class="hljs-string">'files'</span>)
+      App.execute <span class="hljs-string">'when:fetched'</span>, folder,<span class="hljs-function"> -&gt;</span>
+        files.<span class="hljs-reserved">import</span> folder.get(<span class="hljs-string">'children'</span>), <span class="hljs-string">'_folder'</span>
+        files.<span class="hljs-reserved">import</span> folder.get(<span class="hljs-string">'documents'</span>), <span class="hljs-string">'document'</span>
+      files
+      
+    
+  App.reqres.setHandler <span class="hljs-string">"folder:file:entities"</span>, <span class="hljs-function"><span class="hljs-params">(folder)</span> -&gt;</span>
+    API.getFolderFiles folder</div></div></div></div></body></html>

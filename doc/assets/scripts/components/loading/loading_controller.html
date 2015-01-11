@@ -1,0 +1,61 @@
+<!DOCTYPE html><html lang="en"><head><title>assets/scripts/components/loading/loading_controller</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../../../"><meta name="groc-document-path" content="assets/scripts/components/loading/loading_controller"><meta name="groc-project-path" content="assets/scripts/components/loading/loading_controller.coffee"><link rel="stylesheet" type="text/css" media="all" href="../../../../assets/style.css"><script type="text/javascript" src="../../../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/components/loading/loading_controller.coffee</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-property">@Bamboo</span>.<span class="hljs-built_in">module</span> <span class="hljs-string">"Components.Loading"</span>, <span class="hljs-function"><span class="hljs-params">(Loading, App, Backbone, Marionette, $, _)</span> -&gt;</span>
+  
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Loading</span>.<span class="hljs-title">LoadingController</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">App</span>.<span class="hljs-title">Controllers</span>.<span class="hljs-title">Base</span></span>
+    
+    <span class="hljs-attribute">initialize</span>: <span class="hljs-function"><span class="hljs-params">(options)</span> -&gt;</span>
+      { view, config } = options
+      
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> _.isBoolean(config) <span class="hljs-keyword">and</span> !config
+      config = <span class="hljs-keyword">if</span> _.isBoolean(config) <span class="hljs-keyword">then</span> {} <span class="hljs-keyword">else</span> config
+
+      _.defaults config,
+        <span class="hljs-attribute">loadingType</span>: <span class="hljs-string">"spinner"</span>
+        <span class="hljs-attribute">entities</span>: <span class="hljs-property">@getEntities</span>(view)
+        <span class="hljs-attribute">debug</span>: <span class="hljs-literal">false</span>
+
+      <span class="hljs-built_in">console</span>.info <span class="hljs-string">'loading'</span>, config.entities
+      
+      <span class="hljs-keyword">switch</span> config.loadingType
+        <span class="hljs-keyword">when</span> <span class="hljs-string">"opacity"</span>
+          <span class="hljs-property">@region</span>.currentView.$el.css <span class="hljs-string">"opacity"</span>, <span class="hljs-number">0.5</span>
+        <span class="hljs-keyword">when</span> <span class="hljs-string">"spinner"</span>
+          loadingView = <span class="hljs-property">@getLoadingView</span>()
+          <span class="hljs-property">@show</span> loadingView
+        <span class="hljs-keyword">else</span>
+          <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Error(<span class="hljs-string">"Invalid loadingType"</span>)
+      
+      <span class="hljs-property">@showRealView</span> view, loadingView, config
+      
+    <span class="hljs-attribute">showRealView</span>: <span class="hljs-function"><span class="hljs-params">(realView, loadingView, config)</span> -&gt;</span>
+      App.execute <span class="hljs-string">"when:fetched"</span>, config.entities,<span class="hljs-function"> =&gt;</span>
+        <span class="hljs-built_in">console</span>.info <span class="hljs-string">'fetched'</span>, config.entities
+        <span class="hljs-comment">## ...after the entities are fetched, execute this callback</span>
+        <span class="hljs-comment">## ================================================================ ##</span>
+        <span class="hljs-comment">## If the region we are trying to insert is not the loadingView then</span>
+        <span class="hljs-comment">## we know the user has navigated to a different page while the loading </span>
+        <span class="hljs-comment">## view was still open. In that case, we know to manually close the original </span>
+        <span class="hljs-comment">## view so its controller is also closed.  We also prevent showing the real </span>
+        <span class="hljs-comment">## view (which would snap the user back to the old view unexpectedly)</span>
+        <span class="hljs-comment">## ================================================================ ##</span>
+        <span class="hljs-keyword">switch</span> config.loadingType
+          <span class="hljs-keyword">when</span> <span class="hljs-string">"opacity"</span>
+            <span class="hljs-property">@region</span>.currentView.$el.removeAttr <span class="hljs-string">"style"</span>
+          <span class="hljs-keyword">when</span> <span class="hljs-string">"spinner"</span>
+            <span class="hljs-keyword">return</span> realView.close() <span class="hljs-keyword">if</span> <span class="hljs-property">@region</span>.currentView <span class="hljs-keyword">isnt</span> loadingView
+        
+        <span class="hljs-comment">## show the real view unless we've set debug in the loading options</span>
+        <span class="hljs-property">@show</span> realView <span class="hljs-keyword">unless</span> config.debug
+    
+    <span class="hljs-attribute">getEntities</span>: <span class="hljs-function"><span class="hljs-params">(view)</span> -&gt;</span>
+      <span class="hljs-comment">## return the entities manually set during configuration, or just pull </span>
+      <span class="hljs-comment">## off the model and collection from the view (if they exist)</span>
+      _.chain(view).pick(<span class="hljs-string">"model"</span>, <span class="hljs-string">"collection"</span>).toArray().compact().value()
+    
+    <span class="hljs-attribute">getLoadingView</span>:<span class="hljs-function"> -&gt;</span>
+      <span class="hljs-keyword">new</span> Loading.LoadingView
+  
+  App.commands.setHandler <span class="hljs-string">"show:loading"</span>, <span class="hljs-function"><span class="hljs-params">(view, options)</span> -&gt;</span>
+    <span class="hljs-keyword">new</span> Loading.LoadingController
+      <span class="hljs-attribute">view</span>: view
+      <span class="hljs-attribute">region</span>: options.region
+      <span class="hljs-attribute">config</span>: options.loading</div></div></div></div></body></html>

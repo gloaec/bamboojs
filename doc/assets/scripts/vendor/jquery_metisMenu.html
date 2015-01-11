@@ -1,0 +1,45 @@
+<!DOCTYPE html><html lang="en"><head><title>assets/scripts/vendor/jquery_metisMenu</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../../"><meta name="groc-document-path" content="assets/scripts/vendor/jquery_metisMenu"><meta name="groc-project-path" content="assets/scripts/vendor/jquery_metisMenu.js"><link rel="stylesheet" type="text/css" media="all" href="../../../assets/style.css"><script type="text/javascript" src="../../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/vendor/jquery_metisMenu.js</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper">;(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">($, window, document, undefined)</span> {</span>
+
+    <span class="hljs-keyword">var</span> pluginName = <span class="hljs-string">"metisMenu"</span>,
+        defaults = {
+            toggle: <span class="hljs-literal">true</span>
+        };
+        
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Plugin</span><span class="hljs-params">(element, options)</span> {</span>
+        <span class="hljs-keyword">this</span>.element = element;
+        <span class="hljs-keyword">this</span>.settings = $.extend({}, defaults, options);
+        <span class="hljs-keyword">this</span>._defaults = defaults;
+        <span class="hljs-keyword">this</span>._name = pluginName;
+        <span class="hljs-keyword">this</span>.init();
+    }
+
+    Plugin.prototype = {
+        init: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+
+            <span class="hljs-keyword">var</span> $<span class="hljs-keyword">this</span> = $(<span class="hljs-keyword">this</span>.element),
+                $toggle = <span class="hljs-keyword">this</span>.settings.toggle;
+
+            $<span class="hljs-keyword">this</span>.find(<span class="hljs-string">'li.active'</span>).has(<span class="hljs-string">'ul'</span>).children(<span class="hljs-string">'ul'</span>).addClass(<span class="hljs-string">'collapse in'</span>);
+            $<span class="hljs-keyword">this</span>.find(<span class="hljs-string">'li'</span>).not(<span class="hljs-string">'.active'</span>).has(<span class="hljs-string">'ul'</span>).children(<span class="hljs-string">'ul'</span>).addClass(<span class="hljs-string">'collapse'</span>);
+
+            $<span class="hljs-keyword">this</span>.find(<span class="hljs-string">'li'</span>).has(<span class="hljs-string">'ul'</span>).children(<span class="hljs-string">'a'</span>).on(<span class="hljs-string">'click'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(e)</span> {</span>
+                e.preventDefault();
+
+                $(<span class="hljs-keyword">this</span>).parent(<span class="hljs-string">'li'</span>).toggleClass(<span class="hljs-string">'active'</span>).children(<span class="hljs-string">'ul'</span>).collapse(<span class="hljs-string">'toggle'</span>);
+
+                <span class="hljs-keyword">if</span> ($toggle) {
+                    <span class="hljs-comment">//$(this).parent('li').siblings().removeClass('active').children('ul.in').collapse('hide');</span>
+                }
+            });
+        }
+    };
+
+    $.fn[ pluginName ] = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(options)</span> {</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.each(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+            <span class="hljs-keyword">if</span> (!$.data(<span class="hljs-keyword">this</span>, <span class="hljs-string">"plugin_"</span> + pluginName)) {
+                $.data(<span class="hljs-keyword">this</span>, <span class="hljs-string">"plugin_"</span> + pluginName, <span class="hljs-keyword">new</span> Plugin(<span class="hljs-keyword">this</span>, options));
+            }
+        });
+    };
+
+})(jQuery, window, document);</div></div></div></div></body></html>

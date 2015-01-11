@@ -1,18 +1,43 @@
+# bamboo.app
 @Bamboo = do (Backbone, Marionette) ->
 
+  # Inform that the application is loading
   console.info 'Loading application'
 
+  # Declare a new Marionette Application
   App = new Marionette.Application
 
+  # Add regions to the application
   App.addRegions
+    
+    # - Header region
     headerRegion:       "#header-region"
+
+    # - Sidebar region
     sidebarRegion:      "#sidebar-region"
+
+    # - Main region
     mainRegion:         "#main-region"
+
+    # - Footer region
     footerRegion:       "#footer-region"
+
+    # - Using the default
+    #   [Region.Flashes](components/flash/flash_controller.html)
+    #   component
     flashRegion:        Marionette.Region.Flashes.extend el: ".flash-region"
+
+    # - Using the default
+    #   [Region.Breadcrumbs](components/breadcrumbs/breadcrumbs_controller.html)
+    #   component
     breadcrumbsRegion:  Marionette.Region.Breadcrumbs.extend el: "#breadcrumbs-region"
+
+    # - Using the default
+    #   [Region.Dialog](components/dialog/dialog_controller.html)
+    #   component
     dialogRegion:       Marionette.Region.Dialog.extend el: "#dialog-region"
   
+  # Set the default route to `dashboard`
   App.rootRoute = "/dashboard"
 
   App.reqres.setHandler "default:region", ->

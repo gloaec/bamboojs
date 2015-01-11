@@ -1,0 +1,1457 @@
+<!DOCTYPE html><html lang="en"><head><title>assets/scripts/vendor/backbone_marionette</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../../"><meta name="groc-document-path" content="assets/scripts/vendor/backbone_marionette"><meta name="groc-project-path" content="assets/scripts/vendor/backbone_marionette.js"><link rel="stylesheet" type="text/css" media="all" href="../../../assets/style.css"><script type="text/javascript" src="../../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/vendor/backbone_marionette.js</div></div><div id="document"><div class="segment"><div class="comments "><div class="wrapper"><h2 id="marionettejs-backbonemarionette">MarionetteJS (Backbone.Marionette)</h2>
+<p>v1.2.2
+Copyright (c)2013 Derick Bailey, Muted Solutions, LLC.
+Distributed under MIT license
+<a href="http://marionettejs.com">http://marionettejs.com</a></p></div></div><div class="code"><div class="wrapper"><span class="hljs-comment">/*!
+ * Includes BabySitter
+ * https://github.com/marionettejs/backbone.babysitter/
+ *
+ * Includes Wreqr
+ * https://github.com/marionettejs/backbone.wreqr/
+ */</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="backbonebabysitter">Backbone.BabySitter</h2>
+<p>v0.0.6
+Copyright (c)2013 Derick Bailey, Muted Solutions, LLC.
+Distributed under MIT license
+<a href="http://github.com/babysitterjs/backbone.babysitter">http://github.com/babysitterjs/backbone.babysitter</a></p></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="backbonechildviewcontainer">Backbone.ChildViewContainer</h2>
+<p>Provide a container to store, retrieve and
+shut down child views.</p></div></div><div class="code"><div class="wrapper">Backbone.ChildViewContainer = (<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(Backbone, _)</span>{</span>
+  </div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="container-constructor">Container Constructor</h2></div></div></div><div class="segment"><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> Container = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(views)</span>{</span>
+    <span class="hljs-keyword">this</span>._views = {};
+    <span class="hljs-keyword">this</span>._indexByModel = {};
+    <span class="hljs-keyword">this</span>._indexByCustom = {};
+    <span class="hljs-keyword">this</span>._updateLength();
+
+    _.each(views, <span class="hljs-keyword">this</span>.add, <span class="hljs-keyword">this</span>);
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="container-methods">Container Methods</h2></div></div></div><div class="segment"><div class="code"><div class="wrapper">  _.extend(Container.prototype, {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Add a view to this container. Stores the view
+by <code>cid</code> and makes it searchable by the model
+cid (and model itself). Optionally specify
+a custom key to store an retrieve the view.</p></div></div><div class="code"><div class="wrapper">    add: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(view, customIndex)</span>{</span>
+      <span class="hljs-keyword">var</span> viewCid = view.cid;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>store the view</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">this</span>._views[viewCid] = view;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>index it by model</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">if</span> (view.model){
+        <span class="hljs-keyword">this</span>._indexByModel[view.model.cid] = viewCid;
+      }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>index by custom</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">if</span> (customIndex){
+        <span class="hljs-keyword">this</span>._indexByCustom[customIndex] = viewCid;
+      }
+
+      <span class="hljs-keyword">this</span>._updateLength();
+    },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Find a view by the model that was attached to
+it. Uses the model&#39;s <code>cid</code> to find it.</p></div></div><div class="code"><div class="wrapper">    findByModel: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(model)</span>{</span>
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.findByModelCid(model.cid);
+    },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Find a view by the <code>cid</code> of the model that was attached to
+it. Uses the model&#39;s <code>cid</code> to find the view <code>cid</code> and
+retrieve the view using it.</p></div></div><div class="code"><div class="wrapper">    findByModelCid: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(modelCid)</span>{</span>
+      <span class="hljs-keyword">var</span> viewCid = <span class="hljs-keyword">this</span>._indexByModel[modelCid];
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.findByCid(viewCid);
+    },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Find a view by a custom indexer.</p></div></div><div class="code"><div class="wrapper">    findByCustom: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(index)</span>{</span>
+      <span class="hljs-keyword">var</span> viewCid = <span class="hljs-keyword">this</span>._indexByCustom[index];
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.findByCid(viewCid);
+    },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Find by index. This is not guaranteed to be a
+stable index.</p></div></div><div class="code"><div class="wrapper">    findByIndex: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(index)</span>{</span>
+      <span class="hljs-keyword">return</span> _.values(<span class="hljs-keyword">this</span>._views)[index];
+    },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>retrieve a view by it&#39;s <code>cid</code> directly</p></div></div><div class="code"><div class="wrapper">    findByCid: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(cid)</span>{</span>
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._views[cid];
+    },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Remove a view</p></div></div><div class="code"><div class="wrapper">    remove: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(view)</span>{</span>
+      <span class="hljs-keyword">var</span> viewCid = view.cid;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>delete model index</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">if</span> (view.model){
+        <span class="hljs-keyword">delete</span> <span class="hljs-keyword">this</span>._indexByModel[view.model.cid];
+      }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>delete custom index</p></div></div><div class="code"><div class="wrapper">      _.any(<span class="hljs-keyword">this</span>._indexByCustom, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(cid, key)</span> {</span>
+        <span class="hljs-keyword">if</span> (cid === viewCid) {
+          <span class="hljs-keyword">delete</span> <span class="hljs-keyword">this</span>._indexByCustom[key];
+          <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+        }
+      }, <span class="hljs-keyword">this</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>remove the view from the container</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">delete</span> <span class="hljs-keyword">this</span>._views[viewCid];</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>update the length</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">this</span>._updateLength();
+    },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Call a method on every view in the container,
+passing parameters to the call method one at a
+time, like <code>function.call</code>.</p></div></div><div class="code"><div class="wrapper">    call: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(method)</span>{</span>
+      <span class="hljs-keyword">this</span>.apply(method, _.tail(<span class="hljs-built_in">arguments</span>));
+    },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Apply a method on every view in the container,
+passing parameters to the call method one at a
+time, like <code>function.apply</code>.</p></div></div><div class="code"><div class="wrapper">    apply: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(method, args)</span>{</span>
+      _.each(<span class="hljs-keyword">this</span>._views, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(view)</span>{</span>
+        <span class="hljs-keyword">if</span> (_.isFunction(view[method])){
+          view[method].apply(view, args || []);
+        }
+      });
+    },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Update the <code>.length</code> attribute on this container</p></div></div><div class="code"><div class="wrapper">    _updateLength: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+      <span class="hljs-keyword">this</span>.length = _.size(<span class="hljs-keyword">this</span>._views);
+    }
+  });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Borrowing this code from Backbone.Collection:
+<a href="http://backbonejs.org/docs/backbone.html#section-106">http://backbonejs.org/docs/backbone.html#section-106</a>
+Mix in methods from Underscore, for iteration, and other
+collection related features.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> methods = [<span class="hljs-string">'forEach'</span>, <span class="hljs-string">'each'</span>, <span class="hljs-string">'map'</span>, <span class="hljs-string">'find'</span>, <span class="hljs-string">'detect'</span>, <span class="hljs-string">'filter'</span>, 
+    <span class="hljs-string">'select'</span>, <span class="hljs-string">'reject'</span>, <span class="hljs-string">'every'</span>, <span class="hljs-string">'all'</span>, <span class="hljs-string">'some'</span>, <span class="hljs-string">'any'</span>, <span class="hljs-string">'include'</span>, 
+    <span class="hljs-string">'contains'</span>, <span class="hljs-string">'invoke'</span>, <span class="hljs-string">'toArray'</span>, <span class="hljs-string">'first'</span>, <span class="hljs-string">'initial'</span>, <span class="hljs-string">'rest'</span>, 
+    <span class="hljs-string">'last'</span>, <span class="hljs-string">'without'</span>, <span class="hljs-string">'isEmpty'</span>, <span class="hljs-string">'pluck'</span>];
+
+  _.each(methods, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(method)</span> {</span>
+    Container.prototype[method] = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+      <span class="hljs-keyword">var</span> views = _.values(<span class="hljs-keyword">this</span>._views);
+      <span class="hljs-keyword">var</span> args = [views].concat(_.toArray(<span class="hljs-built_in">arguments</span>));
+      <span class="hljs-keyword">return</span> _[method].apply(_, args);
+    };
+  });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>return the public API</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">return</span> Container;
+})(Backbone, _);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="backbonewreqr-backbonemarionette">Backbone.Wreqr (Backbone.Marionette)</h2>
+<p>v0.2.0
+Copyright (c)2013 Derick Bailey, Muted Solutions, LLC.
+Distributed under MIT license
+<a href="http://github.com/marionettejs/backbone.wreqr">http://github.com/marionettejs/backbone.wreqr</a></p></div></div><div class="code"><div class="wrapper">Backbone.Wreqr = (<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(Backbone, Marionette, _)</span>{</span>
+<span class="hljs-pi">  "use strict"</span>;
+  <span class="hljs-keyword">var</span> Wreqr = {};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="handlers">Handlers</h2>
+<p>A registry of functions to call, given a name</p></div></div><div class="code"><div class="wrapper">Wreqr.Handlers = (<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(Backbone, _)</span>{</span>
+<span class="hljs-pi">  "use strict"</span>;
+  </div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="constructor">Constructor</h2></div></div></div><div class="segment"><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> Handlers = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(options)</span>{</span>
+    <span class="hljs-keyword">this</span>.options = options;
+    <span class="hljs-keyword">this</span>._wreqrHandlers = {};
+    
+    <span class="hljs-keyword">if</span> (_.isFunction(<span class="hljs-keyword">this</span>.initialize)){
+      <span class="hljs-keyword">this</span>.initialize(options);
+    }
+  };
+
+  Handlers.extend = Backbone.Model.extend;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="instance-members">Instance Members</h2></div></div></div><div class="segment"><div class="code"><div class="wrapper">  _.extend(Handlers.prototype, Backbone.Events, {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Add multiple handlers using an object literal configuration</p></div></div><div class="code"><div class="wrapper">    setHandlers: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(handlers)</span>{</span>
+      _.each(handlers, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(handler, name)</span>{</span>
+        <span class="hljs-keyword">var</span> context = <span class="hljs-literal">null</span>;
+
+        <span class="hljs-keyword">if</span> (_.isObject(handler) &amp;&amp; !_.isFunction(handler)){
+          context = handler.context;
+          handler = handler.callback;
+        }
+
+        <span class="hljs-keyword">this</span>.setHandler(name, handler, context);
+      }, <span class="hljs-keyword">this</span>);
+    },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Add a handler for the given name, with an
+optional context to run the handler within</p></div></div><div class="code"><div class="wrapper">    setHandler: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name, handler, context)</span>{</span>
+      <span class="hljs-keyword">var</span> config = {
+        callback: handler,
+        context: context
+      };
+
+      <span class="hljs-keyword">this</span>._wreqrHandlers[name] = config;
+
+      <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">"handler:add"</span>, name, handler, context);
+    },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Determine whether or not a handler is registered</p></div></div><div class="code"><div class="wrapper">    hasHandler: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name)</span>{</span>
+      <span class="hljs-keyword">return</span> !! <span class="hljs-keyword">this</span>._wreqrHandlers[name];
+    },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get the currently registered handler for
+the specified name. Throws an exception if
+no handler is found.</p></div></div><div class="code"><div class="wrapper">    getHandler: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name)</span>{</span>
+      <span class="hljs-keyword">var</span> config = <span class="hljs-keyword">this</span>._wreqrHandlers[name];
+
+      <span class="hljs-keyword">if</span> (!config){
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"Handler not found for '"</span> + name + <span class="hljs-string">"'"</span>);
+      }
+
+      <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+        <span class="hljs-keyword">var</span> args = <span class="hljs-built_in">Array</span>.prototype.slice.apply(<span class="hljs-built_in">arguments</span>);
+        <span class="hljs-keyword">return</span> config.callback.apply(config.context, args);
+      };
+    },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Remove a handler for the specified name</p></div></div><div class="code"><div class="wrapper">    removeHandler: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name)</span>{</span>
+      <span class="hljs-keyword">delete</span> <span class="hljs-keyword">this</span>._wreqrHandlers[name];
+    },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Remove all handlers from this registry</p></div></div><div class="code"><div class="wrapper">    removeAllHandlers: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+      <span class="hljs-keyword">this</span>._wreqrHandlers = {};
+    }
+  });
+
+  <span class="hljs-keyword">return</span> Handlers;
+})(Backbone, _);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="wreqrcommandstorage">Wreqr.CommandStorage</h2>
+<p>Store and retrieve commands for execution.</p></div></div><div class="code"><div class="wrapper">Wreqr.CommandStorage = (<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+<span class="hljs-pi">  "use strict"</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Constructor function</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> CommandStorage = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(options)</span>{</span>
+    <span class="hljs-keyword">this</span>.options = options;
+    <span class="hljs-keyword">this</span>._commands = {};
+
+    <span class="hljs-keyword">if</span> (_.isFunction(<span class="hljs-keyword">this</span>.initialize)){
+      <span class="hljs-keyword">this</span>.initialize(options);
+    }
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Instance methods</p></div></div><div class="code"><div class="wrapper">  _.extend(CommandStorage.prototype, Backbone.Events, {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get an object literal by command name, that contains
+the <code>commandName</code> and the <code>instances</code> of all commands
+represented as an array of arguments to process</p></div></div><div class="code"><div class="wrapper">    getCommands: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(commandName)</span>{</span>
+      <span class="hljs-keyword">var</span> commands = <span class="hljs-keyword">this</span>._commands[commandName];</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>we don&#39;t have it, so add it</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">if</span> (!commands){</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>build the configuration</p></div></div><div class="code"><div class="wrapper">        commands = {
+          command: commandName, 
+          instances: []
+        };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>store it</p></div></div><div class="code"><div class="wrapper">        <span class="hljs-keyword">this</span>._commands[commandName] = commands;
+      }
+
+      <span class="hljs-keyword">return</span> commands;
+    },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Add a command by name, to the storage and store the
+args for the command</p></div></div><div class="code"><div class="wrapper">    addCommand: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(commandName, args)</span>{</span>
+      <span class="hljs-keyword">var</span> command = <span class="hljs-keyword">this</span>.getCommands(commandName);
+      command.instances.push(args);
+    },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Clear all commands for the given <code>commandName</code></p></div></div><div class="code"><div class="wrapper">    clearCommands: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(commandName)</span>{</span>
+      <span class="hljs-keyword">var</span> command = <span class="hljs-keyword">this</span>.getCommands(commandName);
+      command.instances = [];
+    }
+  });
+
+  <span class="hljs-keyword">return</span> CommandStorage;
+})();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="wreqrcommands">Wreqr.Commands</h2>
+<p>A simple command pattern implementation. Register a command
+handler and execute it.</p></div></div><div class="code"><div class="wrapper">Wreqr.Commands = (<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(Wreqr)</span>{</span>
+<span class="hljs-pi">  "use strict"</span>;
+
+  <span class="hljs-keyword">return</span> Wreqr.Handlers.extend({</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>default storage type</p></div></div><div class="code"><div class="wrapper">    storageType: Wreqr.CommandStorage,
+
+    constructor: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(options)</span>{</span>
+      <span class="hljs-keyword">this</span>.options = options || {};
+
+      <span class="hljs-keyword">this</span>._initializeStorage(<span class="hljs-keyword">this</span>.options);
+      <span class="hljs-keyword">this</span>.on(<span class="hljs-string">"handler:add"</span>, <span class="hljs-keyword">this</span>._executeCommands, <span class="hljs-keyword">this</span>);
+
+      <span class="hljs-keyword">var</span> args = <span class="hljs-built_in">Array</span>.prototype.slice.call(<span class="hljs-built_in">arguments</span>);
+      Wreqr.Handlers.prototype.constructor.apply(<span class="hljs-keyword">this</span>, args);
+    },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Execute a named command with the supplied args</p></div></div><div class="code"><div class="wrapper">    execute: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name, args)</span>{</span>
+      name = <span class="hljs-built_in">arguments</span>[<span class="hljs-number">0</span>];
+      args = <span class="hljs-built_in">Array</span>.prototype.slice.call(<span class="hljs-built_in">arguments</span>, <span class="hljs-number">1</span>);
+
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.hasHandler(name)){
+        <span class="hljs-keyword">this</span>.getHandler(name).apply(<span class="hljs-keyword">this</span>, args);
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">this</span>.storage.addCommand(name, args);
+      }
+
+    },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Internal method to handle bulk execution of stored commands</p></div></div><div class="code"><div class="wrapper">    _executeCommands: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name, handler, context)</span>{</span>
+      <span class="hljs-keyword">var</span> command = <span class="hljs-keyword">this</span>.storage.getCommands(name);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>loop through and execute all the stored command instances</p></div></div><div class="code"><div class="wrapper">      _.each(command.instances, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(args)</span>{</span>
+        handler.apply(context, args);
+      });
+
+      <span class="hljs-keyword">this</span>.storage.clearCommands(name);
+    },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Internal method to initialize storage either from the type&#39;s
+<code>storageType</code> or the instance <code>options.storageType</code>.</p></div></div><div class="code"><div class="wrapper">    _initializeStorage: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(options)</span>{</span>
+      <span class="hljs-keyword">var</span> storage;
+
+      <span class="hljs-keyword">var</span> StorageType = options.storageType || <span class="hljs-keyword">this</span>.storageType;
+      <span class="hljs-keyword">if</span> (_.isFunction(StorageType)){
+        storage = <span class="hljs-keyword">new</span> StorageType();
+      } <span class="hljs-keyword">else</span> {
+        storage = StorageType;
+      }
+
+      <span class="hljs-keyword">this</span>.storage = storage;
+    }
+  });
+
+})(Wreqr);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="wreqrrequestresponse">Wreqr.RequestResponse</h2>
+<p>A simple request/response implementation. Register a
+request handler, and return a response from it</p></div></div><div class="code"><div class="wrapper">Wreqr.RequestResponse = (<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(Wreqr)</span>{</span>
+<span class="hljs-pi">  "use strict"</span>;
+
+  <span class="hljs-keyword">return</span> Wreqr.Handlers.extend({
+    request: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+      <span class="hljs-keyword">var</span> name = <span class="hljs-built_in">arguments</span>[<span class="hljs-number">0</span>];
+      <span class="hljs-keyword">var</span> args = <span class="hljs-built_in">Array</span>.prototype.slice.call(<span class="hljs-built_in">arguments</span>, <span class="hljs-number">1</span>);
+
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.getHandler(name).apply(<span class="hljs-keyword">this</span>, args);
+    }
+  });
+
+})(Wreqr);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="event-aggregator">Event Aggregator</h2>
+<p>A pub-sub object that can be used to decouple various parts
+of an application through event-driven architecture.</p></div></div><div class="code"><div class="wrapper">Wreqr.EventAggregator = (<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(Backbone, _)</span>{</span>
+<span class="hljs-pi">  "use strict"</span>;
+  <span class="hljs-keyword">var</span> EA = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Copy the <code>extend</code> function used by Backbone&#39;s classes</p></div></div><div class="code"><div class="wrapper">  EA.extend = Backbone.Model.extend;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Copy the basic Backbone.Events on to the event aggregator</p></div></div><div class="code"><div class="wrapper">  _.extend(EA.prototype, Backbone.Events);
+
+  <span class="hljs-keyword">return</span> EA;
+})(Backbone, _);
+
+
+  <span class="hljs-keyword">return</span> Wreqr;
+})(Backbone, Backbone.Marionette, _);
+
+<span class="hljs-keyword">var</span> Marionette = (<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(global, Backbone, _)</span>{</span>
+<span class="hljs-pi">  "use strict"</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Define and export the Marionette namespace</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> Marionette = {};
+  Backbone.Marionette = Marionette;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get the DOM manipulator for later use</p></div></div><div class="code"><div class="wrapper">  Marionette.$ = Backbone.$;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="helpers">Helpers</h2></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>For slicing <code>arguments</code> in functions</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> protoSlice = <span class="hljs-built_in">Array</span>.prototype.slice;
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">slice</span><span class="hljs-params">(args)</span> {</span>
+  <span class="hljs-keyword">return</span> protoSlice.call(args);
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">throwError</span><span class="hljs-params">(message, name)</span> {</span>
+  <span class="hljs-keyword">var</span> error = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(message);
+  error.name = name || <span class="hljs-string">'Error'</span>;
+  <span class="hljs-keyword">throw</span> error;
+}</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="marionetteextend">Marionette.extend</h2></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Borrow the Backbone <code>extend</code> method so we can use it as needed</p></div></div><div class="code"><div class="wrapper">Marionette.extend = Backbone.Model.extend;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="marionettegetoption">Marionette.getOption</h2></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Retrieve an object, function or other value from a target
+object or its <code>options</code>, with <code>options</code> taking precedence.</p></div></div><div class="code"><div class="wrapper">Marionette.getOption = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(target, optionName)</span>{</span>
+  <span class="hljs-keyword">if</span> (!target || !optionName){ <span class="hljs-keyword">return</span>; }
+  <span class="hljs-keyword">var</span> value;
+
+  <span class="hljs-keyword">if</span> (target.options &amp;&amp; (optionName <span class="hljs-keyword">in</span> target.options) &amp;&amp; (target.options[optionName] !== <span class="hljs-literal">undefined</span>)){
+    value = target.options[optionName];
+  } <span class="hljs-keyword">else</span> {
+    value = target[optionName];
+  }
+
+  <span class="hljs-keyword">return</span> value;
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Trigger an event and/or a corresponding method name. Examples:
+<code>this.triggerMethod(&quot;foo&quot;)</code> will trigger the &quot;foo&quot; event and
+call the &quot;onFoo&quot; method.
+`this.triggerMethod(&quot;foo:bar&quot;) will trigger the &quot;foo:bar&quot; event and
+call the &quot;onFooBar&quot; method.</p></div></div><div class="code"><div class="wrapper">Marionette.triggerMethod = (<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>split the event name on the :</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> splitter = <span class="hljs-regexp">/(^|:)(\w)/gi</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>take the event section (&quot;section1:section2:section3&quot;)
+and turn it in to uppercase name</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getEventName</span><span class="hljs-params">(match, prefix, eventName)</span> {</span>
+    <span class="hljs-keyword">return</span> eventName.toUpperCase();
+  }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>actual triggerMethod name</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> triggerMethod = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(event)</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>get the method name from the event name</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> methodName = <span class="hljs-string">'on'</span> + event.replace(splitter, getEventName);
+    <span class="hljs-keyword">var</span> method = <span class="hljs-keyword">this</span>[methodName];</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>trigger the event, if a trigger method exists</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span>(_.isFunction(<span class="hljs-keyword">this</span>.trigger)) {
+      <span class="hljs-keyword">this</span>.trigger.apply(<span class="hljs-keyword">this</span>, <span class="hljs-built_in">arguments</span>);
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>call the onMethodName if it exists</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (_.isFunction(method)) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>pass all arguments, except the event name</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">return</span> method.apply(<span class="hljs-keyword">this</span>, _.tail(<span class="hljs-built_in">arguments</span>));
+    }
+  };
+
+  <span class="hljs-keyword">return</span> triggerMethod;
+})();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="domrefresh">DOMRefresh</h2>
+<p>Monitor a view&#39;s state, and after it has been rendered and shown
+in the DOM, trigger a &quot;dom:refresh&quot; event every time it is
+re-rendered.</p></div></div><div class="code"><div class="wrapper">Marionette.MonitorDOMRefresh = (<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>track when the view has been shown in the DOM,
+using a Marionette.Region (or by other means of triggering &quot;show&quot;)</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">handleShow</span><span class="hljs-params">(view)</span>{</span>
+    view._isShown = <span class="hljs-literal">true</span>;
+    triggerDOMRefresh(view);
+  }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>track when the view has been rendered</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">handleRender</span><span class="hljs-params">(view)</span>{</span>
+    view._isRendered = <span class="hljs-literal">true</span>;
+    triggerDOMRefresh(view);
+  }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Trigger the &quot;dom:refresh&quot; event and corresponding &quot;onDomRefresh&quot; method</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">triggerDOMRefresh</span><span class="hljs-params">(view)</span>{</span>
+    <span class="hljs-keyword">if</span> (view._isShown &amp;&amp; view._isRendered){
+      <span class="hljs-keyword">if</span> (_.isFunction(view.triggerMethod)){
+        view.triggerMethod(<span class="hljs-string">"dom:refresh"</span>);
+      }
+    }
+  }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Export public API</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(view)</span>{</span>
+    view.listenTo(view, <span class="hljs-string">"show"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+      handleShow(view);
+    });
+
+    view.listenTo(view, <span class="hljs-string">"render"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+      handleRender(view);
+    });
+  };
+})();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="marionettebindentityevents-amp-unbindentityevents">Marionette.bindEntityEvents &amp; unbindEntityEvents</h2>
+<p>These methods are used to bind/unbind a backbone &quot;entity&quot; (collection/model) 
+to methods on a target object. 
+The first parameter, <code>target</code>, must have a <code>listenTo</code> method from the
+EventBinder object.
+The second parameter is the entity (Backbone.Model or Backbone.Collection)
+to bind the events from.
+The third parameter is a hash of { &quot;event:name&quot;: &quot;eventHandler&quot; }
+configuration. Multiple handlers can be separated by a space. A
+function can be supplied instead of a string handler name. </p></div></div><div class="code"><div class="wrapper">(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(Marionette)</span>{</span>
+<span class="hljs-pi">  "use strict"</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Bind the event to handlers specified as a string of
+handler names on the target object</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">bindFromStrings</span><span class="hljs-params">(target, entity, evt, methods)</span>{</span>
+    <span class="hljs-keyword">var</span> methodNames = methods.split(<span class="hljs-regexp">/\s+/</span>);
+
+    _.each(methodNames,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(methodName)</span> {</span>
+
+      <span class="hljs-keyword">var</span> method = target[methodName];
+      <span class="hljs-keyword">if</span>(!method) {
+        throwError(<span class="hljs-string">"Method '"</span>+ methodName +<span class="hljs-string">"' was configured as an event handler, but does not exist."</span>);
+      }
+
+      target.listenTo(entity, evt, method, target);
+    });
+  }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Bind the event to a supplied callback function</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">bindToFunction</span><span class="hljs-params">(target, entity, evt, method)</span>{</span>
+      target.listenTo(entity, evt, method, target);
+  }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Bind the event to handlers specified as a string of
+handler names on the target object</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">unbindFromStrings</span><span class="hljs-params">(target, entity, evt, methods)</span>{</span>
+    <span class="hljs-keyword">var</span> methodNames = methods.split(<span class="hljs-regexp">/\s+/</span>);
+
+    _.each(methodNames,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(methodName)</span> {</span>
+      <span class="hljs-keyword">var</span> method = target[methodName];
+      target.stopListening(entity, evt, method, target);
+    });
+  }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Bind the event to a supplied callback function</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">unbindToFunction</span><span class="hljs-params">(target, entity, evt, method)</span>{</span>
+      target.stopListening(entity, evt, method, target);
+  }
+
+  </div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>generic looping function</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">iterateEvents</span><span class="hljs-params">(target, entity, bindings, functionCallback, stringCallback)</span>{</span>
+    <span class="hljs-keyword">if</span> (!entity || !bindings) { <span class="hljs-keyword">return</span>; }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>allow the bindings to be a function</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (_.isFunction(bindings)){
+      bindings = bindings.call(target);
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>iterate the bindings and bind them</p></div></div><div class="code"><div class="wrapper">    _.each(bindings, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(methods, evt)</span>{</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>allow for a function as the handler, 
+or a list of event names as a string</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">if</span> (_.isFunction(methods)){
+        functionCallback(target, entity, evt, methods);
+      } <span class="hljs-keyword">else</span> {
+        stringCallback(target, entity, evt, methods);
+      }
+
+    });
+  }
+ </div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Export Public API</p></div></div><div class="code"><div class="wrapper">  Marionette.bindEntityEvents = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(target, entity, bindings)</span>{</span>
+    iterateEvents(target, entity, bindings, bindToFunction, bindFromStrings);
+  };
+
+  Marionette.unbindEntityEvents = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(target, entity, bindings)</span>{</span>
+    iterateEvents(target, entity, bindings, unbindToFunction, unbindFromStrings);
+  };
+
+})(Marionette);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="callbacks">Callbacks</h2></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>A simple way of managing a collection of callbacks
+and executing them at a later point in time, using jQuery&#39;s
+<code>Deferred</code> object.</p></div></div><div class="code"><div class="wrapper">Marionette.Callbacks = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+  <span class="hljs-keyword">this</span>._deferred = Marionette.$.Deferred();
+  <span class="hljs-keyword">this</span>._callbacks = [];
+};
+
+_.extend(Marionette.Callbacks.prototype, {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Add a callback to be executed. Callbacks added here are
+guaranteed to execute, even if they are added after the 
+<code>run</code> method is called.</p></div></div><div class="code"><div class="wrapper">  add: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(callback, contextOverride)</span>{</span>
+    <span class="hljs-keyword">this</span>._callbacks.push({cb: callback, ctx: contextOverride});
+
+    <span class="hljs-keyword">this</span>._deferred.done(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(context, options)</span>{</span>
+      <span class="hljs-keyword">if</span> (contextOverride){ context = contextOverride; }
+      callback.call(context, options);
+    });
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Run all registered callbacks with the context specified. 
+Additional callbacks can be added after this has been run 
+and they will still be executed.</p></div></div><div class="code"><div class="wrapper">  run: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(options, context)</span>{</span>
+    <span class="hljs-keyword">this</span>._deferred.resolve(context, options);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Resets the list of callbacks to be run, allowing the same list
+to be run multiple times - whenever the <code>run</code> method is called.</p></div></div><div class="code"><div class="wrapper">  reset: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">var</span> callbacks = <span class="hljs-keyword">this</span>._callbacks;
+    <span class="hljs-keyword">this</span>._deferred = Marionette.$.Deferred();
+    <span class="hljs-keyword">this</span>._callbacks = [];
+    
+    _.each(callbacks, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(cb)</span>{</span>
+      <span class="hljs-keyword">this</span>.add(cb.cb, cb.ctx);
+    }, <span class="hljs-keyword">this</span>);
+  }
+});</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="marionette-controller">Marionette Controller</h2>
+<p>A multi-purpose object to use as a controller for
+modules and routers, and as a mediator for workflow
+and coordination of other objects, views, and more.</p></div></div><div class="code"><div class="wrapper">Marionette.Controller = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(options)</span>{</span>
+  <span class="hljs-keyword">this</span>.triggerMethod = Marionette.triggerMethod;
+  <span class="hljs-keyword">this</span>.options = options || {};
+
+  <span class="hljs-keyword">if</span> (_.isFunction(<span class="hljs-keyword">this</span>.initialize)){
+    <span class="hljs-keyword">this</span>.initialize(<span class="hljs-keyword">this</span>.options);
+  }
+};
+
+Marionette.Controller.extend = Marionette.extend;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="controller-methods">Controller Methods</h2></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Ensure it can trigger events with Backbone.Events</p></div></div><div class="code"><div class="wrapper">_.extend(Marionette.Controller.prototype, Backbone.Events, {
+  close: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">this</span>.stopListening();
+    <span class="hljs-keyword">this</span>.triggerMethod(<span class="hljs-string">"close"</span>);
+    <span class="hljs-keyword">this</span>.unbind();
+  }
+});</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="region-">Region </h2>
+<p>Manage the visual regions of your composite application. See
+<a href="http://lostechies.com/derickbailey/2011/12/12/composite-js-apps-regions-and-region-managers/">http://lostechies.com/derickbailey/2011/12/12/composite-js-apps-regions-and-region-managers/</a></p></div></div><div class="code"><div class="wrapper">Marionette.Region = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(options)</span>{</span>
+  <span class="hljs-keyword">this</span>.options = options || {};
+
+  <span class="hljs-keyword">this</span>.el = Marionette.getOption(<span class="hljs-keyword">this</span>, <span class="hljs-string">"el"</span>);
+
+  <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.el){
+    <span class="hljs-keyword">var</span> err = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"An 'el' must be specified for a region."</span>);
+    err.name = <span class="hljs-string">"NoElError"</span>;
+    <span class="hljs-keyword">throw</span> err;
+  }
+
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.initialize){
+    <span class="hljs-keyword">var</span> args = <span class="hljs-built_in">Array</span>.prototype.slice.apply(<span class="hljs-built_in">arguments</span>);
+    <span class="hljs-keyword">this</span>.initialize.apply(<span class="hljs-keyword">this</span>, args);
+  }
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="region-type-methods">Region Type methods</h2></div></div></div><div class="segment"><div class="code"><div class="wrapper">_.extend(Marionette.Region, {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Build an instance of a region by passing in a configuration object
+and a default region type to use if none is specified in the config.
+The config object should either be a string as a jQuery DOM selector,
+a Region type directly, or an object literal that specifies both
+a selector and regionType:
+```js
+{
+  selector: &quot;#foo&quot;,
+  regionType: MyCustomRegion</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-comment">// </span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>```</p></div></div><div class="code"><div class="wrapper">  buildRegion: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(regionConfig, defaultRegionType)</span>{</span>
+
+    <span class="hljs-keyword">var</span> regionIsString = (<span class="hljs-keyword">typeof</span> regionConfig === <span class="hljs-string">"string"</span>);
+    <span class="hljs-keyword">var</span> regionSelectorIsString = (<span class="hljs-keyword">typeof</span> regionConfig.selector === <span class="hljs-string">"string"</span>);
+    <span class="hljs-keyword">var</span> regionTypeIsUndefined = (<span class="hljs-keyword">typeof</span> regionConfig.regionType === <span class="hljs-string">"undefined"</span>);
+    <span class="hljs-keyword">var</span> regionIsType = (<span class="hljs-keyword">typeof</span> regionConfig === <span class="hljs-string">"function"</span>);
+
+    <span class="hljs-keyword">if</span> (!regionIsType &amp;&amp; !regionIsString &amp;&amp; !regionSelectorIsString) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"Region must be specified as a Region type, a selector string or an object with selector property"</span>);
+    }
+
+    <span class="hljs-keyword">var</span> selector, RegionType;
+   </div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>get the selector for the region</p></div></div><div class="code"><div class="wrapper">    
+    <span class="hljs-keyword">if</span> (regionIsString) {
+      selector = regionConfig;
+    } 
+
+    <span class="hljs-keyword">if</span> (regionConfig.selector) {
+      selector = regionConfig.selector;
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>get the type for the region</p></div></div><div class="code"><div class="wrapper">    
+    <span class="hljs-keyword">if</span> (regionIsType){
+      RegionType = regionConfig;
+    }
+
+    <span class="hljs-keyword">if</span> (!regionIsType &amp;&amp; regionTypeIsUndefined) {
+      RegionType = defaultRegionType;
+    }
+
+    <span class="hljs-keyword">if</span> (regionConfig.regionType) {
+      RegionType = regionConfig.regionType;
+    }
+    </div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>build the region instance</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> region = <span class="hljs-keyword">new</span> RegionType({
+      el: selector
+    });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>override the <code>getEl</code> function if we have a parentEl
+this must be overridden to ensure the selector is found
+on the first use of the region. if we try to assign the
+region&#39;s <code>el</code> to <code>parentEl.find(selector)</code> in the object
+literal to build the region, the element will not be
+guaranteed to be in the DOM already, and will cause problems</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (regionConfig.parentEl){
+
+      region.getEl = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(selector)</span> {</span>
+        <span class="hljs-keyword">var</span> parentEl = regionConfig.parentEl;
+        <span class="hljs-keyword">if</span> (_.isFunction(parentEl)){
+          parentEl = parentEl();
+        }
+        <span class="hljs-keyword">return</span> parentEl.find(selector);
+      };
+    }
+
+    <span class="hljs-keyword">return</span> region;
+  }
+
+});</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="region-instance-methods">Region Instance Methods</h2></div></div></div><div class="segment"><div class="code"><div class="wrapper">_.extend(Marionette.Region.prototype, Backbone.Events, {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Displays a backbone view instance inside of the region.
+Handles calling the <code>render</code> method for you. Reads content
+directly from the <code>el</code> attribute. Also calls an optional
+<code>onShow</code> and <code>close</code> method on your view, just after showing
+or just before closing the view, respectively.</p></div></div><div class="code"><div class="wrapper">  show: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(view)</span>{</span>
+
+    <span class="hljs-keyword">this</span>.ensureEl();
+
+    <span class="hljs-keyword">var</span> isViewClosed = view.isClosed || _.isUndefined(view.$el);
+
+    <span class="hljs-keyword">var</span> isDifferentView = view !== <span class="hljs-keyword">this</span>.currentView;
+
+    <span class="hljs-keyword">if</span> (isDifferentView) {
+      <span class="hljs-keyword">this</span>.close();
+    }
+
+    view.render();
+
+    <span class="hljs-keyword">if</span> (isDifferentView || isViewClosed) {
+      <span class="hljs-keyword">this</span>.open(view);
+    }
+    
+    <span class="hljs-keyword">this</span>.currentView = view;
+
+    Marionette.triggerMethod.call(<span class="hljs-keyword">this</span>, <span class="hljs-string">"show"</span>, view);
+    Marionette.triggerMethod.call(view, <span class="hljs-string">"show"</span>);
+  },
+
+  ensureEl: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.$el || <span class="hljs-keyword">this</span>.$el.length === <span class="hljs-number">0</span>){
+      <span class="hljs-keyword">this</span>.$el = <span class="hljs-keyword">this</span>.getEl(<span class="hljs-keyword">this</span>.el);
+    }
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Override this method to change how the region finds the
+DOM element that it manages. Return a jQuery selector object.</p></div></div><div class="code"><div class="wrapper">  getEl: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(selector)</span>{</span>
+    <span class="hljs-keyword">return</span> Marionette.$(selector);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Override this method to change how the new view is
+appended to the <code>$el</code> that the region is managing</p></div></div><div class="code"><div class="wrapper">  open: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(view)</span>{</span>
+    <span class="hljs-keyword">this</span>.$el.empty().append(view.el);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Close the current view, if there is one. If there is no
+current view, it does nothing and returns immediately.</p></div></div><div class="code"><div class="wrapper">  close: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">var</span> view = <span class="hljs-keyword">this</span>.currentView;
+    <span class="hljs-keyword">if</span> (!view || view.isClosed){ <span class="hljs-keyword">return</span>; }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>call &#39;close&#39; or &#39;remove&#39;, depending on which is found</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (view.close) { view.close(); }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (view.remove) { view.remove(); }
+
+    Marionette.triggerMethod.call(<span class="hljs-keyword">this</span>, <span class="hljs-string">"close"</span>);
+
+    <span class="hljs-keyword">delete</span> <span class="hljs-keyword">this</span>.currentView;
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Attach an existing view to the region. This 
+will not call <code>render</code> or <code>onShow</code> for the new view, 
+and will not replace the current HTML for the <code>el</code>
+of the region.</p></div></div><div class="code"><div class="wrapper">  attachView: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(view)</span>{</span>
+    <span class="hljs-keyword">this</span>.currentView = view;
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Reset the region by closing any existing view and
+clearing out the cached <code>$el</code>. The next time a view
+is shown via this region, the region will re-query the
+DOM for the region&#39;s <code>el</code>.</p></div></div><div class="code"><div class="wrapper">  reset: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">this</span>.close();
+    <span class="hljs-keyword">delete</span> <span class="hljs-keyword">this</span>.$el;
+  }
+});</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Copy the <code>extend</code> function used by Backbone&#39;s classes</p></div></div><div class="code"><div class="wrapper">Marionette.Region.extend = Marionette.extend;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="marionetteregionmanager">Marionette.RegionManager</h2>
+<p>Manage one or more related <code>Marionette.Region</code> objects.</p></div></div><div class="code"><div class="wrapper">Marionette.RegionManager = (<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(Marionette)</span>{</span>
+
+  <span class="hljs-keyword">var</span> RegionManager = Marionette.Controller.extend({
+    constructor: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(options)</span>{</span>
+      <span class="hljs-keyword">this</span>._regions = {};
+      Marionette.Controller.prototype.constructor.call(<span class="hljs-keyword">this</span>, options);
+    },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Add multiple regions using an object literal, where
+each key becomes the region name, and each value is
+the region definition.</p></div></div><div class="code"><div class="wrapper">    addRegions: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(regionDefinitions, defaults)</span>{</span>
+      <span class="hljs-keyword">var</span> regions = {};
+
+      _.each(regionDefinitions, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(definition, name)</span>{</span>
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> definition === <span class="hljs-string">"string"</span>){
+          definition = { selector: definition };
+        }
+
+        <span class="hljs-keyword">if</span> (definition.selector){
+          definition = _.defaults({}, definition, defaults);
+        }
+
+        <span class="hljs-keyword">var</span> region = <span class="hljs-keyword">this</span>.addRegion(name, definition);
+        regions[name] = region;
+      }, <span class="hljs-keyword">this</span>);
+
+      <span class="hljs-keyword">return</span> regions;
+    },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Add an individual region to the region manager,
+and return the region instance</p></div></div><div class="code"><div class="wrapper">    addRegion: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name, definition)</span>{</span>
+      <span class="hljs-keyword">var</span> region;
+
+      <span class="hljs-keyword">var</span> isObject = _.isObject(definition);
+      <span class="hljs-keyword">var</span> isString = _.isString(definition);
+      <span class="hljs-keyword">var</span> hasSelector = !!definition.selector;
+
+      <span class="hljs-keyword">if</span> (isString || (isObject &amp;&amp; hasSelector)){
+        region = Marionette.Region.buildRegion(definition, Marionette.Region);
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (_.isFunction(definition)){
+        region = Marionette.Region.buildRegion(definition, Marionette.Region);
+      } <span class="hljs-keyword">else</span> {
+        region = definition;
+      }
+
+      <span class="hljs-keyword">this</span>._store(name, region);
+      <span class="hljs-keyword">this</span>.triggerMethod(<span class="hljs-string">"region:add"</span>, name, region);
+      <span class="hljs-keyword">return</span> region;
+    },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get a region by name</p></div></div><div class="code"><div class="wrapper">    get: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name)</span>{</span>
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._regions[name];
+    },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Remove a region by name</p></div></div><div class="code"><div class="wrapper">    removeRegion: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name)</span>{</span>
+      <span class="hljs-keyword">var</span> region = <span class="hljs-keyword">this</span>._regions[name];
+      <span class="hljs-keyword">this</span>._remove(name, region);
+    },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Close all regions in the region manager, and
+remove them</p></div></div><div class="code"><div class="wrapper">    removeRegions: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+      _.each(<span class="hljs-keyword">this</span>._regions, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(region, name)</span>{</span>
+        <span class="hljs-keyword">this</span>._remove(name, region);
+      }, <span class="hljs-keyword">this</span>);
+    },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Close all regions in the region manager, but
+leave them attached</p></div></div><div class="code"><div class="wrapper">    closeRegions: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+      _.each(<span class="hljs-keyword">this</span>._regions, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(region, name)</span>{</span>
+        region.close();
+      }, <span class="hljs-keyword">this</span>);
+    },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Close all regions and shut down the region
+manager entirely</p></div></div><div class="code"><div class="wrapper">    close: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+      <span class="hljs-keyword">this</span>.removeRegions();
+      <span class="hljs-keyword">var</span> args = <span class="hljs-built_in">Array</span>.prototype.slice.call(<span class="hljs-built_in">arguments</span>);
+      Marionette.Controller.prototype.close.apply(<span class="hljs-keyword">this</span>, args);
+    },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>internal method to store regions</p></div></div><div class="code"><div class="wrapper">    _store: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name, region)</span>{</span>
+      <span class="hljs-keyword">this</span>._regions[name] = region;
+      <span class="hljs-keyword">this</span>._setLength();
+    },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>internal method to remove a region</p></div></div><div class="code"><div class="wrapper">    _remove: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name, region)</span>{</span>
+      region.close();
+      <span class="hljs-keyword">delete</span> <span class="hljs-keyword">this</span>._regions[name];
+      <span class="hljs-keyword">this</span>._setLength();
+      <span class="hljs-keyword">this</span>.triggerMethod(<span class="hljs-string">"region:remove"</span>, name, region);
+    },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>set the number of regions current held</p></div></div><div class="code"><div class="wrapper">    _setLength: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+      <span class="hljs-keyword">this</span>.length = _.size(<span class="hljs-keyword">this</span>._regions);
+    }
+
+  });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Borrowing this code from Backbone.Collection:
+<a href="http://backbonejs.org/docs/backbone.html#section-106">http://backbonejs.org/docs/backbone.html#section-106</a>
+Mix in methods from Underscore, for iteration, and other
+collection related features.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> methods = [<span class="hljs-string">'forEach'</span>, <span class="hljs-string">'each'</span>, <span class="hljs-string">'map'</span>, <span class="hljs-string">'find'</span>, <span class="hljs-string">'detect'</span>, <span class="hljs-string">'filter'</span>, 
+    <span class="hljs-string">'select'</span>, <span class="hljs-string">'reject'</span>, <span class="hljs-string">'every'</span>, <span class="hljs-string">'all'</span>, <span class="hljs-string">'some'</span>, <span class="hljs-string">'any'</span>, <span class="hljs-string">'include'</span>, 
+    <span class="hljs-string">'contains'</span>, <span class="hljs-string">'invoke'</span>, <span class="hljs-string">'toArray'</span>, <span class="hljs-string">'first'</span>, <span class="hljs-string">'initial'</span>, <span class="hljs-string">'rest'</span>, 
+    <span class="hljs-string">'last'</span>, <span class="hljs-string">'without'</span>, <span class="hljs-string">'isEmpty'</span>, <span class="hljs-string">'pluck'</span>];
+
+  _.each(methods, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(method)</span> {</span>
+    RegionManager.prototype[method] = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+      <span class="hljs-keyword">var</span> regions = _.values(<span class="hljs-keyword">this</span>._regions);
+      <span class="hljs-keyword">var</span> args = [regions].concat(_.toArray(<span class="hljs-built_in">arguments</span>));
+      <span class="hljs-keyword">return</span> _[method].apply(_, args);
+    };
+  });
+
+  <span class="hljs-keyword">return</span> RegionManager;
+})(Marionette);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="template-cache">Template Cache</h2></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Manage templates stored in <code>&lt;script&gt;</code> blocks,
+caching them for faster access.</p></div></div><div class="code"><div class="wrapper">Marionette.TemplateCache = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(templateId)</span>{</span>
+  <span class="hljs-keyword">this</span>.templateId = templateId;
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>TemplateCache object-level methods. Manage the template
+caches from these method calls instead of creating 
+your own TemplateCache instances</p></div></div><div class="code"><div class="wrapper">_.extend(Marionette.TemplateCache, {
+  templateCaches: {},</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get the specified template by id. Either
+retrieves the cached version, or loads it
+from the DOM.</p></div></div><div class="code"><div class="wrapper">  get: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(templateId)</span>{</span>
+    <span class="hljs-keyword">var</span> cachedTemplate = <span class="hljs-keyword">this</span>.templateCaches[templateId];
+
+    <span class="hljs-keyword">if</span> (!cachedTemplate){
+      cachedTemplate = <span class="hljs-keyword">new</span> Marionette.TemplateCache(templateId);
+      <span class="hljs-keyword">this</span>.templateCaches[templateId] = cachedTemplate;
+    }
+
+    <span class="hljs-keyword">return</span> cachedTemplate.load();
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Clear templates from the cache. If no arguments
+are specified, clears all templates:
+<code>clear()</code>
+If arguments are specified, clears each of the 
+specified templates from the cache:
+<code>clear(&quot;#t1&quot;, &quot;#t2&quot;, &quot;...&quot;)</code></p></div></div><div class="code"><div class="wrapper">  clear: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">var</span> i;
+    <span class="hljs-keyword">var</span> args = slice(<span class="hljs-built_in">arguments</span>);
+    <span class="hljs-keyword">var</span> length = args.length;
+
+    <span class="hljs-keyword">if</span> (length &gt; <span class="hljs-number">0</span>){
+      <span class="hljs-keyword">for</span>(i=<span class="hljs-number">0</span>; i&lt;length; i++){
+        <span class="hljs-keyword">delete</span> <span class="hljs-keyword">this</span>.templateCaches[args[i]];
+      }
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">this</span>.templateCaches = {};
+    }
+  }
+});</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>TemplateCache instance methods, allowing each
+template cache object to manage its own state
+and know whether or not it has been loaded</p></div></div><div class="code"><div class="wrapper">_.extend(Marionette.TemplateCache.prototype, {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Internal method to load the template</p></div></div><div class="code"><div class="wrapper">  load: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Guard clause to prevent loading this template more than once</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.compiledTemplate){
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.compiledTemplate;
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Load the template and compile it</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> template = <span class="hljs-keyword">this</span>.loadTemplate(<span class="hljs-keyword">this</span>.templateId);
+    <span class="hljs-keyword">this</span>.compiledTemplate = <span class="hljs-keyword">this</span>.compileTemplate(template);
+
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.compiledTemplate;
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Load a template from the DOM, by default. Override
+this method to provide your own template retrieval
+For asynchronous loading with AMD/RequireJS, consider
+using a template-loader plugin as described here: 
+<a href="https://github.com/marionettejs/backbone.marionette/wiki/Using-marionette-with-requirejs">https://github.com/marionettejs/backbone.marionette/wiki/Using-marionette-with-requirejs</a></p></div></div><div class="code"><div class="wrapper">  loadTemplate: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(templateId)</span>{</span>
+    <span class="hljs-keyword">var</span> template = Marionette.$(templateId).html();
+
+    <span class="hljs-keyword">if</span> (!template || template.length === <span class="hljs-number">0</span>){
+      throwError(<span class="hljs-string">"Could not find template: '"</span> + templateId + <span class="hljs-string">"'"</span>, <span class="hljs-string">"NoTemplateError"</span>);
+    }
+
+    <span class="hljs-keyword">return</span> template;
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Pre-compile the template before caching it. Override
+this method if you do not need to pre-compile a template
+(JST / RequireJS for example) or if you want to change
+the template engine used (Handebars, etc).</p></div></div><div class="code"><div class="wrapper">  compileTemplate: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(rawTemplate)</span>{</span>
+    <span class="hljs-keyword">return</span> _.template(rawTemplate);
+  }
+});</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="renderer">Renderer</h2></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Render a template with data by passing in the template
+selector and the data to render.</p></div></div><div class="code"><div class="wrapper">Marionette.Renderer = {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Render a template with data. The <code>template</code> parameter is
+passed to the <code>TemplateCache</code> object to retrieve the
+template function. Override this method to provide your own
+custom rendering and template handling for all of Marionette.</p></div></div><div class="code"><div class="wrapper">  render: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(template, data)</span>{</span>
+
+    <span class="hljs-keyword">if</span> (!template) {
+      <span class="hljs-keyword">var</span> error = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"Cannot render the template since it's false, null or undefined."</span>);
+      error.name = <span class="hljs-string">"TemplateNotFoundError"</span>;
+      <span class="hljs-keyword">throw</span> error;
+    }
+
+    <span class="hljs-keyword">var</span> templateFunc;
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> template === <span class="hljs-string">"function"</span>){
+      templateFunc = template;
+    } <span class="hljs-keyword">else</span> {
+      templateFunc = Marionette.TemplateCache.get(template);
+    }
+
+    <span class="hljs-keyword">return</span> templateFunc(data);
+  }
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="marionetteview">Marionette.View</h2></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>The core view type that other Marionette views extend from.</p></div></div><div class="code"><div class="wrapper">Marionette.View = Backbone.View.extend({
+
+  constructor: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(options)</span>{</span>
+    _.bindAll(<span class="hljs-keyword">this</span>, <span class="hljs-string">"render"</span>);
+
+    <span class="hljs-keyword">var</span> args = <span class="hljs-built_in">Array</span>.prototype.slice.apply(<span class="hljs-built_in">arguments</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>this exposes view options to the view initializer
+this is a backfill since backbone removed the assignment
+of this.options
+at some point however this may be removed</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">this</span>.options = options || {};
+    Backbone.View.prototype.constructor.apply(<span class="hljs-keyword">this</span>, args);
+
+    Marionette.MonitorDOMRefresh(<span class="hljs-keyword">this</span>);
+    <span class="hljs-keyword">this</span>.listenTo(<span class="hljs-keyword">this</span>, <span class="hljs-string">"show"</span>, <span class="hljs-keyword">this</span>.onShowCalled, <span class="hljs-keyword">this</span>);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>import the &quot;triggerMethod&quot; to trigger events with corresponding
+methods if the method exists</p></div></div><div class="code"><div class="wrapper">  triggerMethod: Marionette.triggerMethod,</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get the template for this view
+instance. You can set a <code>template</code> attribute in the view
+definition or pass a <code>template: &quot;whatever&quot;</code> parameter in
+to the constructor options.</p></div></div><div class="code"><div class="wrapper">  getTemplate: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">return</span> Marionette.getOption(<span class="hljs-keyword">this</span>, <span class="hljs-string">"template"</span>);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Mix in template helper methods. Looks for a
+<code>templateHelpers</code> attribute, which can either be an
+object literal, or a function that returns an object
+literal. All methods and attributes from this object
+are copies to the object passed in.</p></div></div><div class="code"><div class="wrapper">  mixinTemplateHelpers: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(target)</span>{</span>
+    target = target || {};
+    <span class="hljs-keyword">var</span> templateHelpers = Marionette.getOption(<span class="hljs-keyword">this</span>, <span class="hljs-string">"templateHelpers"</span>);
+    <span class="hljs-keyword">if</span> (_.isFunction(templateHelpers)){
+      templateHelpers = templateHelpers.call(<span class="hljs-keyword">this</span>);
+    }
+    <span class="hljs-keyword">return</span> _.extend(target, templateHelpers);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Configure <code>triggers</code> to forward DOM events to view
+events. <code>triggers: {&quot;click .foo&quot;: &quot;do:foo&quot;}</code></p></div></div><div class="code"><div class="wrapper">  configureTriggers: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.triggers) { <span class="hljs-keyword">return</span>; }
+
+    <span class="hljs-keyword">var</span> triggerEvents = {};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Allow <code>triggers</code> to be configured as a function</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> triggers = _.result(<span class="hljs-keyword">this</span>, <span class="hljs-string">"triggers"</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Configure the triggers, prevent default
+action and stop propagation of DOM events</p></div></div><div class="code"><div class="wrapper">    _.each(triggers, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value, key)</span>{</span>
+
+      <span class="hljs-keyword">var</span> hasOptions = _.isObject(value);
+      <span class="hljs-keyword">var</span> eventName = hasOptions ? value.event : value;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>build the event handler function for the DOM event</p></div></div><div class="code"><div class="wrapper">      triggerEvents[key] = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>stop the event in its tracks</p></div></div><div class="code"><div class="wrapper">        <span class="hljs-keyword">if</span> (e) {
+          <span class="hljs-keyword">var</span> prevent = e.preventDefault;
+          <span class="hljs-keyword">var</span> stop = e.stopPropagation;
+
+          <span class="hljs-keyword">var</span> shouldPrevent = hasOptions ? value.preventDefault : prevent;
+          <span class="hljs-keyword">var</span> shouldStop = hasOptions ? value.stopPropagation : stop;
+
+          <span class="hljs-keyword">if</span> (shouldPrevent &amp;&amp; prevent) { prevent.apply(e); }
+          <span class="hljs-keyword">if</span> (shouldStop &amp;&amp; stop) { stop.apply(e); }
+        }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>build the args for the event</p></div></div><div class="code"><div class="wrapper">        <span class="hljs-keyword">var</span> args = {
+          view: <span class="hljs-keyword">this</span>,
+          model: <span class="hljs-keyword">this</span>.model,
+          collection: <span class="hljs-keyword">this</span>.collection
+        };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>trigger the event</p></div></div><div class="code"><div class="wrapper">        <span class="hljs-keyword">this</span>.triggerMethod(eventName, args);
+      };
+
+    }, <span class="hljs-keyword">this</span>);
+
+    <span class="hljs-keyword">return</span> triggerEvents;
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Overriding Backbone.View&#39;s delegateEvents to handle
+the <code>triggers</code>, <code>modelEvents</code>, and <code>collectionEvents</code> configuration</p></div></div><div class="code"><div class="wrapper">  delegateEvents: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(events)</span>{</span>
+    <span class="hljs-keyword">this</span>._delegateDOMEvents(events);
+    Marionette.bindEntityEvents(<span class="hljs-keyword">this</span>, <span class="hljs-keyword">this</span>.model, Marionette.getOption(<span class="hljs-keyword">this</span>, <span class="hljs-string">"modelEvents"</span>));
+    Marionette.bindEntityEvents(<span class="hljs-keyword">this</span>, <span class="hljs-keyword">this</span>.collection, Marionette.getOption(<span class="hljs-keyword">this</span>, <span class="hljs-string">"collectionEvents"</span>));
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>internal method to delegate DOM events and triggers</p></div></div><div class="code"><div class="wrapper">  _delegateDOMEvents: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(events)</span>{</span>
+    events = events || <span class="hljs-keyword">this</span>.events;
+    <span class="hljs-keyword">if</span> (_.isFunction(events)){ events = events.call(<span class="hljs-keyword">this</span>); }
+
+    <span class="hljs-keyword">var</span> combinedEvents = {};
+    <span class="hljs-keyword">var</span> triggers = <span class="hljs-keyword">this</span>.configureTriggers();
+    _.extend(combinedEvents, events, triggers);
+
+    Backbone.View.prototype.delegateEvents.call(<span class="hljs-keyword">this</span>, combinedEvents);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Overriding Backbone.View&#39;s undelegateEvents to handle unbinding
+the <code>triggers</code>, <code>modelEvents</code>, and <code>collectionEvents</code> config</p></div></div><div class="code"><div class="wrapper">  undelegateEvents: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">var</span> args = <span class="hljs-built_in">Array</span>.prototype.slice.call(<span class="hljs-built_in">arguments</span>);
+    Backbone.View.prototype.undelegateEvents.apply(<span class="hljs-keyword">this</span>, args);
+
+    Marionette.unbindEntityEvents(<span class="hljs-keyword">this</span>, <span class="hljs-keyword">this</span>.model, Marionette.getOption(<span class="hljs-keyword">this</span>, <span class="hljs-string">"modelEvents"</span>));
+    Marionette.unbindEntityEvents(<span class="hljs-keyword">this</span>, <span class="hljs-keyword">this</span>.collection, Marionette.getOption(<span class="hljs-keyword">this</span>, <span class="hljs-string">"collectionEvents"</span>));
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Internal method, handles the <code>show</code> event.</p></div></div><div class="code"><div class="wrapper">  onShowCalled: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>},</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Default <code>close</code> implementation, for removing a view from the
+DOM and unbinding it. Regions will call this method
+for you. You can specify an <code>onClose</code> method in your view to
+add custom code that is called after the view is closed.</p></div></div><div class="code"><div class="wrapper">  close: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.isClosed) { <span class="hljs-keyword">return</span>; }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>allow the close to be stopped by returning <code>false</code>
+from the <code>onBeforeClose</code> method</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> shouldClose = <span class="hljs-keyword">this</span>.triggerMethod(<span class="hljs-string">"before:close"</span>);
+    <span class="hljs-keyword">if</span> (shouldClose === <span class="hljs-literal">false</span>){
+      <span class="hljs-keyword">return</span>;
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>mark as closed before doing the actual close, to
+prevent infinite loops within &quot;close&quot; event handlers
+that are trying to close other views</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">this</span>.isClosed = <span class="hljs-literal">true</span>;
+    <span class="hljs-keyword">this</span>.triggerMethod(<span class="hljs-string">"close"</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>unbind UI elements</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">this</span>.unbindUIElements();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>remove the view from the DOM</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">this</span>.remove();
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>This method binds the elements specified in the &quot;ui&quot; hash inside the view&#39;s code with
+the associated jQuery selectors.</p></div></div><div class="code"><div class="wrapper">  bindUIElements: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.ui) { <span class="hljs-keyword">return</span>; }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>store the ui hash in _uiBindings so they can be reset later
+and so re-rendering the view will be able to find the bindings</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>._uiBindings){
+      <span class="hljs-keyword">this</span>._uiBindings = <span class="hljs-keyword">this</span>.ui;
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>get the bindings result, as a function or otherwise</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> bindings = _.result(<span class="hljs-keyword">this</span>, <span class="hljs-string">"_uiBindings"</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>empty the ui so we don&#39;t have anything to start with</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">this</span>.ui = {};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>bind each of the selectors</p></div></div><div class="code"><div class="wrapper">    _.each(_.keys(bindings), <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(key)</span> {</span>
+      <span class="hljs-keyword">var</span> selector = bindings[key];
+      <span class="hljs-keyword">this</span>.ui[key] = <span class="hljs-keyword">this</span>.$(selector);
+    }, <span class="hljs-keyword">this</span>);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>This method unbinds the elements specified in the &quot;ui&quot; hash</p></div></div><div class="code"><div class="wrapper">  unbindUIElements: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.ui || !<span class="hljs-keyword">this</span>._uiBindings){ <span class="hljs-keyword">return</span>; }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>delete all of the existing ui bindings</p></div></div><div class="code"><div class="wrapper">    _.each(<span class="hljs-keyword">this</span>.ui, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">($el, name)</span>{</span>
+      <span class="hljs-keyword">delete</span> <span class="hljs-keyword">this</span>.ui[name];
+    }, <span class="hljs-keyword">this</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>reset the ui element to the original bindings configuration</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">this</span>.ui = <span class="hljs-keyword">this</span>._uiBindings;
+    <span class="hljs-keyword">delete</span> <span class="hljs-keyword">this</span>._uiBindings;
+  }
+});</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="item-view">Item View</h2></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>A single item view implementation that contains code for rendering
+with underscore.js templates, serializing the view&#39;s model or collection,
+and calling several methods on extended views, such as <code>onRender</code>.</p></div></div><div class="code"><div class="wrapper">Marionette.ItemView = Marionette.View.extend({
+  </div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Setting up the inheritance chain which allows changes to 
+Marionette.View.prototype.constructor which allows overriding</p></div></div><div class="code"><div class="wrapper">  constructor: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    Marionette.View.prototype.constructor.apply(<span class="hljs-keyword">this</span>, slice(<span class="hljs-built_in">arguments</span>));
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Serialize the model or collection for the view. If a model is
+found, <code>.toJSON()</code> is called. If a collection is found, <code>.toJSON()</code>
+is also called, but is used to populate an <code>items</code> array in the
+resulting data. If both are found, defaults to the model.
+You can override the <code>serializeData</code> method in your own view
+definition, to provide custom serialization for your view&#39;s data.</p></div></div><div class="code"><div class="wrapper">  serializeData: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">var</span> data = {};
+
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.model) {
+      data = <span class="hljs-keyword">this</span>.model.toJSON();
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.collection) {
+      data = { items: <span class="hljs-keyword">this</span>.collection.toJSON() };
+    }
+
+    <span class="hljs-keyword">return</span> data;
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Render the view, defaulting to underscore.js templates.
+You can override this in your view definition to provide
+a very specific rendering for your view. In general, though,
+you should override the <code>Marionette.Renderer</code> object to
+change how Marionette renders views.</p></div></div><div class="code"><div class="wrapper">  render: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">this</span>.isClosed = <span class="hljs-literal">false</span>;
+
+    <span class="hljs-keyword">this</span>.triggerMethod(<span class="hljs-string">"before:render"</span>, <span class="hljs-keyword">this</span>);
+    <span class="hljs-keyword">this</span>.triggerMethod(<span class="hljs-string">"item:before:render"</span>, <span class="hljs-keyword">this</span>);
+
+    <span class="hljs-keyword">var</span> data = <span class="hljs-keyword">this</span>.serializeData();
+    data = <span class="hljs-keyword">this</span>.mixinTemplateHelpers(data);
+
+    <span class="hljs-keyword">var</span> template = <span class="hljs-keyword">this</span>.getTemplate();
+    <span class="hljs-keyword">var</span> html = Marionette.Renderer.render(template, data);
+
+    <span class="hljs-keyword">this</span>.$el.html(html);
+    <span class="hljs-keyword">this</span>.bindUIElements();
+
+    <span class="hljs-keyword">this</span>.triggerMethod(<span class="hljs-string">"render"</span>, <span class="hljs-keyword">this</span>);
+    <span class="hljs-keyword">this</span>.triggerMethod(<span class="hljs-string">"item:rendered"</span>, <span class="hljs-keyword">this</span>);
+
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Override the default close event to add a few
+more events that are triggered.</p></div></div><div class="code"><div class="wrapper">  close: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.isClosed){ <span class="hljs-keyword">return</span>; }
+
+    <span class="hljs-keyword">this</span>.triggerMethod(<span class="hljs-string">'item:before:close'</span>);
+
+    Marionette.View.prototype.close.apply(<span class="hljs-keyword">this</span>, slice(<span class="hljs-built_in">arguments</span>));
+
+    <span class="hljs-keyword">this</span>.triggerMethod(<span class="hljs-string">'item:closed'</span>);
+  }
+});</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="collection-view">Collection View</h2></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>A view that iterates over a Backbone.Collection
+and renders an individual ItemView for each model.</p></div></div><div class="code"><div class="wrapper">Marionette.CollectionView = Marionette.View.extend({</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>used as the prefix for item view events
+that are forwarded through the collectionview</p></div></div><div class="code"><div class="wrapper">  itemViewEventPrefix: <span class="hljs-string">"itemview"</span>,</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>constructor</p></div></div><div class="code"><div class="wrapper">  constructor: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(options)</span>{</span>
+    <span class="hljs-keyword">this</span>._initChildViewStorage();
+
+    Marionette.View.prototype.constructor.apply(<span class="hljs-keyword">this</span>, slice(<span class="hljs-built_in">arguments</span>));
+
+    <span class="hljs-keyword">this</span>._initialEvents();
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Configured the initial events that the collection view
+binds to. Override this method to prevent the initial
+events, or to add your own initial events.</p></div></div><div class="code"><div class="wrapper">  _initialEvents: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.collection){
+      <span class="hljs-keyword">this</span>.listenTo(<span class="hljs-keyword">this</span>.collection, <span class="hljs-string">"add"</span>, <span class="hljs-keyword">this</span>.addChildView, <span class="hljs-keyword">this</span>);
+      <span class="hljs-keyword">this</span>.listenTo(<span class="hljs-keyword">this</span>.collection, <span class="hljs-string">"remove"</span>, <span class="hljs-keyword">this</span>.removeItemView, <span class="hljs-keyword">this</span>);
+      <span class="hljs-keyword">this</span>.listenTo(<span class="hljs-keyword">this</span>.collection, <span class="hljs-string">"reset"</span>, <span class="hljs-keyword">this</span>.render, <span class="hljs-keyword">this</span>);
+    }
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Handle a child item added to the collection</p></div></div><div class="code"><div class="wrapper">  addChildView: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(item, collection, options)</span>{</span>
+    <span class="hljs-keyword">this</span>.closeEmptyView();
+    <span class="hljs-keyword">var</span> ItemView = <span class="hljs-keyword">this</span>.getItemView(item);
+    <span class="hljs-keyword">var</span> index = <span class="hljs-keyword">this</span>.collection.indexOf(item);
+    <span class="hljs-keyword">this</span>.addItemView(item, ItemView, index);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Override from <code>Marionette.View</code> to guarantee the <code>onShow</code> method
+of child views is called.</p></div></div><div class="code"><div class="wrapper">  onShowCalled: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">this</span>.children.each(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(child)</span>{</span>
+      Marionette.triggerMethod.call(child, <span class="hljs-string">"show"</span>);
+    });
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Internal method to trigger the before render callbacks
+and events</p></div></div><div class="code"><div class="wrapper">  triggerBeforeRender: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">this</span>.triggerMethod(<span class="hljs-string">"before:render"</span>, <span class="hljs-keyword">this</span>);
+    <span class="hljs-keyword">this</span>.triggerMethod(<span class="hljs-string">"collection:before:render"</span>, <span class="hljs-keyword">this</span>);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Internal method to trigger the rendered callbacks and
+events</p></div></div><div class="code"><div class="wrapper">  triggerRendered: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">this</span>.triggerMethod(<span class="hljs-string">"render"</span>, <span class="hljs-keyword">this</span>);
+    <span class="hljs-keyword">this</span>.triggerMethod(<span class="hljs-string">"collection:rendered"</span>, <span class="hljs-keyword">this</span>);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Render the collection of items. Override this method to
+provide your own implementation of a render function for
+the collection view.</p></div></div><div class="code"><div class="wrapper">  render: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">this</span>.isClosed = <span class="hljs-literal">false</span>;
+    <span class="hljs-keyword">this</span>.triggerBeforeRender();
+    <span class="hljs-keyword">this</span>._renderChildren();
+    <span class="hljs-keyword">this</span>.triggerRendered();
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Internal method. Separated so that CompositeView can have
+more control over events being triggered, around the rendering
+process</p></div></div><div class="code"><div class="wrapper">  _renderChildren: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">this</span>.closeEmptyView();
+    <span class="hljs-keyword">this</span>.closeChildren();
+
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.collection &amp;&amp; <span class="hljs-keyword">this</span>.collection.length &gt; <span class="hljs-number">0</span>) {
+      <span class="hljs-keyword">this</span>.showCollection();
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">this</span>.showEmptyView();
+    }
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Internal method to loop through each item in the
+collection view and show it</p></div></div><div class="code"><div class="wrapper">  showCollection: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">var</span> ItemView;
+    <span class="hljs-keyword">this</span>.collection.each(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(item, index)</span>{</span>
+      ItemView = <span class="hljs-keyword">this</span>.getItemView(item);
+      <span class="hljs-keyword">this</span>.addItemView(item, ItemView, index);
+    }, <span class="hljs-keyword">this</span>);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Internal method to show an empty view in place of
+a collection of item views, when the collection is
+empty</p></div></div><div class="code"><div class="wrapper">  showEmptyView: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">var</span> EmptyView = <span class="hljs-keyword">this</span>.getEmptyView();
+
+    <span class="hljs-keyword">if</span> (EmptyView &amp;&amp; !<span class="hljs-keyword">this</span>._showingEmptyView){
+      <span class="hljs-keyword">this</span>._showingEmptyView = <span class="hljs-literal">true</span>;
+      <span class="hljs-keyword">var</span> model = <span class="hljs-keyword">new</span> Backbone.Model();
+      <span class="hljs-keyword">this</span>.addItemView(model, EmptyView, <span class="hljs-number">0</span>);
+    }
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Internal method to close an existing emptyView instance
+if one exists. Called when a collection view has been
+rendered empty, and then an item is added to the collection.</p></div></div><div class="code"><div class="wrapper">  closeEmptyView: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._showingEmptyView){
+      <span class="hljs-keyword">this</span>.closeChildren();
+      <span class="hljs-keyword">delete</span> <span class="hljs-keyword">this</span>._showingEmptyView;
+    }
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Retrieve the empty view type</p></div></div><div class="code"><div class="wrapper">  getEmptyView: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">return</span> Marionette.getOption(<span class="hljs-keyword">this</span>, <span class="hljs-string">"emptyView"</span>);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Retrieve the itemView type, either from <code>this.options.itemView</code>
+or from the <code>itemView</code> in the object definition. The &quot;options&quot;
+takes precedence.</p></div></div><div class="code"><div class="wrapper">  getItemView: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(item)</span>{</span>
+    <span class="hljs-keyword">var</span> itemView = Marionette.getOption(<span class="hljs-keyword">this</span>, <span class="hljs-string">"itemView"</span>);
+
+    <span class="hljs-keyword">if</span> (!itemView){
+      throwError(<span class="hljs-string">"An `itemView` must be specified"</span>, <span class="hljs-string">"NoItemViewError"</span>);
+    }
+
+    <span class="hljs-keyword">return</span> itemView;
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Render the child item&#39;s view and add it to the
+HTML for the collection view.</p></div></div><div class="code"><div class="wrapper">  addItemView: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(item, ItemView, index)</span>{</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>get the itemViewOptions if any were specified</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> itemViewOptions = Marionette.getOption(<span class="hljs-keyword">this</span>, <span class="hljs-string">"itemViewOptions"</span>);
+    <span class="hljs-keyword">if</span> (_.isFunction(itemViewOptions)){
+      itemViewOptions = itemViewOptions.call(<span class="hljs-keyword">this</span>, item, index);
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>build the view </p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> view = <span class="hljs-keyword">this</span>.buildItemView(item, ItemView, itemViewOptions);
+    </div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>set up the child view event forwarding</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">this</span>.addChildViewEventForwarding(view);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>this view is about to be added</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">this</span>.triggerMethod(<span class="hljs-string">"before:item:added"</span>, view);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Store the child view itself so we can properly
+remove and/or close it later</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">this</span>.children.add(view);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Render it and show it</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">this</span>.renderItemView(view, index);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>call the &quot;show&quot; method if the collection view
+has already been shown</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._isShown){
+      Marionette.triggerMethod.call(view, <span class="hljs-string">"show"</span>);
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>this view was added</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">this</span>.triggerMethod(<span class="hljs-string">"after:item:added"</span>, view);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Set up the child view event forwarding. Uses an &quot;itemview:&quot;
+prefix in front of all forwarded events.</p></div></div><div class="code"><div class="wrapper">  addChildViewEventForwarding: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(view)</span>{</span>
+    <span class="hljs-keyword">var</span> prefix = Marionette.getOption(<span class="hljs-keyword">this</span>, <span class="hljs-string">"itemViewEventPrefix"</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Forward all child item view events through the parent,
+prepending &quot;itemview:&quot; to the event name</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">this</span>.listenTo(view, <span class="hljs-string">"all"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+      <span class="hljs-keyword">var</span> args = slice(<span class="hljs-built_in">arguments</span>);
+      args[<span class="hljs-number">0</span>] = prefix + <span class="hljs-string">":"</span> + args[<span class="hljs-number">0</span>];
+      args.splice(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>, view);
+
+      Marionette.triggerMethod.apply(<span class="hljs-keyword">this</span>, args);
+    }, <span class="hljs-keyword">this</span>);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>render the item view</p></div></div><div class="code"><div class="wrapper">  renderItemView: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(view, index)</span> {</span>
+    view.render();
+    <span class="hljs-keyword">this</span>.appendHtml(<span class="hljs-keyword">this</span>, view, index);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Build an <code>itemView</code> for every model in the collection.</p></div></div><div class="code"><div class="wrapper">  buildItemView: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(item, ItemViewType, itemViewOptions)</span>{</span>
+    <span class="hljs-keyword">var</span> options = _.extend({model: item}, itemViewOptions);
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> ItemViewType(options);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>get the child view by item it holds, and remove it</p></div></div><div class="code"><div class="wrapper">  removeItemView: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(item)</span>{</span>
+    <span class="hljs-keyword">var</span> view = <span class="hljs-keyword">this</span>.children.findByModel(item);
+    <span class="hljs-keyword">this</span>.removeChildView(view);
+    <span class="hljs-keyword">this</span>.checkEmpty();
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Remove the child view and close it</p></div></div><div class="code"><div class="wrapper">  removeChildView: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(view)</span>{</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>shut down the child view properly,
+including events that the collection has from it</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (view){
+      <span class="hljs-keyword">this</span>.stopListening(view);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>call &#39;close&#39; or &#39;remove&#39;, depending on which is found</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">if</span> (view.close) { view.close(); }
+      <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (view.remove) { view.remove(); }
+
+      <span class="hljs-keyword">this</span>.children.remove(view);
+    }
+
+    <span class="hljs-keyword">this</span>.triggerMethod(<span class="hljs-string">"item:removed"</span>, view);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>helper to show the empty view if the collection is empty</p></div></div><div class="code"><div class="wrapper">  checkEmpty: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>check if we&#39;re empty now, and if we are, show the
+empty view</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.collection || <span class="hljs-keyword">this</span>.collection.length === <span class="hljs-number">0</span>){
+      <span class="hljs-keyword">this</span>.showEmptyView();
+    }
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Append the HTML to the collection&#39;s <code>el</code>.
+Override this method to do something other
+then <code>.append</code>.</p></div></div><div class="code"><div class="wrapper">  appendHtml: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(collectionView, itemView, index)</span>{</span>
+    collectionView.$el.append(itemView.el);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Internal method to set up the <code>children</code> object for
+storing all of the child views</p></div></div><div class="code"><div class="wrapper">  _initChildViewStorage: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">this</span>.children = <span class="hljs-keyword">new</span> Backbone.ChildViewContainer();
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Handle cleanup and other closing needs for
+the collection of views.</p></div></div><div class="code"><div class="wrapper">  close: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.isClosed){ <span class="hljs-keyword">return</span>; }
+
+    <span class="hljs-keyword">this</span>.triggerMethod(<span class="hljs-string">"collection:before:close"</span>);
+    <span class="hljs-keyword">this</span>.closeChildren();
+    <span class="hljs-keyword">this</span>.triggerMethod(<span class="hljs-string">"collection:closed"</span>);
+
+    Marionette.View.prototype.close.apply(<span class="hljs-keyword">this</span>, slice(<span class="hljs-built_in">arguments</span>));
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Close the child views that this collection view
+is holding on to, if any</p></div></div><div class="code"><div class="wrapper">  closeChildren: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">this</span>.children.each(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(child)</span>{</span>
+      <span class="hljs-keyword">this</span>.removeChildView(child);
+    }, <span class="hljs-keyword">this</span>);
+    <span class="hljs-keyword">this</span>.checkEmpty();
+  }
+});</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="composite-view">Composite View</h2></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Used for rendering a branch-leaf, hierarchical structure.
+Extends directly from CollectionView and also renders an
+an item view as <code>modelView</code>, for the top leaf</p></div></div><div class="code"><div class="wrapper">Marionette.CompositeView = Marionette.CollectionView.extend({</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Setting up the inheritance chain which allows changes to
+Marionette.CollectionView.prototype.constructor which allows overriding</p></div></div><div class="code"><div class="wrapper">  constructor: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    Marionette.CollectionView.prototype.constructor.apply(<span class="hljs-keyword">this</span>, slice(<span class="hljs-built_in">arguments</span>));
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Configured the initial events that the composite view
+binds to. Override this method to prevent the initial
+events, or to add your own initial events.</p></div></div><div class="code"><div class="wrapper">  _initialEvents: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.collection){
+      <span class="hljs-keyword">this</span>.listenTo(<span class="hljs-keyword">this</span>.collection, <span class="hljs-string">"add"</span>, <span class="hljs-keyword">this</span>.addChildView, <span class="hljs-keyword">this</span>);
+      <span class="hljs-keyword">this</span>.listenTo(<span class="hljs-keyword">this</span>.collection, <span class="hljs-string">"remove"</span>, <span class="hljs-keyword">this</span>.removeItemView, <span class="hljs-keyword">this</span>);
+      <span class="hljs-keyword">this</span>.listenTo(<span class="hljs-keyword">this</span>.collection, <span class="hljs-string">"reset"</span>, <span class="hljs-keyword">this</span>._renderChildren, <span class="hljs-keyword">this</span>);
+    }
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Retrieve the <code>itemView</code> to be used when rendering each of
+the items in the collection. The default is to return
+<code>this.itemView</code> or Marionette.CompositeView if no <code>itemView</code>
+has been defined</p></div></div><div class="code"><div class="wrapper">  getItemView: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(item)</span>{</span>
+    <span class="hljs-keyword">var</span> itemView = Marionette.getOption(<span class="hljs-keyword">this</span>, <span class="hljs-string">"itemView"</span>) || <span class="hljs-keyword">this</span>.constructor;
+
+    <span class="hljs-keyword">if</span> (!itemView){
+      throwError(<span class="hljs-string">"An `itemView` must be specified"</span>, <span class="hljs-string">"NoItemViewError"</span>);
+    }
+
+    <span class="hljs-keyword">return</span> itemView;
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Serialize the collection for the view.
+You can override the <code>serializeData</code> method in your own view
+definition, to provide custom serialization for your view&#39;s data.</p></div></div><div class="code"><div class="wrapper">  serializeData: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">var</span> data = {};
+
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.model){
+      data = <span class="hljs-keyword">this</span>.model.toJSON();
+    }
+
+    <span class="hljs-keyword">return</span> data;
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Renders the model once, and the collection once. Calling
+this again will tell the model&#39;s view to re-render itself
+but the collection will not re-render.</p></div></div><div class="code"><div class="wrapper">  render: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">this</span>.isRendered = <span class="hljs-literal">true</span>;
+    <span class="hljs-keyword">this</span>.isClosed = <span class="hljs-literal">false</span>;
+    <span class="hljs-keyword">this</span>.resetItemViewContainer();
+
+    <span class="hljs-keyword">this</span>.triggerBeforeRender();
+    <span class="hljs-keyword">var</span> html = <span class="hljs-keyword">this</span>.renderModel();
+    <span class="hljs-keyword">this</span>.$el.html(html);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>the ui bindings is done here and not at the end of render since they
+will not be available until after the model is rendered, but should be
+available before the collection is rendered.</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">this</span>.bindUIElements();
+    <span class="hljs-keyword">this</span>.triggerMethod(<span class="hljs-string">"composite:model:rendered"</span>);
+
+    <span class="hljs-keyword">this</span>._renderChildren();
+
+    <span class="hljs-keyword">this</span>.triggerMethod(<span class="hljs-string">"composite:rendered"</span>);
+    <span class="hljs-keyword">this</span>.triggerRendered();
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+  },
+
+  _renderChildren: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.isRendered){
+      Marionette.CollectionView.prototype._renderChildren.call(<span class="hljs-keyword">this</span>);
+      <span class="hljs-keyword">this</span>.triggerMethod(<span class="hljs-string">"composite:collection:rendered"</span>);
+    }
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Render an individual model, if we have one, as
+part of a composite view (branch / leaf). For example:
+a treeview.</p></div></div><div class="code"><div class="wrapper">  renderModel: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">var</span> data = {};
+    data = <span class="hljs-keyword">this</span>.serializeData();
+    data = <span class="hljs-keyword">this</span>.mixinTemplateHelpers(data);
+
+    <span class="hljs-keyword">var</span> template = <span class="hljs-keyword">this</span>.getTemplate();
+    <span class="hljs-keyword">return</span> Marionette.Renderer.render(template, data);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Appends the <code>el</code> of itemView instances to the specified
+<code>itemViewContainer</code> (a jQuery selector). Override this method to
+provide custom logic of how the child item view instances have their
+HTML appended to the composite view instance.</p></div></div><div class="code"><div class="wrapper">  appendHtml: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(cv, iv, index)</span>{</span>
+    <span class="hljs-keyword">var</span> $container = <span class="hljs-keyword">this</span>.getItemViewContainer(cv);
+    $container.append(iv.el);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Internal method to ensure an <code>$itemViewContainer</code> exists, for the
+<code>appendHtml</code> method to use.</p></div></div><div class="code"><div class="wrapper">  getItemViewContainer: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(containerView)</span>{</span>
+    <span class="hljs-keyword">if</span> (<span class="hljs-string">"$itemViewContainer"</span> <span class="hljs-keyword">in</span> containerView){
+      <span class="hljs-keyword">return</span> containerView.$itemViewContainer;
+    }
+
+    <span class="hljs-keyword">var</span> container;
+    <span class="hljs-keyword">var</span> itemViewContainer = Marionette.getOption(containerView, <span class="hljs-string">"itemViewContainer"</span>);
+    <span class="hljs-keyword">if</span> (itemViewContainer){
+
+      <span class="hljs-keyword">var</span> selector = _.isFunction(itemViewContainer) ? itemViewContainer() : itemViewContainer;
+      container = containerView.$(selector);
+      <span class="hljs-keyword">if</span> (container.length &lt;= <span class="hljs-number">0</span>) {
+        throwError(<span class="hljs-string">"The specified `itemViewContainer` was not found: "</span> + containerView.itemViewContainer, <span class="hljs-string">"ItemViewContainerMissingError"</span>);
+      }
+
+    } <span class="hljs-keyword">else</span> {
+      container = containerView.$el;
+    }
+
+    containerView.$itemViewContainer = container;
+    <span class="hljs-keyword">return</span> container;
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Internal method to reset the <code>$itemViewContainer</code> on render</p></div></div><div class="code"><div class="wrapper">  resetItemViewContainer: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.$itemViewContainer){
+      <span class="hljs-keyword">delete</span> <span class="hljs-keyword">this</span>.$itemViewContainer;
+    }
+  }
+});</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="layout">Layout</h2></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Used for managing application layouts, nested layouts and
+multiple regions within an application or sub-application.
+A specialized view type that renders an area of HTML and then
+attaches <code>Region</code> instances to the specified <code>regions</code>.
+Used for composite view management and sub-application areas.</p></div></div><div class="code"><div class="wrapper">Marionette.Layout = Marionette.ItemView.extend({
+  regionType: Marionette.Region,
+  </div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Ensure the regions are available when the <code>initialize</code> method
+is called.</p></div></div><div class="code"><div class="wrapper">  constructor: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(options)</span> {</span>
+    options = options || {};
+
+    <span class="hljs-keyword">this</span>._firstRender = <span class="hljs-literal">true</span>;
+    <span class="hljs-keyword">this</span>._initializeRegions(options);
+    
+    Marionette.ItemView.prototype.constructor.call(<span class="hljs-keyword">this</span>, options);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Layout&#39;s render will use the existing region objects the
+first time it is called. Subsequent calls will close the
+views that the regions are showing and then reset the <code>el</code>
+for the regions to the newly rendered DOM elements.</p></div></div><div class="code"><div class="wrapper">  render: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.isClosed){</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>a previously closed layout means we need to 
+completely re-initialize the regions</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">this</span>._initializeRegions();
+    }
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._firstRender) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>if this is the first render, don&#39;t do anything to
+reset the regions</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">this</span>._firstRender = <span class="hljs-literal">false</span>;
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.isClosed){</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>If this is not the first render call, then we need to 
+re-initializing the <code>el</code> for each region</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">this</span>._reInitializeRegions();
+    }
+
+    <span class="hljs-keyword">var</span> args = <span class="hljs-built_in">Array</span>.prototype.slice.apply(<span class="hljs-built_in">arguments</span>);
+    <span class="hljs-keyword">var</span> result = Marionette.ItemView.prototype.render.apply(<span class="hljs-keyword">this</span>, args);
+
+    <span class="hljs-keyword">return</span> result;
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Handle closing regions, and then close the view itself.</p></div></div><div class="code"><div class="wrapper">  close: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.isClosed){ <span class="hljs-keyword">return</span>; }
+    <span class="hljs-keyword">this</span>.regionManager.close();
+    <span class="hljs-keyword">var</span> args = <span class="hljs-built_in">Array</span>.prototype.slice.apply(<span class="hljs-built_in">arguments</span>);
+    Marionette.ItemView.prototype.close.apply(<span class="hljs-keyword">this</span>, args);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Add a single region, by name, to the layout</p></div></div><div class="code"><div class="wrapper">  addRegion: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name, definition)</span>{</span>
+    <span class="hljs-keyword">var</span> regions = {};
+    regions[name] = definition;
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._buildRegions(regions)[name];
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Add multiple regions as a {name: definition, name2: def2} object literal</p></div></div><div class="code"><div class="wrapper">  addRegions: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(regions)</span>{</span>
+    <span class="hljs-keyword">this</span>.regions = _.extend({}, <span class="hljs-keyword">this</span>.regions, regions);
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._buildRegions(regions);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Remove a single region from the Layout, by name</p></div></div><div class="code"><div class="wrapper">  removeRegion: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name)</span>{</span>
+    <span class="hljs-keyword">delete</span> <span class="hljs-keyword">this</span>.regions[name];
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.regionManager.removeRegion(name);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>internal method to build regions</p></div></div><div class="code"><div class="wrapper">  _buildRegions: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(regions)</span>{</span>
+    <span class="hljs-keyword">var</span> that = <span class="hljs-keyword">this</span>;
+
+    <span class="hljs-keyword">var</span> defaults = {
+      regionType: Marionette.getOption(<span class="hljs-keyword">this</span>, <span class="hljs-string">"regionType"</span>),
+      parentEl: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span> <span class="hljs-keyword">return</span> that.$el; }
+    };
+
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.regionManager.addRegions(regions, defaults);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Internal method to initialize the regions that have been defined in a
+<code>regions</code> attribute on this layout. </p></div></div><div class="code"><div class="wrapper">  _initializeRegions: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(options)</span> {</span>
+    <span class="hljs-keyword">var</span> regions;
+    <span class="hljs-keyword">this</span>._initRegionManager();
+
+    <span class="hljs-keyword">if</span> (_.isFunction(<span class="hljs-keyword">this</span>.regions)) {
+      regions = <span class="hljs-keyword">this</span>.regions(options);
+    } <span class="hljs-keyword">else</span> {
+      regions = <span class="hljs-keyword">this</span>.regions || {};
+    }
+
+    <span class="hljs-keyword">this</span>.addRegions(regions);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Internal method to re-initialize all of the regions by updating the <code>el</code> that
+they point to</p></div></div><div class="code"><div class="wrapper">  _reInitializeRegions: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">this</span>.regionManager.closeRegions();
+    <span class="hljs-keyword">this</span>.regionManager.each(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(region)</span>{</span>
+      region.reset();
+    });
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Internal method to initialize the region manager
+and all regions in it</p></div></div><div class="code"><div class="wrapper">  _initRegionManager: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">this</span>.regionManager = <span class="hljs-keyword">new</span> Marionette.RegionManager();
+
+    <span class="hljs-keyword">this</span>.listenTo(<span class="hljs-keyword">this</span>.regionManager, <span class="hljs-string">"region:add"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name, region)</span>{</span>
+      <span class="hljs-keyword">this</span>[name] = region;
+      <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">"region:add"</span>, name, region);
+    });
+
+    <span class="hljs-keyword">this</span>.listenTo(<span class="hljs-keyword">this</span>.regionManager, <span class="hljs-string">"region:remove"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name, region)</span>{</span>
+      <span class="hljs-keyword">delete</span> <span class="hljs-keyword">this</span>[name];
+      <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">"region:remove"</span>, name, region);
+    });
+  }
+});</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="approuter">AppRouter</h2></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Reduce the boilerplate code of handling route events
+and then calling a single method on another object.
+Have your routers configured to call the method on
+your object, directly.
+Configure an AppRouter with <code>appRoutes</code>.
+App routers can only take one <code>controller</code> object. 
+It is recommended that you divide your controller
+objects in to smaller pieces of related functionality
+and have multiple routers / controllers, instead of
+just one giant router and controller.
+You can also add standard routes to an AppRouter.</p></div></div><div class="code"><div class="wrapper">Marionette.AppRouter = Backbone.Router.extend({
+
+  constructor: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(options)</span>{</span>
+    Backbone.Router.prototype.constructor.apply(<span class="hljs-keyword">this</span>, slice(<span class="hljs-built_in">arguments</span>));
+	
+    <span class="hljs-keyword">this</span>.options = options || {};
+
+    <span class="hljs-keyword">var</span> appRoutes = Marionette.getOption(<span class="hljs-keyword">this</span>, <span class="hljs-string">"appRoutes"</span>);
+    <span class="hljs-keyword">var</span> controller = <span class="hljs-keyword">this</span>._getController();
+    <span class="hljs-keyword">this</span>.processAppRoutes(controller, appRoutes);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Similar to route method on a Backbone Router but
+method is called on the controller</p></div></div><div class="code"><div class="wrapper">  appRoute: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(route, methodName)</span> {</span>
+    <span class="hljs-keyword">var</span> controller = <span class="hljs-keyword">this</span>._getController();
+    <span class="hljs-keyword">this</span>._addAppRoute(controller, route, methodName);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Internal method to process the <code>appRoutes</code> for the
+router, and turn them in to routes that trigger the
+specified method on the specified <code>controller</code>.</p></div></div><div class="code"><div class="wrapper">  processAppRoutes: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(controller, appRoutes)</span> {</span>
+    <span class="hljs-keyword">if</span> (!appRoutes){ <span class="hljs-keyword">return</span>; }
+
+    <span class="hljs-keyword">var</span> routeNames = _.keys(appRoutes).reverse(); <span class="hljs-comment">// Backbone requires reverted order of routes</span>
+
+    _.each(routeNames, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(route)</span> {</span>
+      <span class="hljs-keyword">this</span>._addAppRoute(controller, route, appRoutes[route]);
+    }, <span class="hljs-keyword">this</span>);
+  },
+
+  _getController: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">return</span> Marionette.getOption(<span class="hljs-keyword">this</span>, <span class="hljs-string">"controller"</span>);
+  },
+
+  _addAppRoute: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(controller, route, methodName)</span>{</span>
+    <span class="hljs-keyword">var</span> method = controller[methodName];
+
+    <span class="hljs-keyword">if</span> (!method) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"Method '"</span> + methodName + <span class="hljs-string">"' was not found on the controller"</span>);
+    }
+
+    <span class="hljs-keyword">this</span>.route(route, methodName, _.bind(method, controller));
+  }
+});</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="application">Application</h2></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Contain and manage the composite application as a whole.
+Stores and starts up <code>Region</code> objects, includes an
+event aggregator as <code>app.vent</code></p></div></div><div class="code"><div class="wrapper">Marionette.Application = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(options)</span>{</span>
+  <span class="hljs-keyword">this</span>._initRegionManager();
+  <span class="hljs-keyword">this</span>._initCallbacks = <span class="hljs-keyword">new</span> Marionette.Callbacks();
+  <span class="hljs-keyword">this</span>.vent = <span class="hljs-keyword">new</span> Backbone.Wreqr.EventAggregator();
+  <span class="hljs-keyword">this</span>.commands = <span class="hljs-keyword">new</span> Backbone.Wreqr.Commands();
+  <span class="hljs-keyword">this</span>.reqres = <span class="hljs-keyword">new</span> Backbone.Wreqr.RequestResponse();
+  <span class="hljs-keyword">this</span>.submodules = {};
+
+  _.extend(<span class="hljs-keyword">this</span>, options);
+
+  <span class="hljs-keyword">this</span>.triggerMethod = Marionette.triggerMethod;
+};
+
+_.extend(Marionette.Application.prototype, Backbone.Events, {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Command execution, facilitated by Backbone.Wreqr.Commands</p></div></div><div class="code"><div class="wrapper">  execute: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">var</span> args = <span class="hljs-built_in">Array</span>.prototype.slice.apply(<span class="hljs-built_in">arguments</span>);
+    <span class="hljs-keyword">this</span>.commands.execute.apply(<span class="hljs-keyword">this</span>.commands, args);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Request/response, facilitated by Backbone.Wreqr.RequestResponse</p></div></div><div class="code"><div class="wrapper">  request: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">var</span> args = <span class="hljs-built_in">Array</span>.prototype.slice.apply(<span class="hljs-built_in">arguments</span>);
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.reqres.request.apply(<span class="hljs-keyword">this</span>.reqres, args);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Add an initializer that is either run at when the <code>start</code>
+method is called, or run immediately if added after <code>start</code>
+has already been called.</p></div></div><div class="code"><div class="wrapper">  addInitializer: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(initializer)</span>{</span>
+    <span class="hljs-keyword">this</span>._initCallbacks.add(initializer);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>kick off all of the application&#39;s processes.
+initializes all of the regions that have been added
+to the app, and runs all of the initializer functions</p></div></div><div class="code"><div class="wrapper">  start: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(options)</span>{</span>
+    <span class="hljs-keyword">this</span>.triggerMethod(<span class="hljs-string">"initialize:before"</span>, options);
+    <span class="hljs-keyword">this</span>._initCallbacks.run(options, <span class="hljs-keyword">this</span>);
+    <span class="hljs-keyword">this</span>.triggerMethod(<span class="hljs-string">"initialize:after"</span>, options);
+
+    <span class="hljs-keyword">this</span>.triggerMethod(<span class="hljs-string">"start"</span>, options);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Add regions to your app. 
+Accepts a hash of named strings or Region objects
+addRegions({something: &quot;#someRegion&quot;})
+addRegions({something: Region.extend({el: &quot;#someRegion&quot;}) });</p></div></div><div class="code"><div class="wrapper">  addRegions: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(regions)</span>{</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._regionManager.addRegions(regions);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Close all regions in the app, without removing them</p></div></div><div class="code"><div class="wrapper">  closeRegions: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">this</span>._regionManager.closeRegions();
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Removes a region from your app, by name
+Accepts the regions name
+removeRegion(&#39;myRegion&#39;)</p></div></div><div class="code"><div class="wrapper">  removeRegion: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(region)</span> {</span>
+    <span class="hljs-keyword">this</span>._regionManager.removeRegion(region);
+  },
+  </div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Provides alternative access to regions
+Accepts the region name
+getRegion(&#39;main&#39;)</p></div></div><div class="code"><div class="wrapper">  getRegion: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(region)</span> {</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._regionManager.get(region);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Create a module, attached to the application</p></div></div><div class="code"><div class="wrapper">  module: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(moduleNames, moduleDefinition)</span>{</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>slice the args, and add this application object as the
+first argument of the array</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> args = slice(<span class="hljs-built_in">arguments</span>);
+    args.unshift(<span class="hljs-keyword">this</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>see the Marionette.Module object for more information</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">return</span> Marionette.Module.create.apply(Marionette.Module, args);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Internal method to set up the region manager</p></div></div><div class="code"><div class="wrapper">  _initRegionManager: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">this</span>._regionManager = <span class="hljs-keyword">new</span> Marionette.RegionManager();
+
+    <span class="hljs-keyword">this</span>.listenTo(<span class="hljs-keyword">this</span>._regionManager, <span class="hljs-string">"region:add"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name, region)</span>{</span>
+      <span class="hljs-keyword">this</span>[name] = region;
+    });
+
+    <span class="hljs-keyword">this</span>.listenTo(<span class="hljs-keyword">this</span>._regionManager, <span class="hljs-string">"region:remove"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name, region)</span>{</span>
+      <span class="hljs-keyword">delete</span> <span class="hljs-keyword">this</span>[name];
+    });
+  }
+});</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Copy the <code>extend</code> function used by Backbone&#39;s classes</p></div></div><div class="code"><div class="wrapper">Marionette.Application.extend = Marionette.extend;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="module">Module</h2></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>A simple module system, used to create privacy and encapsulation in
+Marionette applications</p></div></div><div class="code"><div class="wrapper">Marionette.Module = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(moduleName, app)</span>{</span>
+  <span class="hljs-keyword">this</span>.moduleName = moduleName;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>store sub-modules</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.submodules = {};
+
+  <span class="hljs-keyword">this</span>._setupInitializersAndFinalizers();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>store the configuration for this module</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.app = app;
+  <span class="hljs-keyword">this</span>.startWithParent = <span class="hljs-literal">true</span>;
+
+  <span class="hljs-keyword">this</span>.triggerMethod = Marionette.triggerMethod;
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Extend the Module prototype with events / listenTo, so that the module
+can be used as an event aggregator or pub/sub.</p></div></div><div class="code"><div class="wrapper">_.extend(Marionette.Module.prototype, Backbone.Events, {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Initializer for a specific module. Initializers are run when the
+module&#39;s <code>start</code> method is called.</p></div></div><div class="code"><div class="wrapper">  addInitializer: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(callback)</span>{</span>
+    <span class="hljs-keyword">this</span>._initializerCallbacks.add(callback);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Finalizers are run when a module is stopped. They are used to teardown
+and finalize any variables, references, events and other code that the
+module had set up.</p></div></div><div class="code"><div class="wrapper">  addFinalizer: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(callback)</span>{</span>
+    <span class="hljs-keyword">this</span>._finalizerCallbacks.add(callback);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Start the module, and run all of its initializers</p></div></div><div class="code"><div class="wrapper">  start: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(options)</span>{</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Prevent re-starting a module that is already started</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._isInitialized){ <span class="hljs-keyword">return</span>; }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>start the sub-modules (depth-first hierarchy)</p></div></div><div class="code"><div class="wrapper">    _.each(<span class="hljs-keyword">this</span>.submodules, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(mod)</span>{</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>check to see if we should start the sub-module with this parent</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">if</span> (mod.startWithParent){
+        mod.start(options);
+      }
+    });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>run the callbacks to &quot;start&quot; the current module</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">this</span>.triggerMethod(<span class="hljs-string">"before:start"</span>, options);
+
+    <span class="hljs-keyword">this</span>._initializerCallbacks.run(options, <span class="hljs-keyword">this</span>);
+    <span class="hljs-keyword">this</span>._isInitialized = <span class="hljs-literal">true</span>;
+
+    <span class="hljs-keyword">this</span>.triggerMethod(<span class="hljs-string">"start"</span>, options);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Stop this module by running its finalizers and then stop all of
+the sub-modules for this module</p></div></div><div class="code"><div class="wrapper">  stop: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>if we are not initialized, don&#39;t bother finalizing</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>._isInitialized){ <span class="hljs-keyword">return</span>; }
+    <span class="hljs-keyword">this</span>._isInitialized = <span class="hljs-literal">false</span>;
+
+    Marionette.triggerMethod.call(<span class="hljs-keyword">this</span>, <span class="hljs-string">"before:stop"</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>stop the sub-modules; depth-first, to make sure the
+sub-modules are stopped / finalized before parents</p></div></div><div class="code"><div class="wrapper">    _.each(<span class="hljs-keyword">this</span>.submodules, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(mod)</span>{</span> mod.stop(); });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>run the finalizers</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">this</span>._finalizerCallbacks.run(<span class="hljs-literal">undefined</span>,<span class="hljs-keyword">this</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>reset the initializers and finalizers</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">this</span>._initializerCallbacks.reset();
+    <span class="hljs-keyword">this</span>._finalizerCallbacks.reset();
+
+    Marionette.triggerMethod.call(<span class="hljs-keyword">this</span>, <span class="hljs-string">"stop"</span>);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Configure the module with a definition function and any custom args
+that are to be passed in to the definition function</p></div></div><div class="code"><div class="wrapper">  addDefinition: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(moduleDefinition, customArgs)</span>{</span>
+    <span class="hljs-keyword">this</span>._runModuleDefinition(moduleDefinition, customArgs);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Internal method: run the module definition function with the correct
+arguments</p></div></div><div class="code"><div class="wrapper">  _runModuleDefinition: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(definition, customArgs)</span>{</span>
+    <span class="hljs-keyword">if</span> (!definition){ <span class="hljs-keyword">return</span>; }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>build the correct list of arguments for the module definition</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> args = _.flatten([
+      <span class="hljs-keyword">this</span>,
+      <span class="hljs-keyword">this</span>.app,
+      Backbone,
+      Marionette,
+      Marionette.$, _,
+      customArgs
+    ]);
+
+    definition.apply(<span class="hljs-keyword">this</span>, args);
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Internal method: set up new copies of initializers and finalizers.
+Calling this method will wipe out all existing initializers and
+finalizers.</p></div></div><div class="code"><div class="wrapper">  _setupInitializersAndFinalizers: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+    <span class="hljs-keyword">this</span>._initializerCallbacks = <span class="hljs-keyword">new</span> Marionette.Callbacks();
+    <span class="hljs-keyword">this</span>._finalizerCallbacks = <span class="hljs-keyword">new</span> Marionette.Callbacks();
+  }
+});</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Type methods to create modules</p></div></div><div class="code"><div class="wrapper">_.extend(Marionette.Module, {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Create a module, hanging off the app parameter as the parent object.</p></div></div><div class="code"><div class="wrapper">  create: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(app, moduleNames, moduleDefinition)</span>{</span>
+    <span class="hljs-keyword">var</span> module = app;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>get the custom args passed in after the module definition and
+get rid of the module name and definition function</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> customArgs = slice(<span class="hljs-built_in">arguments</span>);
+    customArgs.splice(<span class="hljs-number">0</span>, <span class="hljs-number">3</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>split the module names and get the length</p></div></div><div class="code"><div class="wrapper">    moduleNames = moduleNames.split(<span class="hljs-string">"."</span>);
+    <span class="hljs-keyword">var</span> length = moduleNames.length;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>store the module definition for the last module in the chain</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> moduleDefinitions = [];
+    moduleDefinitions[length-<span class="hljs-number">1</span>] = moduleDefinition;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Loop through all the parts of the module definition</p></div></div><div class="code"><div class="wrapper">    _.each(moduleNames, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(moduleName, i)</span>{</span>
+      <span class="hljs-keyword">var</span> parentModule = module;
+      module = <span class="hljs-keyword">this</span>._getModule(parentModule, moduleName, app);
+      <span class="hljs-keyword">this</span>._addModuleDefinition(parentModule, module, moduleDefinitions[i], customArgs);
+    }, <span class="hljs-keyword">this</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Return the last module in the definition chain</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">return</span> module;
+  },
+
+  _getModule: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(parentModule, moduleName, app, def, args)</span>{</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get an existing module of this name if we have one</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> module = parentModule[moduleName];
+
+    <span class="hljs-keyword">if</span> (!module){</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Create a new module if we don&#39;t have one</p></div></div><div class="code"><div class="wrapper">      module = <span class="hljs-keyword">new</span> Marionette.Module(moduleName, app);
+      parentModule[moduleName] = module;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>store the module on the parent</p></div></div><div class="code"><div class="wrapper">      parentModule.submodules[moduleName] = module;
+    }
+
+    <span class="hljs-keyword">return</span> module;
+  },
+
+  _addModuleDefinition: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(parentModule, module, def, args)</span>{</span>
+    <span class="hljs-keyword">var</span> fn; 
+    <span class="hljs-keyword">var</span> startWithParent;
+
+    <span class="hljs-keyword">if</span> (_.isFunction(def)){</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>if a function is supplied for the module definition</p></div></div><div class="code"><div class="wrapper">      fn = def;
+      startWithParent = <span class="hljs-literal">true</span>;
+
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (_.isObject(def)){</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>if an object is supplied</p></div></div><div class="code"><div class="wrapper">      fn = def.define;
+      startWithParent = def.startWithParent;
+      
+    } <span class="hljs-keyword">else</span> {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>if nothing is supplied</p></div></div><div class="code"><div class="wrapper">      startWithParent = <span class="hljs-literal">true</span>;
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>add module definition if needed</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (fn){
+      module.addDefinition(fn, args);
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p><code>and</code> the two together, ensuring a single <code>false</code> will prevent it
+from starting with the parent</p></div></div><div class="code"><div class="wrapper">    module.startWithParent = module.startWithParent &amp;&amp; startWithParent;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>setup auto-start if needed</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (module.startWithParent &amp;&amp; !module.startWithParentIsConfigured){</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>only configure this once</p></div></div><div class="code"><div class="wrapper">      module.startWithParentIsConfigured = <span class="hljs-literal">true</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>add the module initializer config</p></div></div><div class="code"><div class="wrapper">      parentModule.addInitializer(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(options)</span>{</span>
+        <span class="hljs-keyword">if</span> (module.startWithParent){
+          module.start(options);
+        }
+      });
+
+    }
+
+  }
+});
+
+
+
+  <span class="hljs-keyword">return</span> Marionette;
+})(<span class="hljs-keyword">this</span>, Backbone, _);</div></div></div></div></body></html>
