@@ -38,6 +38,7 @@ do (Backbone) ->
       protocol = target.protocol + "//"
       passThrough = href.indexOf('special_url') >= 0 or $(target).data('reload')?
       passThrough ||= href.slice(protocol.length) is protocol
+      passThrough ||= href.startsWith('//')
       passThrough ||= event.altKey or event.ctrlKey or event.metaKey or event.shiftKey
 
       unless passThrough

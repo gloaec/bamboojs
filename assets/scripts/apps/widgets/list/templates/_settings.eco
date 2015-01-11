@@ -54,12 +54,18 @@
     <i class="fa fa-arrows-h"></i>
     <span class="hidden-xs">ColXS</span>
   </span>
-  <input type="number" placeholder="Tiny screen width" autofocus="" class="form-control input-colxs">
+  <div class="form-control slider-control">
+    <input class="input-colxs" type="number" data-slider-min="1" data-slider-max="12" data-slider-step="1" data-slider-tooltip="hide"/>
+  </div>
+  <!--input type="number" placeholder="Tiny screen width" autofocus="" class="form-control input-colxs"-->
   <span class="input-group-addon">
     <i class="fa fa-arrows-v"></i>
     <span class="hidden-xs">RowXS</span>
   </span>
-  <input type="number" placeholder="Tiny screen height" autofocus="" class="form-control input-rowxs">
+  <div class="form-control slider-control">
+    <input class="input-rowxs" type="number" data-slider-min="1" data-slider-max="12" data-slider-step="1" data-slider-tooltip="hide"/>
+  </div>
+  <!--input type="number" placeholder="Tiny screen height" autofocus="" class="form-control input-rowxs"-->
 </div>
 <div class="input-group panel-toolbar">
   <span class="input-group-addon">
@@ -69,12 +75,18 @@
     <i class="fa fa-arrows-h"></i>
     <span class="hidden-xs">ColSM</span>
   </span>
-  <input type="number" placeholder="Small sceen width" autofocus="" class="form-control input-colsm">
+  <div class="form-control slider-control">
+    <input class="input-colsm" type="number" data-slider-min="1" data-slider-max="12" data-slider-step="1" data-slider-value="<%= @colsm %>" data-slider-tooltip="hide"/>
+  </div>
+  <!--input type="number" placeholder="Small sceen width" autofocus="" class="form-control input-colsm"-->
   <span class="input-group-addon">
     <i class="fa fa-arrows-v"></i>
     <span class="hidden-xs">RowSM</span>
   </span>
-  <input type="number" placeholder="Small sceen height" autofocus="" class="form-control input-rowsm">
+  <div class="form-control slider-control">
+    <input class="input-rowsm" type="number" data-slider-min="1" data-slider-max="12" data-slider-step="1" data-slider-value="<%= @rowsm %>" data-slider-tooltip="hide"/>
+  </div>
+  <!--input type="number" placeholder="Small sceen height" autofocus="" class="form-control input-rowsm"-->
 </div>
 <div class="input-group panel-toolbar">
   <span class="input-group-addon">
@@ -84,12 +96,18 @@
     <i class="fa fa-arrows-h"></i>
     <span class="hidden-xs">ColMD</span>
   </span>
-  <input type="number" placeholder="Medium screen width" autofocus="" class="form-control input-colmd">
+  <div class="form-control slider-control">
+    <input class="input-colmd" type="number" data-slider-min="1" data-slider-max="12" data-slider-step="1" data-slider-value="<%= @colmd %>" data-slider-tooltip="hide"/>
+  </div>
+  <!--input type="number" placeholder="Medium screen width" autofocus="" class="form-control input-colmd"-->
   <span class="input-group-addon">
     <i class="fa fa-arrows-v"></i>
     <span class="hidden-xs">RowMD</span>
   </span>
-  <input type="number" placeholder="Medium screen height" autofocus="" class="form-control input-rowmd">
+  <div class="form-control slider-control">
+    <input class="input-rowmd" type="number" data-slider-min="1" data-slider-max="12" data-slider-step="1" data-slider-value="<%= @rowmd %>" data-slider-tooltip="hide"/>
+  </div>
+  <!--input type="number" placeholder="Medium screen height" autofocus="" class="form-control input-rowmd"-->
 </div>
 <div class="input-group panel-toolbar">
   <span class="input-group-addon">
@@ -99,10 +117,16 @@
     <i class="fa fa-arrows-h"></i>
     <span class="hidden-xs">ColLG</span>
   </span>
-  <input type="number" placeholder="Large Screen width" autofocus="" class="form-control input-collg">
+  <div class="form-control slider-control">
+    <input class="input-collg" type="number" data-slider-min="1" data-slider-max="12" data-slider-step="1" data-slider-value="<%= @collg %>" data-slider-tooltip="hide"/>
+  </div>
+  <!--input type="number" placeholder="Large Screen width" autofocus="" class="form-control input-collg"-->
   <span class="input-group-addon">
     <i class="fa fa-arrows-v"></i>
     <span class="hidden-xs">RowLG</span>
   </span>
-  <input type="number" placeholder="Large screen height" autofocus="" class="form-control input-rowlg">
+  <div class="form-control slider-control">
+    <input class="input-rowlg" type="number" data-slider-min="1" data-slider-max="12" data-slider-step="1" data-slider-value="<%= @rowlg %>" data-slider-tooltip="hide"/>
+  </div>
+  <!--input type="number" placeholder="Large screen height" autofocus="" class="form-control input-rowlg"-->
 </div>

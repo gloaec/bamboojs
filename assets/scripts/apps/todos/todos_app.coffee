@@ -1,6 +1,6 @@
-@Bamboo.module "WidgetTodosApp", (WidgetTodosApp, App, Backbone, Marionette, $, _) ->
+@Bamboo.module "TodosApp", (TodosApp, App, Backbone, Marionette, $, _) ->
 
-  class WidgetTodosApp.Router extends Marionette.SubRouter
+  class TodosApp.Router extends Marionette.SubRouter
 
     prefix: "todos"
 
@@ -11,13 +11,13 @@
       
   API =
     list: (todos=false) ->
-      new TodosModule.List.Controller todos: todos, show: "all"
+      new TodosApp.List.Controller todos: todos, show: "all"
 
     list_completed: (todos=false) ->
-      new TodosModule.List.Controller todos: todos, show: "completed"
+      new TodosApp.List.Controller todos: todos, show: "completed"
 
     list_active: (todos=false) ->
-      new TodosModule.List.Controller todos: todos, show: "active"
+      new TodosApp.List.Controller todos: todos, show: "active"
       
     delete: (id, todo=false) ->
       todo.destroy()
@@ -39,5 +39,5 @@
     API.clearCompleted todos
 
   App.addInitializer ->
-    new WidgetTodosApp.Router
+    new TodosApp.Router
       controller: API

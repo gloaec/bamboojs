@@ -1,0 +1,95 @@
+
+/*==================================================
+ * Effect 2
+ * ===============================================*/
+.todo-main
+{
+  position: relative;
+  z-index: 1;
+}
+.todo-main:before, .todo-main:after
+{
+  z-index: 0;
+  position: absolute;
+  content: "";
+  bottom: 15px;
+  left: 10px;
+  width: 50%;
+  height: 20px;
+  max-width:300px;
+  -webkit-box-shadow: 0 15px 10px #777;
+  -moz-box-shadow: 0 15px 10px #777;
+  box-shadow: 0 15px 10px #777;
+  -webkit-transform: rotate(-3deg);
+  -moz-transform: rotate(-3deg);
+  -o-transform: rotate(-3deg);
+  -ms-transform: rotate(-3deg);
+  transform: rotate(-3deg);
+}
+.todo-main:after
+{
+  z-index: -1;
+  -webkit-transform: rotate(3deg);
+  -moz-transform: rotate(3deg);
+  -o-transform: rotate(3deg);
+  -ms-transform: rotate(3deg);
+  transform: rotate(3deg);
+  right: 10px;
+  left: auto;
+}
+.todos-main-region {
+    margin: 20px 0;
+  position: relative;
+  padding: 18px 0 0 0;
+  margin: 2em auto;
+  color: #fff;
+    background: url("/images/linedpaper.png") repeat scroll 0 15px rgba(0, 0, 0, 0);
+  overflow: hidden;
+  -moz-border-radius: 5px 0 5px 5px;
+  border-radius: 5px 0 5px 5px;
+}
+.todos-main-region:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  border-style: solid;
+  background: #F0F0F0;
+  -webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
+  -moz-box-shadow: 0 1px 1px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
+  box-shadow: 0 1px 1px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
+  /* Firefox 3.0 damage limitation */
+  display: block; width: 0;
+  border-width: 8px;
+  border-color: #fff #fff transparent transparent;
+  -moz-border-radius: 0 0 0 5px;
+  border-radius: 0 0 0 5px;
+}
+.widget .todos-main-region,
+.widget .todo-main {
+    margin: 0;
+    padding: 0;
+}
+.widget .todos-main-region:before,
+.widget .todo-main:before,
+.widget .todos-main-region:after,
+.widget .todo-main:after {
+    box-shadow: none;
+    border: none;
+    background: none;
+}
+.todos-main-region .input-group {
+    background: url("/images/linedpaper.png") repeat scroll 0 15px rgba(0, 0, 0, 0);
+}
+.todos-main-region .input-group:hover,
+.todos-main-region .input-group:focus,
+.todos-main-region .input-group.focus {
+    background: #FFF;
+}
+.todos-main-region .input-group .form-control {
+    background: none repeat scroll 0 0 transparent;
+    border-left: 1px solid #d9534f;n
+}
+.page-header .badge {
+    vertical-align: middle;
+}

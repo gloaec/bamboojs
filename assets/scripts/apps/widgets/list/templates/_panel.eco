@@ -3,13 +3,17 @@
     <div class="pull-right">
       <div class="pull-right">
         <div class="btn-group">
-          <button class="btn btn-<%= @color %> dropdown-toggle" data-toggle="collapse" data-parent="#widget-<%= @id %>" data-target=".widget-<%= @id %>" aria-expanded="false">
+          <button class="btn btn-<%= @color %>" data-toggle="collapse" data-parent="#widget-<%= @id %>" data-target=".widget-<%= @id %>" aria-expanded="false">
             <i class="fa fa-fw fa-wrench"></i>
           </button>
+          <label class="btn btn-<%= @color %>">
+            <input class="state-input hidden" type="checkbox" autocomplete="off">
+            <span class="state-icon"><i class="fa fa-fw fa-expand"></i></span>
+          </label>
         </div>
       </div>
     </div>
-    <div class="widget-<%= @id %> collapse" style="padding-right: 38px">
+    <div class="widget-<%= @id %> collapse ellipsis" style="padding-right: 38px">
       <i class="fa fa-fw fa-bars"></i>
       <a href="<%= @link %>" class="panel-title">
         <span class="icon"><i class="fa <%= @icon %>"></i></span>
@@ -29,6 +33,13 @@
     <div class="widget-<%= @id %> panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
       <%= @render 'widgets/list/_settings', form: 'panel' %>
     </div>
-    <div class="widget-<%= @id %> panel-collapse collapse in widget-region"></div>
+    <div class="widget-<%= @id %> panel-collapse collapse in widget-region">
+      <% if @command and (@command.startsWith '//' or @command.startsWith 'http://' or @command.startsWith 'https://'): %>
+        <div class="embed-responsive embed-responsive-16by9">
+          <iframe src="<%= @command %>" class="embed-responsive-item border-0 frame embed" style="margin-bottom: -5px; width: 100%"
+          frameborder="0" allowfullscreen/>
+        </div>
+      <% end %>
+    </div>
   </div>
 </div>

@@ -1,13 +1,20 @@
-@Bamboo.module "TodosApp.List", (List, App, Backbone, Marionette, $, _) ->
+@Bamboo.module "TodosWidget.List", (List, App, Backbone, Marionette, $, _) ->
 
   class List.Controller extends App.Controllers.Base
 
     initialize: (options) ->
       {widget, todos} = options
       @todos = todos or= App.request "todo:entities"
+      @filter
 
-      @layout = @getLayoutView todos
+      App.execute "when:fetched", todos, =>
+        @updateWidget widget, todos
 
+      @listenTo @todos, 'all', =>
+        @updateWidget widget, todos
+
+      @layout = @getLayoutView()
+			
       @listenTo @layout, "show", =>
         @todosView todos
         @footerView todos
@@ -15,15 +22,18 @@
 			
       @show @layout
 
+    updateWidget: (widget) ->
+      widget.set
+        badge: """
+          #{@todos.remaining().size()}
+          <span class='hidden-xs'>remaining</span>
+        """
+
     formView: (todos) ->
       formView = @getFormView todos
 
       formView.on "new:todo:clicked", (todo) ->
         App.vent.trigger "new:todo:clicked", todo
-
-      formView.on "filter:clicked", (filter) =>
-        @todos.setFilter filter
-        @todos.trigger 'filter'
 
       @show formView, region: @layout.todosHeaderRegion
 		
@@ -43,6 +53,10 @@
       footerView.on "clear-completed:todos:clicked", (todos) ->
         App.vent.trigger "clear-completed:todos:clicked", todos
 
+      footerView.on "filter:clicked", (filter) =>
+        @todos.setFilter filter
+        @todos.trigger 'filter'
+
       @show footerView, region: @layout.todosFooterRegion
 
     getFormView: (todos) ->
@@ -58,6 +72,5 @@
       new List.Footer
         collection: todos
 
-    getLayoutView: (todos) ->
+    getLayoutView: ->
       new List.Layout
-        collection: todos

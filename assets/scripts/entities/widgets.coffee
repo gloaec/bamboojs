@@ -14,10 +14,10 @@
       color: "default"
       badge: false
       force: "auto"
-      collg: 3
-      colmd: 4
-      colsm: 6
-      colxs: 3
+      collg: 3, rowlg: 12
+      colmd: 4, rowmd: 12
+      colsm: 6, rowsm: 12
+      colxs: 3, rowxs: 1
       id: _.random 1, 999999999999999
 
   class Entities.WidgetsCollection extends Entities.Collection
@@ -58,15 +58,17 @@
       ,
         {force: 'icon', badge: '<i class="fa fa-warning text-warning"></i>'}
       ,
-        name: "Youtube",
-        link: "//www.youtube.com/embed/bTEoejDdwoM"
+        name: "Youtube | Agoraphonic - Fateless",
+        link: "//www.youtube.com/watch?v=bTEoejDdwoM"
+        command: "//www.youtube.com/embed/bTEoejDdwoM"
         icon: "fa-youtube-play"
         color: "danger"
         collg: 4
         colmd: 6
       ,
-        name: "Soundcloud",
-        link: "//w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/154345411&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;visual=true"
+        name: "Soundcloud | Agoraphonic - A line in the sand",
+        link: "//soundcloud.com/agoraphonic/a-line-in-the-sand"
+        command: "//w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/154345411&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;visual=true"
         icon: "fa-soundcloud"
         color: "warning"
         collg: 4

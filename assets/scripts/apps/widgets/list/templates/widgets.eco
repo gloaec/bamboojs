@@ -1,27 +1,28 @@
 <h3 class="page-header">
     Widgets <small>overview</small>
 
-  <div class="btn-group pull-right" data-toggle="buttons" role="group" aria-label="...">
-    <label class="btn <%= 'active' if @force is 'auto' %>">
-      <input type="radio" class="global-appearance" name="global-appearance" value="auto" autocomplete="off" checked="">
-      <i class="fa fa-compress"></i>
-      <span class="hidden-xs">Auto</i>
-    </label>
-    <label class="btn <%= 'active' if @force is 'icon' %>">
-      <input type="radio" class="global-appearance" name="global-appearance" value="icon" autocomplete="off">
-      <i class="fa fa-th"></i>
-      <span class="hidden-xs">Icons</i>
-    </label>
-    <label class="btn <%= 'active' if @force is 'panel' %>">
-      <input type="radio" class="global-appearance" name="global-appearance" value="panel" autocomplete="off">
-      <i class="fa fa-columns"></i>
-      <span class="hidden-xs">Panels</span>
-    </label>
-    <label class="btn <%= 'active' if false %>">
-      <input type="radio" class="global-appearance" name="global-appearance" value="panel" autocomplete="off">
-      <i class="fa fa-th-list"></i>
-      <span class="hidden-xs">Custom</span>
-    </label>
+  <div class="btn-group pull-right" role="group" aria-label="...">
+    <div class="btn-group" data-toggle="buttons" role="group" aria-label="...">
+      <label class="btn btn-default <%= 'active' if @force is 'auto' %>">
+        <input type="radio" class="global-appearance" name="global-appearance" value="auto" autocomplete="off" checked="">
+        <i class="fa fa-arrows-alt"></i>
+        <span class="hidden-xs">Auto</i>
+      </label>
+      <label class="btn btn-default <%= 'active' if @force is 'icon' %>">
+        <input type="radio" class="global-appearance" name="global-appearance" value="icon" autocomplete="off">
+        <i class="fa fa-th"></i>
+        <span class="hidden-xs">Icons</i>
+      </label>
+      <label class="btn btn-default <%= 'active' if @force is 'panel' %>">
+        <input type="radio" class="global-appearance" name="global-appearance" value="panel" autocomplete="off">
+        <i class="fa fa-columns"></i>
+        <span class="hidden-xs">Panels</span>
+      </label>
+    </div>
+    <button class="btn btn-success">
+      <i class="fa fa-plus"></i>
+      <span class="hidden-xs">Add</span>
+    </button>
   </div>
 </h3>
 
