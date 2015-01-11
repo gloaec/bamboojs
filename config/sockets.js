@@ -37,13 +37,13 @@ module.exports.sockets = {
   // You can enable flashsockets by adding 'flashsocket' to this list:
   transports: [
   'websocket',
+  'flashsocket',
   'htmlfile',
   'xhr-polling',
   'jsonp-polling'
   ],
 
-
-
+  'log level': 1,
 
   // Use this option to set the datastore socket.io will use to manage rooms/sockets/subscriptions:
   // default: memory
@@ -170,10 +170,10 @@ module.exports.sockets = {
   'browser client cache': true,
 
   // Does Socket.IO need to send a minified build of the static client script?
-  'browser client minification': false,
+  'browser client minification': true,
 
   // Does Socket.IO need to send an ETag header for the static requests?
-  'browser client etag': false,
+  'browser client etag': true,
 
   // Adds a Cache-Control: private, x-gzip-ok="", max-age=31536000 header to static requests, 
   // but only if the file is requested with a version number like /socket.io/socket.io.v0.9.9.js.
@@ -182,7 +182,7 @@ module.exports.sockets = {
   // Does Socket.IO need to GZIP the static files?
   // This process is only done once and the computed output is stored in memory. 
   // So we don't have to spawn a gzip process for each request.
-  'browser client gzip': false,
+  'browser client gzip': true,
 
   // Optional override function to serve all static files, 
   // including socket.io.js et al.
