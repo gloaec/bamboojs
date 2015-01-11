@@ -34,5 +34,20 @@ module.exports = {
   // log: {
   //   level: "silent"
   // }
+  
+  sockets : {
+    'browser client minification': true,
+    'browser client etag': true,
+    'browser client gzip': true,
+    'log level': 1,
+
+    'transports': [
+      'websocket'
+    , 'flashsocket'
+    , 'htmlfile'
+    , 'xhr-polling'
+    , 'jsonp-polling'
+    ]
+  }
 
 };
