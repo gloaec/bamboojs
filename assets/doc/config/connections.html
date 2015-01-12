@@ -1,0 +1,83 @@
+<!DOCTYPE html><html lang="en"><head><title>config/connections</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="config/connections"><meta name="groc-project-path" content="config/connections.js"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">config/connections.js</div></div><div id="document"><div class="segment"><div class="comments "><div class="wrapper"><p>Connections
+(sails.config.connections)</p>
+<p><code>Connections</code> are like &quot;saved settings&quot; for your adapters.  What&#39;s the difference between
+a connection and an adapter, you might ask?  An adapter (e.g. <code>sails-mysql</code>) is generic--
+it needs some additional information to work (e.g. your database host, password, user, etc.)
+A <code>connection</code> is that additional information.</p>
+<p>Each model must have a <code>connection</code> property (a string) which is references the name of one
+of these connections.  If it doesn&#39;t, the default <code>connection</code> configured in <code>config/models.js</code>
+will be applied.  Of course, a connection can (and usually is) shared by multiple models.
+.
+Note: If you&#39;re using version control, you should put your passwords/api keys
+in <code>config/local.js</code>, environment variables, or use another strategy.
+(this is to prevent you inadvertently sensitive credentials up to your repository.)</p>
+<p>For more information on configuration, check out:
+<a href="http://sailsjs.org/#/documentation/reference/sails.config/sails.config.connections.html">http://sailsjs.org/#/documentation/reference/sails.config/sails.config.connections.html</a></p></div></div><div class="code"><div class="wrapper">module.exports.connections = {
+
+  <span class="hljs-comment">/***************************************************************************
+  *                                                                          *
+  * Local disk storage for DEVELOPMENT ONLY                                  *
+  *                                                                          *
+  * Installed by default.                                                    *
+  *                                                                          *
+  ***************************************************************************/</span>
+  localDiskDb: {
+    adapter: <span class="hljs-string">'sails-disk'</span>
+  },
+
+  <span class="hljs-comment">/***************************************************************************
+  *                                                                          *
+  * MySQL is the world's most popular relational database.                   *
+  * http://en.wikipedia.org/wiki/MySQL                                       *
+  *                                                                          *
+  * Run: npm install sails-mysql                                             *
+  *                                                                          *
+  ***************************************************************************/</span>
+  someMysqlServer: {
+    adapter: <span class="hljs-string">'sails-mysql'</span>,
+    host: <span class="hljs-string">'YOUR_MYSQL_SERVER_HOSTNAME_OR_IP_ADDRESS'</span>,
+    user: <span class="hljs-string">'YOUR_MYSQL_USER'</span>,
+    password: <span class="hljs-string">'YOUR_MYSQL_PASSWORD'</span>,
+    database: <span class="hljs-string">'YOUR_MYSQL_DB'</span>
+  },
+
+  <span class="hljs-comment">/***************************************************************************
+  *                                                                          *
+  * MongoDB is the leading NoSQL database.                                   *
+  * http://en.wikipedia.org/wiki/MongoDB                                     *
+  *                                                                          *
+  * Run: npm install sails-mongo                                             *
+  *                                                                          *
+  ***************************************************************************/</span>
+  someMongodbServer: {
+    adapter: <span class="hljs-string">'sails-mongo'</span>,
+    host: <span class="hljs-string">'localhost'</span>,
+    port: <span class="hljs-number">27017</span>,</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>user: &#39;username&#39;,
+password: &#39;password&#39;,
+database: &#39;your_mongo_db_name_here&#39;</p></div></div><div class="code"><div class="wrapper">  },
+
+  <span class="hljs-comment">/***************************************************************************
+  *                                                                          *
+  * PostgreSQL is another officially supported relational database.          *
+  * http://en.wikipedia.org/wiki/PostgreSQL                                  *
+  *                                                                          *
+  * Run: npm install sails-postgresql                                        *
+  *                                                                          *
+  *                                                                          *
+  ***************************************************************************/</span>
+  somePostgresqlServer: {
+    adapter: <span class="hljs-string">'sails-postgresql'</span>,
+    host: <span class="hljs-string">'YOUR_POSTGRES_SERVER_HOSTNAME_OR_IP_ADDRESS'</span>,
+    user: <span class="hljs-string">'YOUR_POSTGRES_USER'</span>,
+    password: <span class="hljs-string">'YOUR_POSTGRES_PASSWORD'</span>,
+    database: <span class="hljs-string">'YOUR_POSTGRES_DB'</span>
+  }
+
+
+  <span class="hljs-comment">/***************************************************************************
+  *                                                                          *
+  * More adapters: https://github.com/balderdashy/sails                      *
+  *                                                                          *
+  ***************************************************************************/</span>
+
+};</div></div></div></div></body></html>

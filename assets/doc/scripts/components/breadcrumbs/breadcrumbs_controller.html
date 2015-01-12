@@ -1,0 +1,102 @@
+<!DOCTYPE html><html lang="en"><head><title>scripts/components/breadcrumbs/breadcrumbs_controller</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../../"><meta name="groc-document-path" content="scripts/components/breadcrumbs/breadcrumbs_controller"><meta name="groc-project-path" content="assets/scripts/components/breadcrumbs/breadcrumbs_controller.coffee"><link rel="stylesheet" type="text/css" media="all" href="../../../assets/style.css"><script type="text/javascript" src="../../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/components/breadcrumbs/breadcrumbs_controller.coffee</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-property">@Bamboo</span>.<span class="hljs-built_in">module</span> <span class="hljs-string">"Components.Breadcrumbs"</span>, <span class="hljs-function"><span class="hljs-params">(Breadcrumbs, App, Backbone, Marionette, $, _)</span> -&gt;</span>
+	
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Breadcrumbs</span>.<span class="hljs-title">BreadcrumbsController</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">App</span>.<span class="hljs-title">Controllers</span>.<span class="hljs-title">Base</span></span>
+
+    <span class="hljs-attribute">initialize</span>: <span class="hljs-function"><span class="hljs-params">(options)</span> -&gt;</span>
+	    <span class="hljs-comment">#Backbone.history.on 'route', @updateBreadcrumbs</span>
+
+      <span class="hljs-property">@breadcrumbs</span> = options.breadcrumbs <span class="hljs-keyword">or</span>= App.request <span class="hljs-string">"breadcrumb:entities"</span>
+      <span class="hljs-property">@breadcrumb</span> = options.breadcrumb<span class="hljs-comment"># or= new @breadcrumbs.model</span>
+      <span class="hljs-property">@region</span> = options.region <span class="hljs-keyword">or</span>= App.request <span class="hljs-string">"default:breadcrumbs:region"</span>
+
+
+      <span class="hljs-keyword">if</span> <span class="hljs-property">@breadcrumb</span> <span class="hljs-keyword">instanceof</span> App.Entities.Model
+        App.execute <span class="hljs-string">"when:fetched"</span>, <span class="hljs-property">@breadcrumb</span>,<span class="hljs-function"> =&gt;</span>
+          <span class="hljs-property">@generateBreadcrumbs</span> <span class="hljs-property">@breadcrumb</span>
+      <span class="hljs-keyword">else</span>
+        <span class="hljs-property">@generateBreadcrumbs</span> <span class="hljs-property">@breadcrumb</span>
+
+      breadcrumbsView =  <span class="hljs-property">@getBreadcrumbsView</span> <span class="hljs-property">@breadcrumbs</span>
+      <span class="hljs-property">@show</span> breadcrumbsView
+
+    <span class="hljs-attribute">getBreadcrumbsView</span>: <span class="hljs-function"><span class="hljs-params">(breadcrumbs)</span> -&gt;</span>
+      <span class="hljs-keyword">new</span> Breadcrumbs.BreadcrumbsView
+        <span class="hljs-attribute">collection</span>: breadcrumbs
+ 
+    <span class="hljs-attribute">updateBreadcrumbs</span>:<span class="hljs-function"> -&gt;</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Manage @crumbs here.</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-attribute">generateBreadcrumbs</span>: <span class="hljs-function"><span class="hljs-params">(entity)</span> -&gt;</span>
+      leaf = <span class="hljs-keyword">if</span> entity <span class="hljs-keyword">instanceof</span> App.Entities.Model
+      <span class="hljs-keyword">then</span> entity
+      <span class="hljs-keyword">else</span> <span class="hljs-keyword">new</span> <span class="hljs-property">@breadcrumbs</span>.model
+      leaf.set <span class="hljs-attribute">leaf</span>: <span class="hljs-literal">true</span>
+      root = <span class="hljs-keyword">new</span> <span class="hljs-property">@breadcrumbs</span>.model
+        <span class="hljs-attribute">root</span>: <span class="hljs-literal">true</span>
+        <span class="hljs-attribute">name</span>: <span class="hljs-string">'Dashboard'</span>
+        <span class="hljs-attribute">icon</span>: <span class="hljs-string">'dashboard'</span>
+      <span class="hljs-keyword">if</span> entity <span class="hljs-keyword">instanceof</span> App.Entities.Folder
+        leaf.set <span class="hljs-attribute">parent</span>: entity.get(<span class="hljs-string">'parent'</span>)
+        leaf.set <span class="hljs-attribute">name</span>:   entity.get(<span class="hljs-string">'name'</span>)
+        <span class="hljs-keyword">if</span> entity == App.current_user.get(<span class="hljs-string">'scans_folder'</span>)
+          leaf.set <span class="hljs-attribute">icon</span>: <span class="hljs-string">'tasks'</span>
+        <span class="hljs-keyword">else</span>
+          leaf.set <span class="hljs-attribute">icon</span>: <span class="hljs-string">'folder-open'</span>
+        leaf.set <span class="hljs-attribute">url</span>:    entity.url()
+      <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> entity <span class="hljs-keyword">instanceof</span> App.Entities.Document
+        leaf.set <span class="hljs-attribute">parent</span>: entity.get(<span class="hljs-string">'folder'</span>)
+        leaf.set <span class="hljs-attribute">name</span>:   entity.get(<span class="hljs-string">'name'</span>)
+        leaf.set <span class="hljs-attribute">icon</span>:   entity.icon()
+        leaf.set <span class="hljs-attribute">url</span>:    entity.url()
+      <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> entity <span class="hljs-keyword">instanceof</span> App.Entities.Scan
+        leaf.set <span class="hljs-attribute">parent</span>: entity.get(<span class="hljs-string">'folder'</span>)
+        leaf.set <span class="hljs-attribute">name</span>:   entity.get(<span class="hljs-string">'name'</span>)
+        leaf.set <span class="hljs-attribute">icon</span>:   <span class="hljs-string">'bar-chart-o'</span>
+        leaf.set <span class="hljs-attribute">url</span>:    entity.url()
+      <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> entity <span class="hljs-keyword">instanceof</span> App.Entities.User
+        leaf.set <span class="hljs-attribute">parent</span>: <span class="hljs-keyword">new</span> <span class="hljs-property">@breadcrumbs</span>.model
+          <span class="hljs-attribute">name</span>: <span class="hljs-string">"Users"</span>
+          <span class="hljs-attribute">icon</span>: <span class="hljs-string">'list'</span>
+          <span class="hljs-attribute">url</span>: <span class="hljs-string">"/users"</span>
+          <span class="hljs-attribute">parent</span>: root
+      <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> _.isObject(entity)
+        leaf.set <span class="hljs-attribute">parent</span>: root
+        leaf.set entity
+      <span class="hljs-keyword">else</span> <span class="hljs-keyword">return</span> <span class="hljs-property">@breadcrumbs</span>.reset()
+      <span class="hljs-property">@breadcrumbs</span>.reset <span class="hljs-property">@recBreadcrumbs</span>(leaf.get(<span class="hljs-string">'parent'</span>)).concat [leaf]
+      
+    <span class="hljs-attribute">recBreadcrumbs</span>: <span class="hljs-function"><span class="hljs-params">(folder)</span> -&gt;</span>
+      <span class="hljs-keyword">return</span> [] <span class="hljs-keyword">unless</span> folder
+      breadcrumb = <span class="hljs-keyword">new</span> <span class="hljs-property">@breadcrumbs</span>.model
+      <span class="hljs-keyword">if</span> folder.get(<span class="hljs-string">'parent'</span>)
+        breadcrumb.set <span class="hljs-attribute">parent</span>: folder.get(<span class="hljs-string">'parent'</span>)
+        breadcrumb.set <span class="hljs-attribute">name</span>:   folder.get(<span class="hljs-string">'name'</span>)
+        <span class="hljs-keyword">if</span> folder == App.current_user.get(<span class="hljs-string">'scans_folder'</span>)
+          breadcrumb.set <span class="hljs-attribute">url</span>:  <span class="hljs-string">"/scans"</span>
+          breadcrumb.set <span class="hljs-attribute">icon</span>: <span class="hljs-string">'tasks'</span>
+        <span class="hljs-keyword">else</span>
+          breadcrumb.set <span class="hljs-attribute">url</span>:  folder.url?()
+          breadcrumb.set <span class="hljs-attribute">icon</span>: <span class="hljs-string">'folder-open'</span>
+        <span class="hljs-keyword">if</span> folder.get(<span class="hljs-string">'url'</span>)
+          breadcrumb.set <span class="hljs-attribute">url</span>: folder.get(<span class="hljs-string">'url'</span>)
+        <span class="hljs-keyword">if</span> folder.get(<span class="hljs-string">'icon'</span>)
+          breadcrumb.set <span class="hljs-attribute">icon</span>: folder.get(<span class="hljs-string">'icon'</span>)
+      <span class="hljs-keyword">else</span>
+        breadcrumb.set <span class="hljs-attribute">name</span>:   <span class="hljs-string">'Dashboard'</span>
+        breadcrumb.set <span class="hljs-attribute">icon</span>:   <span class="hljs-string">'dashboard'</span>
+        breadcrumb.set <span class="hljs-attribute">url</span>:    <span class="hljs-string">'/dashboard'</span>
+      <span class="hljs-property">@recBreadcrumbs</span>(folder.get(<span class="hljs-string">'parent'</span>)).concat [breadcrumb]
+
+  App.addInitializer<span class="hljs-function"> -&gt;</span>
+    <span class="hljs-property">@breadcrumbsController</span> = <span class="hljs-keyword">new</span> Breadcrumbs.BreadcrumbsController
+
+  App.commands.setHandler <span class="hljs-string">"breadcrumbs"</span>, <span class="hljs-function"><span class="hljs-params">(entity)</span> -&gt;</span>
+    <span class="hljs-keyword">if</span> entity <span class="hljs-keyword">instanceof</span> App.Entities.Model
+      App.execute <span class="hljs-string">"when:fetched"</span>, entity,<span class="hljs-function"> =&gt;</span>
+        App.breadcrumbsController.generateBreadcrumbs entity
+    <span class="hljs-keyword">else</span>
+      App.breadcrumbsController.generateBreadcrumbs entity
+
+  App.commands.setHandler <span class="hljs-string">"show:breadcrumbs"</span>, <span class="hljs-function"><span class="hljs-params">(options)</span> -&gt;</span>
+    <span class="hljs-keyword">new</span> Breadcrumbs.BreadcrumbsController options
+
+
+      <span class="hljs-comment">#Backbone.history.on 'navigate', (a,b,c,d) -&gt;</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p> console.log &#39;Navigate&#39;, a, b, c, d
+ App.breadcrumbsController.updateBreadcrumbs()</p></div></div></div></div></body></html>

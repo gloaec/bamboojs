@@ -1,0 +1,105 @@
+<!DOCTYPE html><html lang="en"><head><title>scripts/entities/folders</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../"><meta name="groc-document-path" content="scripts/entities/folders"><meta name="groc-project-path" content="assets/scripts/entities/folders.coffee"><link rel="stylesheet" type="text/css" media="all" href="../../assets/style.css"><script type="text/javascript" src="../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/entities/folders.coffee</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-property">@Bamboo</span>.<span class="hljs-built_in">module</span> <span class="hljs-string">"Entities"</span>, <span class="hljs-function"><span class="hljs-params">(Entities, App, Backbone, Marionette, $, _)</span> -&gt;</span>
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Entities</span>.<span class="hljs-title">Author</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Entities</span>.<span class="hljs-title">Model</span></span>
+    <span class="hljs-property">@mixin</span> Entities.User
+
+    <span class="hljs-attribute">relations</span>: [
+      <span class="hljs-attribute">type</span>: Backbone.Many
+      <span class="hljs-attribute">key</span>: <span class="hljs-string">'folders'</span>
+      <span class="hljs-attribute">relatedModel</span>: <span class="hljs-string">'Bamboo.Entities.Folder'</span>
+    ]
+
+    <span class="hljs-attribute">defaults</span>:
+      <span class="hljs-attribute">folders</span>: []
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Entities</span>.<span class="hljs-title">Folder</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Entities</span>.<span class="hljs-title">Model</span></span>
+
+	  <span class="hljs-comment">#set: (key, value, options) -&gt;</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p> ret = Entities.Model::set.apply @, arguments
+ @get(&#39;documents&#39;).options.folder_id = @id
+ ret</p></div></div><div class="code"><div class="wrapper">      
+    <span class="hljs-attribute">urlRoot</span>:<span class="hljs-function"> -&gt;</span> <span class="hljs-string">"/folders"</span>
+
+    <span class="hljs-attribute">relations</span>: [
+      <span class="hljs-attribute">type</span>: Backbone.One
+      <span class="hljs-attribute">key</span>: <span class="hljs-string">'parent'</span>
+      <span class="hljs-attribute">relatedModel</span>: Backbone.Self
+    ,
+      <span class="hljs-attribute">type</span>: Backbone.Many
+      <span class="hljs-attribute">key</span>: <span class="hljs-string">'documents'</span>
+      <span class="hljs-attribute">collectionType</span>: <span class="hljs-string">'Bamboo.Entities.DocumentsCollection'</span>
+    ,
+      <span class="hljs-attribute">type</span>: Backbone.Many
+      <span class="hljs-attribute">key</span>: <span class="hljs-string">'children'</span>
+      <span class="hljs-attribute">collectionType</span>: <span class="hljs-string">'Bamboo.Entities.FoldersCollection'</span>
+    ,
+      <span class="hljs-attribute">type</span>: Backbone.Many
+      <span class="hljs-attribute">key</span>: <span class="hljs-string">'files'</span>
+      <span class="hljs-attribute">collectionType</span>: <span class="hljs-string">'Bamboo.Entities.FilesCollection'</span>
+    ]
+
+    <span class="hljs-attribute">defaults</span>:
+      <span class="hljs-attribute">author</span>: <span class="hljs-literal">null</span>
+
+    <span class="hljs-attribute">validation</span>:
+      <span class="hljs-attribute">title</span>: [
+        <span class="hljs-attribute">required</span>: <span class="hljs-literal">true</span>
+        <span class="hljs-attribute">msg</span>: <span class="hljs-string">'Title is required'</span>
+      ,
+        <span class="hljs-attribute">pattern</span>: <span class="hljs-regexp">/^[A-Z]/</span>
+        <span class="hljs-attribute">msg</span>: <span class="hljs-string">'Must start with capital letter'</span>
+      ]
+      <span class="hljs-attribute">content</span>:
+        <span class="hljs-attribute">maxLength</span>: <span class="hljs-number">140</span>
+        <span class="hljs-attribute">msg</span>: <span class="hljs-string">'Folder is too long (140 chars maximum)'</span>
+
+    <span class="hljs-attribute">icon</span>:<span class="hljs-function"> -&gt;</span> <span class="hljs-string">'folder'</span>
+    
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Entities</span>.<span class="hljs-title">FoldersCollection</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Entities</span>.<span class="hljs-title">Collection</span></span>
+
+    <span class="hljs-attribute">model</span>: Entities.Folder
+
+    <span class="hljs-attribute">url</span>:<span class="hljs-function"> -&gt;</span> <span class="hljs-string">"/folders"</span>
+
+    <span class="hljs-attribute">comparator</span>: <span class="hljs-function"><span class="hljs-params">(m)</span> -&gt;</span>
+      -m.get <span class="hljs-string">"created_at"</span>
+
+    <span class="hljs-attribute">getByAuthorID</span>: <span class="hljs-function"><span class="hljs-params">(id)</span> -&gt;</span>
+      <span class="hljs-property">@where</span> <span class="hljs-attribute">author_id</span>: id
+	
+
+  API =
+    <span class="hljs-attribute">newFolder</span>: <span class="hljs-function"><span class="hljs-params">(parent)</span> -&gt;</span>
+      <span class="hljs-keyword">new</span> Entities.Folder
+        <span class="hljs-attribute">parent</span>: parent
+        <span class="hljs-attribute">children</span>: <span class="hljs-keyword">new</span> Entities.FoldersCollection
+        <span class="hljs-attribute">documents</span>: <span class="hljs-keyword">new</span> Entities.DocumentsCollection
+        <span class="hljs-attribute">files</span>: <span class="hljs-keyword">new</span> Entities.FilesCollection
+
+    <span class="hljs-attribute">getFolders</span>: <span class="hljs-function"><span class="hljs-params">()</span> -&gt;</span>
+      folders = <span class="hljs-keyword">new</span> Entities.FoldersCollection
+      folders.fetch <span class="hljs-attribute">reset</span>: <span class="hljs-literal">true</span>
+      folders
+
+    <span class="hljs-attribute">getFolder</span>: <span class="hljs-function"><span class="hljs-params">(id)</span> -&gt;</span>
+      folder = <span class="hljs-keyword">new</span> Entities.Folder <span class="hljs-attribute">id</span>: id
+      folder.fetch()
+      folder
+
+    <span class="hljs-attribute">getFolderDocuments</span>: <span class="hljs-function"><span class="hljs-params">(folder)</span> -&gt;</span>
+      <span class="hljs-keyword">unless</span> folder.get(<span class="hljs-string">'documents'</span>)?
+        documents = <span class="hljs-keyword">new</span> Entities.DocumentsCollection [], <span class="hljs-attribute">folder</span>: folder
+        folder.set(<span class="hljs-string">'documents'</span>, documents)
+      folder.get(<span class="hljs-string">'documents'</span>)
+
+
+  App.reqres.setHandler <span class="hljs-string">"folder:entities"</span>,<span class="hljs-function"> -&gt;</span>
+    API.getFolders()
+    
+  App.reqres.setHandler <span class="hljs-string">"folder:entity"</span>, <span class="hljs-function"><span class="hljs-params">(id)</span> -&gt;</span>
+    API.getFolder id
+
+  App.reqres.setHandler <span class="hljs-string">"new:folder:entity"</span>, <span class="hljs-function"><span class="hljs-params">(parent)</span> -&gt;</span>
+    API.newFolder parent
+
+  App.reqres.setHandler <span class="hljs-string">"folder:document:entities"</span>, <span class="hljs-function"><span class="hljs-params">(folder)</span> -&gt;</span>
+    API.getFolderDocuments folder</div></div></div></div></body></html>

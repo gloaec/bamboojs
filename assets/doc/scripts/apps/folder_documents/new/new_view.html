@@ -1,0 +1,91 @@
+<!DOCTYPE html><html lang="en"><head><title>scripts/apps/folder_documents/new/new_view</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../../../"><meta name="groc-document-path" content="scripts/apps/folder_documents/new/new_view"><meta name="groc-project-path" content="assets/scripts/apps/folder_documents/new/new_view.coffee"><link rel="stylesheet" type="text/css" media="all" href="../../../../assets/style.css"><script type="text/javascript" src="../../../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/apps/folder_documents/new/new_view.coffee</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-property">@Bamboo</span>.<span class="hljs-built_in">module</span> <span class="hljs-string">"FolderDocumentsApp.New"</span>, <span class="hljs-function"><span class="hljs-params">(New, App, Backbone, Marionette, $, _)</span> -&gt;</span>
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">New</span>.<span class="hljs-title">Toolbar</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">App</span>.<span class="hljs-title">Views</span>.<span class="hljs-title">ItemView</span></span>
+    <span class="hljs-attribute">template</span>: <span class="hljs-string">"folder_documents/new/_toolbar"</span>
+
+    <span class="hljs-attribute">events</span>:
+      <span class="hljs-string">"click .create-folder-document"</span>   :<span class="hljs-function"> -&gt;</span> <span class="hljs-property">@trigger</span> <span class="hljs-string">"create:folder:document:clicked"</span>, <span class="hljs-property">@model</span>
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">New</span>.<span class="hljs-title">Webpage</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">App</span>.<span class="hljs-title">Views</span>.<span class="hljs-title">ItemView</span></span>
+    <span class="hljs-attribute">template</span>: <span class="hljs-string">"folder_documents/new/new_webpage"</span>
+
+    <span class="hljs-attribute">initialize</span>:<span class="hljs-function"> -&gt;</span>
+      <span class="hljs-property">@listenTo</span> <span class="hljs-property">@model</span>, <span class="hljs-string">'validated'</span>, <span class="hljs-function"><span class="hljs-params">(_, __, attrs)</span> =&gt;</span> <span class="hljs-property">@showErrors</span>(attrs)
+      <span class="hljs-property">@listenTo</span> @, <span class="hljs-string">'create:folder:document:clicked'</span>, <span class="hljs-property">@createFolderDocumentClicked</span>
+
+    <span class="hljs-attribute">ui</span>:
+      form                 : <span class="hljs-string">"form"</span>
+      attachment_file_name : <span class="hljs-string">".attachment_file_name"</span>
+      preview              : <span class="hljs-string">"#preview"</span>
+
+    <span class="hljs-attribute">events</span>:
+      <span class="hljs-string">'submit form'</span> : <span class="hljs-string">'formSubmitted'</span>
+
+    <span class="hljs-attribute">modelEvents</span>:
+      <span class="hljs-string">'change:name'</span>:<span class="hljs-function"> -&gt;</span>
+        <span class="hljs-property">@model</span>.set <span class="hljs-attribute">attachment_file_name</span>: <span class="hljs-property">@model</span>.get(<span class="hljs-string">'name'</span>)
+        <span class="hljs-property">@ui</span>.preview.attr <span class="hljs-attribute">src</span>: <span class="hljs-property">@model</span>.get(<span class="hljs-string">'name'</span>)
+
+    <span class="hljs-attribute">bindings</span>:
+      <span class="hljs-string">".attachment_file_name"</span> : <span class="hljs-string">"attachment_file_name"</span>
+      <span class="hljs-string">".attachment_file_name"</span> : <span class="hljs-string">"name"</span>
+
+    <span class="hljs-attribute">onRender</span>:<span class="hljs-function"> -&gt;</span>
+      <span class="hljs-property">@stickit</span>()
+      <span class="hljs-property">@validateit</span>()
+      <span class="hljs-property">@ui</span>.preview.<span class="hljs-literal">on</span> <span class="hljs-string">'load'</span>,<span class="hljs-function"> =&gt;</span>
+
+    <span class="hljs-attribute">createFolderDocumentClicked</span>: <span class="hljs-function"><span class="hljs-params">(<span class="hljs-built_in">document</span>)</span> -&gt;</span>
+      <span class="hljs-property">@ui</span>.form.submit()
+
+    <span class="hljs-attribute">formSubmitted</span>: <span class="hljs-function"><span class="hljs-params">(e)</span> -&gt;</span>
+      e.preventDefault()
+      <span class="hljs-built_in">console</span>.log <span class="hljs-property">@model</span>.toJSON()
+      <span class="hljs-property">@model</span>.save <span class="hljs-attribute">from</span>: <span class="hljs-string">'webpage'</span>,
+        <span class="hljs-attribute">success</span>:<span class="hljs-function"> =&gt;</span>
+          <span class="hljs-property">@collection</span>.add <span class="hljs-property">@model</span>
+          App.execute <span class="hljs-string">"flash:success"</span>, <span class="hljs-string">"Webpage #<span class="hljs-subst">#{<span class="hljs-property">@model</span>.id}</span> successfully imported"</span>
+          App.navigate <span class="hljs-property">@model</span>.get(<span class="hljs-string">'folder'</span>).url(), <span class="hljs-attribute">trigger</span>: <span class="hljs-literal">true</span>
+        <span class="hljs-attribute">error</span>: <span class="hljs-function"><span class="hljs-params">(post, jqXHR)</span> =&gt;</span>
+          <span class="hljs-property">@showErrors</span> $.parseJSON(jqXHR.responseText).errors
+
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">New</span>.<span class="hljs-title">Document</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">App</span>.<span class="hljs-title">Views</span>.<span class="hljs-title">ItemView</span></span>
+    <span class="hljs-attribute">template</span>: <span class="hljs-string">"folder_documents/new/new_document"</span>
+
+    <span class="hljs-attribute">initialize</span>:<span class="hljs-function"> -&gt;</span>
+      <span class="hljs-property">@listenTo</span> <span class="hljs-property">@model</span>, <span class="hljs-string">'validated'</span>, <span class="hljs-function"><span class="hljs-params">(_, __, attrs)</span> =&gt;</span> <span class="hljs-property">@showErrors</span>(attrs)
+      <span class="hljs-property">@listenTo</span> @, <span class="hljs-string">'create:folder:document:clicked'</span>, <span class="hljs-property">@createFolderDocumentClicked</span>
+
+    <span class="hljs-attribute">ui</span>:
+      name       : <span class="hljs-string">"#name"</span>
+      content    : <span class="hljs-string">"#content"</span>
+      form       : <span class="hljs-string">"form"</span>
+
+    <span class="hljs-attribute">events</span>:
+      <span class="hljs-string">'submit form'</span> : <span class="hljs-string">'formSubmitted'</span>
+
+    <span class="hljs-attribute">bindings</span>:
+      <span class="hljs-string">"#name"</span>      : <span class="hljs-string">"name"</span>
+      <span class="hljs-string">"#content"</span>   : <span class="hljs-string">"content"</span>
+
+    <span class="hljs-attribute">onRender</span>:<span class="hljs-function"> -&gt;</span>
+      _.defer<span class="hljs-function"> =&gt;</span> <span class="hljs-property">@ui</span>.content.ckeditor <span class="hljs-attribute">height</span>: <span class="hljs-number">350</span>
+      <span class="hljs-property">@stickit</span>()
+      <span class="hljs-property">@validateit</span>()
+
+    <span class="hljs-attribute">createFolderDocumentClicked</span>: <span class="hljs-function"><span class="hljs-params">(<span class="hljs-built_in">document</span>)</span> -&gt;</span>
+      <span class="hljs-property">@ui</span>.form.submit()
+
+    <span class="hljs-attribute">formSubmitted</span>: <span class="hljs-function"><span class="hljs-params">(e)</span> -&gt;</span>
+      e.preventDefault()
+      <span class="hljs-property">@model</span>.set <span class="hljs-attribute">content</span>: <span class="hljs-property">@ui</span>.content.val().trim()
+      <span class="hljs-built_in">console</span>.log <span class="hljs-property">@model</span>.toJSON()
+      <span class="hljs-keyword">if</span> <span class="hljs-property">@model</span>.isValid(<span class="hljs-literal">true</span>)
+        <span class="hljs-property">@model</span>.save <span class="hljs-attribute">from</span>: <span class="hljs-string">'scratch'</span>,
+          <span class="hljs-attribute">success</span>:<span class="hljs-function"> =&gt;</span>
+            <span class="hljs-property">@collection</span>.add <span class="hljs-property">@model</span>
+            App.execute <span class="hljs-string">"flash:success"</span>, <span class="hljs-string">"Document #<span class="hljs-subst">#{<span class="hljs-property">@model</span>.id}</span> successfully created"</span>
+            App.navigate <span class="hljs-property">@model</span>.get(<span class="hljs-string">'folder'</span>).url(), <span class="hljs-attribute">trigger</span>: <span class="hljs-literal">true</span>
+          <span class="hljs-attribute">error</span>: <span class="hljs-function"><span class="hljs-params">(post, jqXHR)</span> =&gt;</span>
+            <span class="hljs-property">@showErrors</span> $.parseJSON(jqXHR.responseText).errors</div></div></div></div></body></html>

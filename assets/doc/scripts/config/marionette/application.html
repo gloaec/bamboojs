@@ -1,0 +1,62 @@
+<!DOCTYPE html><html lang="en"><head><title>scripts/config/marionette/application</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../../"><meta name="groc-document-path" content="scripts/config/marionette/application"><meta name="groc-project-path" content="assets/scripts/config/marionette/application.coffee"><link rel="stylesheet" type="text/css" media="all" href="../../../assets/style.css"><script type="text/javascript" src="../../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/config/marionette/application.coffee</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-keyword">do</span> <span class="hljs-function"><span class="hljs-params">(Backbone)</span> -&gt;</span>
+	
+  _.extend Backbone.Marionette.<span class="hljs-attribute">Application</span>::,
+
+    <span class="hljs-attribute">navigate</span>: <span class="hljs-function"><span class="hljs-params">(route, options = {})</span> -&gt;</span>
+      <span class="hljs-property">@vent</span>.trigger <span class="hljs-string">'navigate'</span>, route, options
+      Backbone.history.navigate route, options
+      <span class="hljs-property">@highlightRoute</span>(route)
+
+    <span class="hljs-attribute">getCurrentRoute</span>:<span class="hljs-function"> -&gt;</span>
+      frag = Backbone.history.fragment
+      <span class="hljs-keyword">unless</span> _.isEmpty(frag)
+        <span class="hljs-property">@highlightRoute</span>(<span class="hljs-string">"/<span class="hljs-subst">#{frag}</span>"</span>)
+        frag
+		
+    <span class="hljs-attribute">highlightRoute</span>: <span class="hljs-function"><span class="hljs-params">(href)</span> -&gt;</span>
+      $(<span class="hljs-string">'.sidebar-nav li.active:not(.dropdown-toggle)'</span>).removeClass(<span class="hljs-string">'active'</span>)
+      $<span class="hljs-function"><span class="hljs-params">(<span class="hljs-string">'a'</span>)</span>.<span class="hljs-title">each</span> <span class="hljs-params">(i, el)</span>-&gt;</span>
+        <span class="hljs-keyword">if</span> href.match($(el).attr(<span class="hljs-string">'href'</span>))
+          $(el).parent(<span class="hljs-string">'li'</span>).addClass(<span class="hljs-string">'active'</span>)
+
+    <span class="hljs-attribute">startHistory</span>: <span class="hljs-function"><span class="hljs-params">(options = {})</span> -&gt;</span>
+      _.defaults options,
+        <span class="hljs-attribute">pushState</span>: <span class="hljs-literal">true</span>
+
+      <span class="hljs-keyword">if</span> Backbone.history
+        Backbone.history.start options
+        <span class="hljs-keyword">if</span> Backbone.history._hasPushState
+          $<span class="hljs-function"><span class="hljs-params">(<span class="hljs-built_in">document</span>)</span>.<span class="hljs-title">delegate</span> "<span class="hljs-title">a</span>[<span class="hljs-title">href</span>^='/']", "<span class="hljs-title">click</span>", <span class="hljs-params">(event)</span> =&gt;</span>
+            <span class="hljs-property">@delegateClick</span>(event)
+
+    <span class="hljs-attribute">delegateClick</span>: <span class="hljs-function"><span class="hljs-params">(event)</span> -&gt;</span>
+      event = event || <span class="hljs-built_in">window</span>.event
+      target = event.currentTarget || event.srcElement || event.target</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get the anchor href and protcol</p></div></div><div class="code"><div class="wrapper">      href = $(target).attr(<span class="hljs-string">"href"</span>)
+      protocol = target.protocol + <span class="hljs-string">"//"</span>
+      passThrough = href.indexOf(<span class="hljs-string">'special_url'</span>) &gt;= <span class="hljs-number">0</span> <span class="hljs-keyword">or</span> $(target).data(<span class="hljs-string">'reload'</span>)?
+      passThrough ||= href.slice(protocol.length) <span class="hljs-keyword">is</span> protocol
+      passThrough ||= href.startsWith(<span class="hljs-string">'//'</span>)
+      passThrough ||= event.altKey <span class="hljs-keyword">or</span> event.ctrlKey <span class="hljs-keyword">or</span> event.metaKey <span class="hljs-keyword">or</span> event.shiftKey
+
+      <span class="hljs-keyword">unless</span> passThrough</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Ensure the protocol is not part of URL, meaning its relative.
+Stop the event bubbling to ensure the link will not cause a page refresh.</p></div></div><div class="code"><div class="wrapper">        event.preventDefault()</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Note by using Backbone.history.navigate, router events will not be
+triggered. If this is a problem, change this to navigate on your
+router.</p></div></div><div class="code"><div class="wrapper">        <span class="hljs-property">@navigate</span> href, <span class="hljs-literal">true</span>
+        <span class="hljs-literal">false</span>
+
+    <span class="hljs-attribute">register</span>: <span class="hljs-function"><span class="hljs-params">(instance, id)</span> -&gt;</span>
+      <span class="hljs-property">@_registry</span> ?= {}
+      <span class="hljs-property">@_registry</span>[id] = instance
+		
+    <span class="hljs-attribute">unregister</span>: <span class="hljs-function"><span class="hljs-params">(instance, id)</span> -&gt;</span>
+      <span class="hljs-keyword">delete</span> <span class="hljs-property">@_registry</span>[id]
+		
+    <span class="hljs-attribute">resetRegistry</span>:<span class="hljs-function"> -&gt;</span>
+      oldCount = <span class="hljs-property">@getRegistrySize</span>()
+      <span class="hljs-keyword">for</span> key, controller <span class="hljs-keyword">of</span> <span class="hljs-property">@_registry</span>
+        controller.region.close()
+      msg = <span class="hljs-string">"There were <span class="hljs-subst">#{oldCount}</span> controllers in the registry, there are now <span class="hljs-subst">#{<span class="hljs-property">@getRegistrySize</span>()}</span>"</span>
+      <span class="hljs-keyword">if</span> <span class="hljs-property">@getRegistrySize</span>() &gt; <span class="hljs-number">0</span> <span class="hljs-keyword">then</span> <span class="hljs-built_in">console</span>.warn(msg, <span class="hljs-property">@_registry</span>) <span class="hljs-keyword">else</span> <span class="hljs-built_in">console</span>.log(msg)
+		
+    <span class="hljs-attribute">getRegistrySize</span>:<span class="hljs-function"> -&gt;</span>
+      _.size <span class="hljs-property">@_registry</span></div></div></div></div></body></html>

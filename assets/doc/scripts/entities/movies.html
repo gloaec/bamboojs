@@ -1,0 +1,42 @@
+<!DOCTYPE html><html lang="en"><head><title>scripts/entities/movies</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../"><meta name="groc-document-path" content="scripts/entities/movies"><meta name="groc-project-path" content="assets/scripts/entities/movies.coffee"><link rel="stylesheet" type="text/css" media="all" href="../../assets/style.css"><script type="text/javascript" src="../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/entities/movies.coffee</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-property">@Bamboo</span>.<span class="hljs-built_in">module</span> <span class="hljs-string">"Entities"</span>, <span class="hljs-function"><span class="hljs-params">(Entities, App, Backbone, Marionette, $, _)</span> -&gt;</span>
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Entities</span>.<span class="hljs-title">Movie</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Entities</span>.<span class="hljs-title">Model</span></span>
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Entities</span>.<span class="hljs-title">MoviesCollection</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Entities</span>.<span class="hljs-title">Collection</span></span>
+    <span class="hljs-attribute">model</span>: Entities.Movie
+    
+    <span class="hljs-attribute">parse</span>: <span class="hljs-function"><span class="hljs-params">(resp)</span> -&gt;</span>
+      resp.movies
+
+  API =
+    <span class="hljs-attribute">getMovies</span>: <span class="hljs-function"><span class="hljs-params">(url, params = {})</span> -&gt;</span>
+      _.defaults params,
+        <span class="hljs-attribute">apikey</span>: <span class="hljs-string">"vzjnwecqq7av3mauck2238uj"</span> <span class="hljs-comment">## App.request "rotten:tomatoes:api:key"</span>
+        <span class="hljs-attribute">country</span>: <span class="hljs-string">"us"</span>
+      
+      movies = <span class="hljs-keyword">new</span> Entities.MoviesCollection
+      movies.url = <span class="hljs-string">"http://api.rottentomatoes.com/api/public/v1.0/<span class="hljs-subst">#{url}</span>.json?callback=?"</span>
+      movies.fetch
+        <span class="hljs-attribute">reset</span>: <span class="hljs-literal">true</span>
+        <span class="hljs-attribute">data</span>: params
+      movies
+    
+  App.reqres.setHandler <span class="hljs-string">"movie:rental:entities"</span>,<span class="hljs-function"> -&gt;</span>
+    API.getMovies <span class="hljs-string">"lists/dvds/top_rentals"</span>,
+      <span class="hljs-attribute">limit</span>: <span class="hljs-number">20</span>
+  
+  App.reqres.setHandler <span class="hljs-string">"search:movie:entities"</span>, <span class="hljs-function"><span class="hljs-params">(searchTerm)</span> -&gt;</span>
+    API.getMovies <span class="hljs-string">"movies"</span>,
+      <span class="hljs-attribute">q</span>: $.trim(searchTerm)
+  
+  App.reqres.setHandler <span class="hljs-string">"theatre:movie:entities"</span>,<span class="hljs-function"> -&gt;</span>
+    API.getMovies <span class="hljs-string">"lists/movies/in_theaters"</span>,
+      <span class="hljs-attribute">page_limit</span>: <span class="hljs-number">10</span>
+      <span class="hljs-attribute">page</span>: <span class="hljs-number">1</span>
+  
+  App.reqres.setHandler <span class="hljs-string">"upcoming:movie:entities"</span>,<span class="hljs-function"> -&gt;</span>
+    API.getMovies <span class="hljs-string">"lists/movies/upcoming"</span>,
+      <span class="hljs-attribute">page_limit</span>: <span class="hljs-number">10</span>
+      <span class="hljs-attribute">page</span>: <span class="hljs-number">1</span>
+    </div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Use this in your browser&#39;s console to initialize a JSONP request to see the API in action.
+$.getJSON(&quot;<a href="http://api.rottentomatoes.com/api/public/v1.0/movies.json?callback=?">http://api.rottentomatoes.com/api/public/v1.0/movies.json?callback=?</a>&quot;, {apikey: &quot;vzjnwecqq7av3mauck2238uj&quot;, q: &quot;shining&quot;})</p></div></div></div></div></body></html>

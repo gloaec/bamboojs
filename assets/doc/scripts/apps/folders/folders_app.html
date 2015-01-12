@@ -1,0 +1,43 @@
+<!DOCTYPE html><html lang="en"><head><title>scripts/apps/folders/folders_app</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../../"><meta name="groc-document-path" content="scripts/apps/folders/folders_app"><meta name="groc-project-path" content="assets/scripts/apps/folders/folders_app.coffee"><link rel="stylesheet" type="text/css" media="all" href="../../../assets/style.css"><script type="text/javascript" src="../../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/apps/folders/folders_app.coffee</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-property">@Bamboo</span>.<span class="hljs-built_in">module</span> <span class="hljs-string">"FoldersApp"</span>, <span class="hljs-function"><span class="hljs-params">(FoldersApp, App, Backbone, Marionette, $, _)</span> -&gt;</span>
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">FoldersApp</span>.<span class="hljs-title">Router</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Marionette</span>.<span class="hljs-title">SubRouter</span></span>
+
+    <span class="hljs-attribute">prefix</span>: <span class="hljs-string">"folders"</span>
+
+    <span class="hljs-attribute">appRoutes</span>:
+      <span class="hljs-string">"new"</span>      : <span class="hljs-string">"new"</span>
+      <span class="hljs-string">":id"</span>      : <span class="hljs-string">"show"</span>
+      <span class="hljs-string">":id/edit"</span> : <span class="hljs-string">"edit"</span>
+
+  API =
+    <span class="hljs-attribute">new</span>: <span class="hljs-function"><span class="hljs-params">(folders=<span class="hljs-literal">false</span>)</span> -&gt;</span>
+      <span class="hljs-keyword">new</span> FoldersApp.New.Controller <span class="hljs-attribute">folders</span>: folders
+
+    <span class="hljs-attribute">show</span>: <span class="hljs-function"><span class="hljs-params">(id, folder=<span class="hljs-literal">false</span>)</span> -&gt;</span>
+      <span class="hljs-keyword">new</span> FoldersApp.Show.Controller <span class="hljs-attribute">id</span>: id, <span class="hljs-attribute">folder</span>: folder
+
+    <span class="hljs-attribute">edit</span>: <span class="hljs-function"><span class="hljs-params">(id, folder=<span class="hljs-literal">false</span>)</span> -&gt;</span>
+      <span class="hljs-keyword">new</span> FoldersApp.Edit.Controller <span class="hljs-attribute">id</span>: id, <span class="hljs-attribute">folder</span>: folder
+
+    <span class="hljs-attribute">delete</span>: <span class="hljs-function"><span class="hljs-params">(id, folder=<span class="hljs-literal">false</span>)</span> -&gt;</span>
+      folder.destroy()
+
+  App.vent.<span class="hljs-literal">on</span> <span class="hljs-string">"folder:clicked"</span>, <span class="hljs-function"><span class="hljs-params">(folder)</span> -&gt;</span>
+    App.navigate <span class="hljs-string">"folders/<span class="hljs-subst">#{folder.id}</span>"</span>
+    API.show folder.id, folder
+
+  App.vent.<span class="hljs-literal">on</span> <span class="hljs-string">"new:folder:clicked"</span>, <span class="hljs-function"><span class="hljs-params">(folders)</span> -&gt;</span>
+    App.navigate <span class="hljs-string">"folders/new"</span>
+    API.<span class="hljs-keyword">new</span> folders
+
+  App.vent.<span class="hljs-literal">on</span> <span class="hljs-string">"edit:folder:clicked"</span>, <span class="hljs-function"><span class="hljs-params">(folder)</span> -&gt;</span>
+    App.navigate <span class="hljs-string">"folders/<span class="hljs-subst">#{folder.id}</span>/edit"</span>
+    API.edit folder.id, folder
+
+  App.vent.<span class="hljs-literal">on</span> <span class="hljs-string">"delete:folder:clicked"</span>, <span class="hljs-function"><span class="hljs-params">(folder)</span> -&gt;</span>
+    App.navigate <span class="hljs-string">"folders/<span class="hljs-subst">#{folder.id}</span>/delete"</span>
+    API.<span class="hljs-keyword">delete</span> folder.id, folder
+
+  App.addInitializer<span class="hljs-function"> -&gt;</span>
+    <span class="hljs-keyword">new</span> FoldersApp.Router
+      <span class="hljs-attribute">controller</span>: API</div></div></div></div></body></html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html><html lang="en"><head><title>scripts/apps/folders/show/show_view</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../../../"><meta name="groc-document-path" content="scripts/apps/folders/show/show_view"><meta name="groc-project-path" content="assets/scripts/apps/folders/show/show_view.coffee"><link rel="stylesheet" type="text/css" media="all" href="../../../../assets/style.css"><script type="text/javascript" src="../../../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/apps/folders/show/show_view.coffee</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-property">@Bamboo</span>.<span class="hljs-built_in">module</span> <span class="hljs-string">"FoldersApp.Show"</span>, <span class="hljs-function"><span class="hljs-params">(Show, App, Backbone, Marionette, $, _)</span> -&gt;</span>
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Show</span>.<span class="hljs-title">Toolbar</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">App</span>.<span class="hljs-title">Views</span>.<span class="hljs-title">ItemView</span></span>
+    <span class="hljs-attribute">template</span>: <span class="hljs-string">"folders/show/_toolbar"</span>
+    <span class="hljs-class">className: "<span class="hljs-title">btn</span>-<span class="hljs-title">group</span> <span class="hljs-title">pull</span>-<span class="hljs-title">right</span>"</span>
+
+    <span class="hljs-attribute">ui</span>:
+      uploadBtn     : <span class="hljs-string">'.new-folder-upload'</span>
+      dropdownMenu  : <span class="hljs-string">'.dropdown-menu'</span>
+      <span class="hljs-attribute">dropdownToggle</span>: <span class="hljs-string">'.dropdown-toggle'</span>
+
+    <span class="hljs-attribute">events</span>:
+      <span class="hljs-string">"click .new-folder-folder"</span>   :<span class="hljs-function"> -&gt;</span> <span class="hljs-property">@trigger</span> <span class="hljs-string">"new:folder:folder:clicked"</span>, <span class="hljs-property">@model</span>
+      <span class="hljs-string">"click .new-folder-document"</span> :<span class="hljs-function"> -&gt;</span> <span class="hljs-property">@trigger</span> <span class="hljs-string">"new:folder:document:clicked"</span>, <span class="hljs-property">@model</span>
+      <span class="hljs-string">"click .new-folder-webpage"</span>  :<span class="hljs-function"> -&gt;</span> <span class="hljs-property">@trigger</span> <span class="hljs-string">"new:folder:webpage:clicked"</span>, <span class="hljs-property">@model</span>
+      <span class="hljs-comment">#"click .new-folder-upload"   : -&gt; @trigger "new:folder:upload:clicked", @model</span>
+
+    <span class="hljs-attribute">onRender</span>:<span class="hljs-function"> -&gt;</span>
+      _.defer<span class="hljs-function"> =&gt;</span> <span class="hljs-property">@initUploader</span>()
+
+    <span class="hljs-attribute">initUploader</span>: <span class="hljs-function"><span class="hljs-params">(params={})</span> -&gt;</span>
+
+      _.defaults params,
+        <span class="hljs-attribute">url</span>: <span class="hljs-string">"<span class="hljs-subst">#{<span class="hljs-property">@model</span>.url()}</span>/documents?from=upload"</span>
+        <span class="hljs-attribute">multipart_params</span>:
+          <span class="hljs-attribute">document_text_only</span>: <span class="hljs-literal">true</span>
+          <span class="hljs-attribute">authenticity_token</span>: App.current_user.get <span class="hljs-string">'authenticity_token'</span>
+          <span class="hljs-comment">#'&lt;%= request.session_options[:key] %&gt;': '&lt;%= request.session_options[:id] %&gt;'</span>
+        runtimes      : <span class="hljs-string">'html5,gears,flash,silverlight,browserplus'</span>
+	<span class="hljs-comment">#drop_element  : "files-region"</span>
+        browse_button : <span class="hljs-property">@ui</span>.uploadBtn[<span class="hljs-number">0</span>]
+	<span class="hljs-comment">#container     : "files-region"</span>
+        max_file_size : <span class="hljs-string">'100mb'</span>
+        <span class="hljs-comment">#rename: true</span>
+        <span class="hljs-attribute">filters</span>: [
+          title       : <span class="hljs-string">"Bamboo Supported Documents"</span>
+          extensions  : <span class="hljs-string">"doc,docx,pdf,rtf,txt,html"</span>
+        ]
+        autostart : <span class="hljs-literal">true</span>
+
+      uploader = <span class="hljs-keyword">new</span> plupload.Uploader params
+
+      uploader.bind <span class="hljs-string">'Init'</span>, <span class="hljs-function"><span class="hljs-params">(up, params)</span> =&gt;</span>
+        <span class="hljs-built_in">console</span>.info <span class="hljs-string">"Init"</span>, up, params
+        <span class="hljs-property">@ui</span>.uploadBtn.attr(<span class="hljs-attribute">title</span>: <span class="hljs-string">"Runtime: <span class="hljs-subst">#{params.runtime}</span>"</span>).tooltip()
+
+
+      uploader.bind <span class="hljs-string">'PostInit'</span>, <span class="hljs-function"><span class="hljs-params">(up, params)</span> =&gt;</span>
+        <span class="hljs-built_in">console</span>.info <span class="hljs-string">"PostInit"</span>, up, params
+        <span class="hljs-property">@$el</span>.removeClass(<span class="hljs-string">'open'</span>).css(<span class="hljs-attribute">opacity</span>: <span class="hljs-number">1</span>)</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Chrome FIX:</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-property">@$el</span>.css(<span class="hljs-attribute">opacity</span>: <span class="hljs-number">0</span>).addClass(<span class="hljs-string">'open'</span>)</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Must init first to avoid default binding</p></div></div><div class="code"><div class="wrapper">      uploader.init()
+
+      uploader.bind <span class="hljs-string">'FilesAdded'</span>, <span class="hljs-function"><span class="hljs-params">(up, files)</span> =&gt;</span>
+        $.each files, <span class="hljs-function"><span class="hljs-params">(i, file)</span> =&gt;</span>
+          <span class="hljs-built_in">console</span>.info <span class="hljs-string">"File #<span class="hljs-subst">#{file.id}</span> added"</span>, file.percent
+          <span class="hljs-property">@collection</span>.add _.extend file,
+            <span class="hljs-attribute">name</span>: file.name <span class="hljs-comment">#_.truncate(file.name, 40)</span>
+            <span class="hljs-attribute">updated_at</span>: <span class="hljs-keyword">new</span> Date()
+            <span class="hljs-attribute">tr_class</span>: <span class="hljs-keyword">if</span> i%<span class="hljs-number">2</span> <span class="hljs-keyword">then</span> <span class="hljs-string">'even'</span> <span class="hljs-keyword">else</span> <span class="hljs-string">'odd'</span>
+            <span class="hljs-attribute">state</span>: <span class="hljs-number">0</span>
+            <span class="hljs-attribute">attachment_file_size</span>: plupload.formatSize(file.size)
+            <span class="hljs-attribute">attachment_file_type</span>: file.name.split(<span class="hljs-string">'.'</span>).pop()
+            <span class="hljs-attribute">user</span>: App.current_user
+            <span class="hljs-attribute">progress</span>: <span class="hljs-number">0</span>
+        uploader.refresh() <span class="hljs-comment"># Reposition Flash/Silverlight</span>
+        uploader.start()
+      
+      uploader.bind <span class="hljs-string">'UploadProgress'</span>, <span class="hljs-function"><span class="hljs-params">(up, file)</span> =&gt;</span>
+        <span class="hljs-built_in">console</span>.info <span class="hljs-string">"Upload #<span class="hljs-subst">#{file.id}</span>"</span>, file.percent
+        <span class="hljs-property">@collection</span>.get(file.id).set <span class="hljs-attribute">progress</span>: file.precent
+      
+      uploader.bind <span class="hljs-string">'Error'</span>, <span class="hljs-function"><span class="hljs-params">(up, err)</span> =&gt;</span>
+        <span class="hljs-built_in">console</span>.error <span class="hljs-string">'ERROR'</span>, up, err
+        up.refresh() <span class="hljs-comment"># Reposition Flash/Silverlight</span>
+      
+      uploader.bind <span class="hljs-string">'FileUploaded'</span>, <span class="hljs-function"><span class="hljs-params">(up, file)</span> =&gt;</span>
+        <span class="hljs-built_in">console</span>.info <span class="hljs-string">"File #<span class="hljs-subst">#{file.id}</span> Uploaded !"</span>
+        <span class="hljs-property">@collection</span>.get(file.id).set <span class="hljs-attribute">progress</span>: file.percent
+	
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Show</span>.<span class="hljs-title">Folder</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">App</span>.<span class="hljs-title">Views</span>.<span class="hljs-title">ItemView</span></span>
+    <span class="hljs-attribute">template</span>: <span class="hljs-string">"folders/show/_folder"</span>
+
+    <span class="hljs-attribute">initialize</span>:<span class="hljs-function"> -&gt;</span>
+      <span class="hljs-property">@collection</span> = App.request <span class="hljs-string">'folder:file:entities'</span>, <span class="hljs-property">@model</span>
+      <span class="hljs-property">@listenTo</span> <span class="hljs-property">@model</span>, <span class="hljs-string">'add:comments remove:comments change:comments'</span>, <span class="hljs-property">@render</span>, @
+    
+    <span class="hljs-attribute">bindings</span>:
+      <span class="hljs-string">'#title'</span>  : <span class="hljs-string">'title'</span>
+      <span class="hljs-string">'#content'</span>: <span class="hljs-string">'content'</span>
+      <span class="hljs-string">'#nbcomments'</span>:
+        <span class="hljs-attribute">observe</span>: <span class="hljs-string">"comments"</span>
+        <span class="hljs-attribute">onGet</span>: <span class="hljs-function"><span class="hljs-params">(value)</span> -&gt;</span> value.size()
+
+    <span class="hljs-attribute">onRender</span>:<span class="hljs-function"> -&gt;</span>
+      <span class="hljs-property">@stickit</span>()
+      
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Show</span>.<span class="hljs-title">Layout</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">App</span>.<span class="hljs-title">Views</span>.<span class="hljs-title">Layout</span></span>
+    <span class="hljs-attribute">template</span>: <span class="hljs-string">"folders/show/show_layout"</span>
+
+    <span class="hljs-attribute">regions</span>:
+      <span class="hljs-attribute">folderRegion</span>:      <span class="hljs-string">"#folder-region"</span>
+      <span class="hljs-attribute">filesRegion</span>:       <span class="hljs-string">"#files-region"</span>
+      <span class="hljs-attribute">breadcrumbsRegion</span>: <span class="hljs-string">"#breadcrumbs-region"</span></div></div></div></div></body></html>

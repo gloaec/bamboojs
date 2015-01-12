@@ -1,0 +1,9 @@
+<!DOCTYPE html><html lang="en"><head><title>scripts/apps/header_scans/header_scans_app</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../../"><meta name="groc-document-path" content="scripts/apps/header_scans/header_scans_app"><meta name="groc-project-path" content="assets/scripts/apps/header_scans/header_scans_app.coffee"><link rel="stylesheet" type="text/css" media="all" href="../../../assets/style.css"><script type="text/javascript" src="../../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/apps/header_scans/header_scans_app.coffee</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-property">@Bamboo</span>.<span class="hljs-built_in">module</span> <span class="hljs-string">"HeaderScansApp"</span>, <span class="hljs-function"><span class="hljs-params">(HeaderScansApp, App, Backbone, Marionette, $, _)</span> -&gt;</span>
+    
+  API =
+    <span class="hljs-attribute">list</span>: <span class="hljs-function"><span class="hljs-params">(region)</span> -&gt;</span>
+      <span class="hljs-keyword">new</span> HeaderScansApp.List.Controller
+        <span class="hljs-attribute">region</span>: region
+  
+  App.commands.setHandler <span class="hljs-string">"list:header:scans"</span>, <span class="hljs-function"><span class="hljs-params">(region)</span> -&gt;</span>
+    API.list region</div></div></div></div></body></html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html><html lang="en"><head><title>scripts/config/marionette/renderer</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../../"><meta name="groc-document-path" content="scripts/config/marionette/renderer"><meta name="groc-project-path" content="assets/scripts/config/marionette/renderer.coffee"><link rel="stylesheet" type="text/css" media="all" href="../../../assets/style.css"><script type="text/javascript" src="../../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/config/marionette/renderer.coffee</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-keyword">do</span> <span class="hljs-function"><span class="hljs-params">(Marionette)</span> -&gt;</span>
+  _.extend Marionette.Renderer,
+
+    <span class="hljs-attribute">lookups</span>: [
+      <span class="hljs-string">"assets/scripts/apps/"</span>,
+      <span class="hljs-string">"assets/scripts/components/"</span>
+    ]
+
+    <span class="hljs-attribute">render</span>: <span class="hljs-function"><span class="hljs-params">(template, data, more)</span> -&gt;</span>
+      <span class="hljs-built_in">console</span>.info <span class="hljs-string">'Render'</span>, template, data
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> template <span class="hljs-keyword">is</span> <span class="hljs-literal">false</span>
+      path = <span class="hljs-property">@getTemplate</span>(template)
+      <span class="hljs-built_in">console</span>.error <span class="hljs-string">"Template <span class="hljs-subst">#{template}</span> not found!"</span> <span class="hljs-keyword">unless</span> path
+      path(data)
+
+    <span class="hljs-attribute">getTemplate</span>: <span class="hljs-function"><span class="hljs-params">(template)</span> -&gt;</span>
+      <span class="hljs-keyword">for</span> lookup <span class="hljs-keyword">in</span> <span class="hljs-property">@lookups</span>
+        <span class="hljs-comment">## inserts the template at the '-1' position of the template array</span>
+        <span class="hljs-comment">## this allows to omit the word 'templates' from the view but still </span>
+        <span class="hljs-comment">## store the templates in a directory outside of the view</span>
+        <span class="hljs-comment">## example: "users/list/layout" will become "users/list/templates/layout"</span>
+
+        <span class="hljs-keyword">for</span> path <span class="hljs-keyword">in</span> [template, <span class="hljs-property">@withTemplate</span>(template)]
+          <span class="hljs-keyword">return</span> JST[lookup + path] <span class="hljs-keyword">if</span> JST[lookup + path]
+
+    <span class="hljs-attribute">withTemplate</span>: <span class="hljs-function"><span class="hljs-params">(string)</span> -&gt;</span>
+      array = string.split(<span class="hljs-string">"/"</span>)
+      array.splice(-<span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-string">"templates"</span>)
+      array.join(<span class="hljs-string">"/"</span>)</div></div></div></div></body></html>

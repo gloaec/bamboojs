@@ -1,0 +1,39 @@
+<!DOCTYPE html><html lang="en"><head><title>scripts/apps/search/list/list_view</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../../../"><meta name="groc-document-path" content="scripts/apps/search/list/list_view"><meta name="groc-project-path" content="assets/scripts/apps/search/list/list_view.coffee"><link rel="stylesheet" type="text/css" media="all" href="../../../../assets/style.css"><script type="text/javascript" src="../../../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/apps/search/list/list_view.coffee</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-property">@Bamboo</span>.<span class="hljs-built_in">module</span> <span class="hljs-string">"SearchApp.List"</span>, <span class="hljs-function"><span class="hljs-params">(List, App, Backbone, Marionette, $, _)</span> -&gt;</span>
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">List</span>.<span class="hljs-title">Layout</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">App</span>.<span class="hljs-title">Views</span>.<span class="hljs-title">Layout</span></span>
+    <span class="hljs-attribute">template</span>: <span class="hljs-string">"search/list/list_layout"</span>
+
+    <span class="hljs-attribute">regions</span>:
+      <span class="hljs-attribute">panelRegion</span>:   <span class="hljs-string">"#panel-region"</span>
+      <span class="hljs-attribute">moviesRegion</span>:  <span class="hljs-string">"#movies-region"</span>
+  
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">List</span>.<span class="hljs-title">Panel</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">App</span>.<span class="hljs-title">Views</span>.<span class="hljs-title">ItemView</span></span>
+    <span class="hljs-attribute">template</span>: <span class="hljs-string">"search/list/_panel"</span>
+    
+    <span class="hljs-attribute">ui</span>:
+      <span class="hljs-string">"input"</span> : <span class="hljs-string">"input"</span>
+
+    <span class="hljs-attribute">events</span>:
+      <span class="hljs-string">"submit form"</span> : <span class="hljs-string">"formSubmitted"</span>
+    
+    <span class="hljs-attribute">formSubmitted</span>: <span class="hljs-function"><span class="hljs-params">(e)</span> -&gt;</span>
+      e.preventDefault()
+      val = $.trim <span class="hljs-property">@ui</span>.input.val()
+      <span class="hljs-property">@trigger</span> <span class="hljs-string">"search:submitted"</span>, val
+  
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">List</span>.<span class="hljs-title">Movie</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">App</span>.<span class="hljs-title">Views</span>.<span class="hljs-title">ItemView</span></span>
+    <span class="hljs-attribute">template</span>: <span class="hljs-string">"search/list/_movie"</span>
+    <span class="hljs-attribute">tagName</span>: <span class="hljs-string">"tr"</span>
+  
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">List</span>.<span class="hljs-title">Empty</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">App</span>.<span class="hljs-title">Views</span>.<span class="hljs-title">ItemView</span></span>
+    <span class="hljs-attribute">template</span>: <span class="hljs-string">"search/list/_empty"</span>
+    <span class="hljs-attribute">tagName</span>: <span class="hljs-string">"tr"</span>
+  
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">List</span>.<span class="hljs-title">Movies</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">App</span>.<span class="hljs-title">Views</span>.<span class="hljs-title">CompositeView</span></span>
+    <span class="hljs-attribute">template</span>: <span class="hljs-string">"search/list/_movies"</span>
+    <span class="hljs-attribute">itemView</span>: List.Movie
+    <span class="hljs-attribute">emptyView</span>: List.Empty
+    <span class="hljs-attribute">itemViewContainer</span>: <span class="hljs-string">"tbody"</span>
+  
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">List</span>.<span class="hljs-title">Hero</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">App</span>.<span class="hljs-title">Views</span>.<span class="hljs-title">ItemView</span></span>
+    <span class="hljs-attribute">template</span>: <span class="hljs-string">"search/list/_hero"</span></div></div></div></div></body></html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html><html lang="en"><head><title>scripts/apps/scans/list/list_view</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../../../"><meta name="groc-document-path" content="scripts/apps/scans/list/list_view"><meta name="groc-project-path" content="assets/scripts/apps/scans/list/list_view.coffee"><link rel="stylesheet" type="text/css" media="all" href="../../../../assets/style.css"><script type="text/javascript" src="../../../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/apps/scans/list/list_view.coffee</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-property">@Bamboo</span>.<span class="hljs-built_in">module</span> <span class="hljs-string">"ScansApp.List"</span>, <span class="hljs-function"><span class="hljs-params">(List, App, Backbone, Marionette, $, _)</span> -&gt;</span>
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">List</span>.<span class="hljs-title">Toolbar</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">App</span>.<span class="hljs-title">Views</span>.<span class="hljs-title">ItemView</span></span>
+    <span class="hljs-attribute">template</span>: <span class="hljs-string">"scans/list/_toolbar"</span>
+    <span class="hljs-class">className: "<span class="hljs-title">btn</span>-<span class="hljs-title">group</span> <span class="hljs-title">pull</span>-<span class="hljs-title">right</span>"</span>
+
+    <span class="hljs-attribute">ui</span>: {}
+
+    <span class="hljs-attribute">events</span>: {}
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">List</span>.<span class="hljs-title">Empty</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">App</span>.<span class="hljs-title">Views</span>.<span class="hljs-title">ItemView</span></span>
+    <span class="hljs-attribute">template</span>: <span class="hljs-string">"scans/list/_empty"</span>
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">List</span>.<span class="hljs-title">Scan</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">App</span>.<span class="hljs-title">Views</span>.<span class="hljs-title">ItemView</span></span>
+    <span class="hljs-attribute">template</span>: <span class="hljs-string">"scans/list/_scan"</span>
+    <span class="hljs-attribute">tagName</span>: <span class="hljs-string">'a'</span>,
+    <span class="hljs-class">className: '<span class="hljs-title">list</span>-<span class="hljs-title">group</span>-<span class="hljs-title">item</span> <span class="hljs-title">clearfix</span>'</span>
+
+    <span class="hljs-attribute">initialize</span>:<span class="hljs-function"> -&gt;</span>
+      <span class="hljs-property">@$el</span>.prop <span class="hljs-string">'href'</span>, <span class="hljs-property">@model</span>.url()
+      <span class="hljs-property">@timer</span> = setInterval<span class="hljs-function"> =&gt;</span>
+        <span class="hljs-property">@model</span>.trigger <span class="hljs-string">"change:updated_at"</span>, <span class="hljs-property">@model</span>
+      , <span class="hljs-number">30000</span>
+
+    <span class="hljs-attribute">bindings</span>:
+      <span class="hljs-string">".name"</span>:               <span class="hljs-string">"name"</span>
+      <span class="hljs-string">".count_documents"</span>:    <span class="hljs-string">"count_documents"</span>
+      <span class="hljs-string">".count_pending"</span>:      <span class="hljs-string">"count_pending"</span>
+      <span class="hljs-string">".count_passed"</span>:       <span class="hljs-string">"count_passed"</span>
+      <span class="hljs-string">".count_suspicious"</span>:   <span class="hljs-string">"count_suspicious"</span>
+      <span class="hljs-string">".count_plagiarized"</span>:  <span class="hljs-string">"count_plagiarized"</span>
+      <span class="hljs-string">".count_similarities"</span>: <span class="hljs-string">"count_similarities"</span>
+      <span class="hljs-string">".count_sources"</span>:      <span class="hljs-string">"count_sources"</span>
+      <span class="hljs-string">".updated_at"</span>:
+        <span class="hljs-attribute">observe</span>: <span class="hljs-string">"updated_at"</span>
+        <span class="hljs-attribute">onGet</span>: <span class="hljs-function"><span class="hljs-params">(value)</span> -&gt;</span> <span class="hljs-string">"modified <span class="hljs-subst">#{moment(value).fromNow()}</span>"</span> <span class="hljs-keyword">if</span> value
+      <span class="hljs-string">".sprogress"</span>:
+        <span class="hljs-attribute">observe</span>: <span class="hljs-string">"progress"</span>
+        <span class="hljs-attribute">onGet</span>: <span class="hljs-function"><span class="hljs-params">(value)</span> -&gt;</span>
+          <span class="hljs-keyword">switch</span> value
+            <span class="hljs-keyword">when</span> <span class="hljs-number">0</span> <span class="hljs-keyword">then</span> <span class="hljs-string">"Pending"</span>
+            <span class="hljs-keyword">when</span> <span class="hljs-number">100</span> <span class="hljs-keyword">then</span> <span class="hljs-string">"Completed"</span>
+            <span class="hljs-keyword">else</span> <span class="hljs-string">"<span class="hljs-subst">#{value}</span>% Complete"</span>
+
+    <span class="hljs-attribute">onRender</span>:<span class="hljs-function"> -&gt;</span>
+      <span class="hljs-property">@stickit</span>()
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">List</span>.<span class="hljs-title">Scans</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">App</span>.<span class="hljs-title">Views</span>.<span class="hljs-title">CompositeView</span></span>
+    <span class="hljs-attribute">template</span>: <span class="hljs-string">"scans/list/scans"</span>
+    <span class="hljs-attribute">itemView</span>: List.Scan
+    <span class="hljs-attribute">emptyView</span>: List.Empty
+    <span class="hljs-attribute">itemViewContainer</span>: <span class="hljs-string">"#scans"</span>
+
+    <span class="hljs-attribute">collectionEvents</span>:
+      <span class="hljs-string">'change'</span>: <span class="hljs-string">'render'</span>
+
+    <span class="hljs-attribute">initialize</span>:<span class="hljs-function"> -&gt;</span>
+      <span class="hljs-property">@timer</span> = setInterval<span class="hljs-function"> =&gt;</span>
+        <span class="hljs-property">@collection</span>.fetch()
+      , <span class="hljs-number">1000</span>
+
+    <span class="hljs-attribute">onClose</span>:<span class="hljs-function"> -&gt;</span>
+      clearInterval(<span class="hljs-property">@timer</span>)</div></div></div></div></body></html>

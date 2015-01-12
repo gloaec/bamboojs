@@ -1,0 +1,31 @@
+<!DOCTYPE html><html lang="en"><head><title>api/responses/badRequest</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../"><meta name="groc-document-path" content="api/responses/badRequest"><meta name="groc-project-path" content="api/responses/badRequest.js"><link rel="stylesheet" type="text/css" media="all" href="../../assets/style.css"><script type="text/javascript" src="../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">api/responses/badRequest.js</div></div><div id="document"><div class="segment"><div class="comments "><div class="wrapper"><p>400 (Bad Request) Handler</p>
+<p>Usage:
+return res.badRequest();
+return res.badRequest(data);
+return res.badRequest(data, &#39;some/specific/badRequest/view&#39;);</p>
+<p>e.g.:</p>
+<pre><code>return res.badRequest(
+  &#39;Please choose a valid `password` (6-12 characters)&#39;,
+  &#39;trial/signup&#39;
+);</code></pre></div></div><div class="code"><div class="wrapper">module.exports = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">badRequest</span><span class="hljs-params">(data, options)</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get access to <code>req</code>, <code>res</code>, &amp; <code>sails</code></p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> req = <span class="hljs-keyword">this</span>.req;
+  <span class="hljs-keyword">var</span> res = <span class="hljs-keyword">this</span>.res;
+  <span class="hljs-keyword">var</span> sails = req._sails;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Set status code</p></div></div><div class="code"><div class="wrapper">  res.status(<span class="hljs-number">400</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Log error to console</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">if</span> (data !== <span class="hljs-literal">undefined</span>) {
+    sails.log.verbose(<span class="hljs-string">'Sending 400 ("Bad Request") response: \n'</span>,data);
+  }
+  <span class="hljs-keyword">else</span> sails.log.verbose(<span class="hljs-string">'Sending 400 ("Bad Request") response'</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Only include errors in response if application environment
+is not set to &#39;production&#39;.  In production, we shouldn&#39;t
+send back any identifying information about errors.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">if</span> (sails.config.environment === <span class="hljs-string">'production'</span>) {
+    data = <span class="hljs-literal">undefined</span>;
+  }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>If the user-agent wants JSON, always respond with JSON</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">if</span> (req.wantsJSON) {
+    <span class="hljs-keyword">return</span> res.jsonx(data);
+  }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>If second argument is a string, we take that to mean it refers to a view.
+If it was omitted, use an empty object (<code>{}</code>)</p></div></div><div class="code"><div class="wrapper">  options = (<span class="hljs-keyword">typeof</span> options === <span class="hljs-string">'string'</span>) ? { view: options } : options || {};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>If a view was provided in options, serve it.
+Otherwise try to guess an appropriate view, or if that doesn&#39;t
+work, just send JSON.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">if</span> (options.view) {
+    <span class="hljs-keyword">return</span> res.view(options.view, { data: data });
+  }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>If no second argument provided, try to serve the implied view,
+but fall back to sending JSON(P) if no view can be inferred.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">else</span> <span class="hljs-keyword">return</span> res.guessView({ data: data }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">couldNotGuessView</span> <span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">return</span> res.jsonx(data);
+  });
+
+};</div></div></div></div></body></html>

@@ -230,12 +230,30 @@ module.exports = function (grunt) {
     },
     
     groc: {
+      markdown: [
+         "README.md"
+      ],
       coffeescript: [
          "assets/scripts/*.coffee",
          "assets/scripts/**/*.coffee"
       ],
+      javascript: [
+         "api/*.js",
+         "api/**/*.js",
+         "config/*.js",
+         "config/**/*.js"
+      ],
+      stylesheet: [
+         "assets/styles/*.css",
+         "assets/styles/**/*.css",
+         "assets/styles/*.scss",
+         "assets/styles/**/*.scss"
+      ],
       options: {
-        "out": "doc/"
+        "out": "assets/doc/",
+        "strip": "assets/",
+        "index": "README.md",
+        'index-page-title': "BambooJS Documentation"
       }
     },
 

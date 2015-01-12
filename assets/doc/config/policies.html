@@ -1,0 +1,55 @@
+<!DOCTYPE html><html lang="en"><head><title>config/policies</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="config/policies"><meta name="groc-project-path" content="config/policies.js"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">config/policies.js</div></div><div id="document"><div class="segment"><div class="comments "><div class="wrapper"><p>Policy mappings (ACL)</p>
+<p>Policies are simply Express middleware functions which run <strong>before</strong> your controllers.
+You can apply one or more policies to a given controller, or protect just one of its actions.</p>
+<p>Any policy file (e.g. <code>authenticated.js</code>) can be dropped into the <code>/policies</code> folder,
+at which point it can be accessed below by its filename, minus the extension, (e.g. <code>authenticated</code>)</p>
+<p>For more information on policies, check out:
+<a href="http://sailsjs.org/#documentation">http://sailsjs.org/#documentation</a></p></div></div><div class="code"><div class="wrapper">module.exports.policies = {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Default policy for all controllers and actions
+(<code>true</code> allows public access) </p></div></div><div class="code"><div class="wrapper">  <span class="hljs-string">'*'</span>: <span class="hljs-literal">true</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><pre><code>// Here&#39;s an example of adding some policies to a controller
+RabbitController: {
+
+    // Apply the `false` policy as the default for all of RabbitController&#39;s actions
+    // (`false` prevents all access, which ensures that nothing bad happens to our rabbits)
+    &#39;*&#39;: false,
+
+    // For the action `nurture`, apply the &#39;isRabbitMother&#39; policy 
+    // (this overrides `false` above)
+    nurture    : &#39;isRabbitMother&#39;,
+
+    // Apply the `isNiceToAnimals` AND `hasRabbitFood` policies
+    // before letting any users feed our rabbits
+    feed : [&#39;isNiceToAnimals&#39;, &#39;hasRabbitFood&#39;]
+}</code></pre></div></div><div class="code"><div class="wrapper">};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Here&#39;s what the <code>isNiceToAnimals</code> policy from above might look like:
+(this file would be located at <code>policies/isNiceToAnimals.js</code>)</p>
+<p>We&#39;ll make some educated guesses about whether our system will
+consider this user someone who is nice to animals.</p>
+<p>Besides protecting rabbits (while a noble cause, no doubt), 
+here are a few other example use cases for policies:</p>
+<ul>
+<li>cookie-based authentication</li>
+<li>role-based access control</li>
+<li>limiting file uploads based on MB quotas</li>
+<li>OAuth</li>
+<li>BasicAuth</li>
+<li>or any other kind of authentication scheme you can imagine</li>
+</ul></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>module.exports = function isNiceToAnimals (req, res, next) {</p>
+<pre><code>// `req.session` contains a set of data specific to the user making this request.
+// It&#39;s kind of like our app&#39;s &quot;memory&quot; of the current user.
+
+// If our user has a history of animal cruelty, not only will we 
+// prevent her from going even one step further (`return`), 
+// we&#39;ll go ahead and redirect her to PETA (`res.redirect`).
+if ( req.session.user.hasHistoryOfAnimalCruelty ) {
+    return res.redirect(&#39;http://PETA.org&#39;);
+}
+
+// If the user has been seen frowning at puppies, we have to assume that
+// they might end up being mean to them, so we&#39;ll 
+if ( req.session.user.frownsAtPuppies ) {
+    return res.redirect(&#39;http://www.dailypuppy.com/&#39;);
+}
+
+// Finally, if the user has a clean record, we&#39;ll call the `next()` function
+// to let them through to the next policy or our controller
+next();</code></pre>
+<p>};</p></div></div></div></div></body></html>

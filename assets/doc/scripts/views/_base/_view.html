@@ -1,0 +1,28 @@
+<!DOCTYPE html><html lang="en"><head><title>scripts/views/_base/_view</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../../"><meta name="groc-document-path" content="scripts/views/_base/_view"><meta name="groc-project-path" content="assets/scripts/views/_base/_view.coffee"><link rel="stylesheet" type="text/css" media="all" href="../../../assets/style.css"><script type="text/javascript" src="../../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/views/_base/_view.coffee</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-property">@Bamboo</span>.<span class="hljs-built_in">module</span> <span class="hljs-string">"Views"</span>, <span class="hljs-function"><span class="hljs-params">(Views, App, Backbone, Marionette, $, _)</span> -&gt;</span>
+
+  _.extend Backbone.<span class="hljs-attribute">View</span>::,
+  
+    <span class="hljs-attribute">validateit</span>:<span class="hljs-function"> -&gt;</span>
+      Backbone.Validation.bind @
+  
+    <span class="hljs-attribute">showErrors</span>: <span class="hljs-function"><span class="hljs-params">(errors)</span> -&gt;</span>
+      <span class="hljs-built_in">console</span>.error <span class="hljs-string">"Validation error"</span>, errors
+      <span class="hljs-property">@$</span>(<span class="hljs-string">'.help-block'</span>).text <span class="hljs-string">''</span>
+      <span class="hljs-property">@$</span>(<span class="hljs-string">'.has-error'</span>).removeClass <span class="hljs-string">'has-error'</span>
+      <span class="hljs-keyword">if</span> errors?
+        <span class="hljs-keyword">for</span> attr_name, msg <span class="hljs-keyword">of</span> errors
+          msg = msg[<span class="hljs-number">0</span>] <span class="hljs-keyword">if</span> _.isArray msg
+          selector = _<span class="hljs-function"><span class="hljs-params">(Object.keys(<span class="hljs-property">@bindings</span>))</span>.<span class="hljs-title">find</span> <span class="hljs-params">(selector)</span> =&gt;</span>
+            <span class="hljs-property">@bindings</span>[selector] == attr_name
+          <span class="hljs-keyword">if</span> selector?
+            <span class="hljs-property">@$</span>(selector).parent().addClass?(<span class="hljs-string">'has-error'</span>)
+            <span class="hljs-property">@$</span>(selector).parent().parent().addClass?(<span class="hljs-string">'has-error'</span>)
+            <span class="hljs-property">@$</span>(selector).next(<span class="hljs-string">'.help-block'</span>)?.text(msg)
+            <span class="hljs-property">@$</span>(selector).prev(<span class="hljs-string">'.help-block'</span>)?.text(msg)
+            <span class="hljs-property">@$</span>(selector).parent().next(<span class="hljs-string">'.help-block'</span>)?.text(msg)
+            <span class="hljs-property">@$</span>(selector).parent().prev(<span class="hljs-string">'.help-block'</span>)?.text(msg)
+
+
+  _.extend Marionette.<span class="hljs-attribute">View</span>::,</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>FIXME Will be overriden by other templateHelpers</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-attribute">templateHelpers</span>:<span class="hljs-function"> -&gt;</span>
+      <span class="hljs-attribute">render</span>: <span class="hljs-function"><span class="hljs-params">(template, data = {})</span> -&gt;</span>
+        <span class="hljs-property">@safe</span> Marionette.Renderer.render template, _.extend(@, data)</div></div></div></div></body></html>

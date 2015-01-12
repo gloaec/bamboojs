@@ -1,0 +1,28 @@
+<!DOCTYPE html><html lang="en"><head><title>scripts/config/cocktail/mixins</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../../"><meta name="groc-document-path" content="scripts/config/cocktail/mixins"><meta name="groc-project-path" content="assets/scripts/config/cocktail/mixins.coffee"><link rel="stylesheet" type="text/css" media="all" href="../../../assets/style.css"><script type="text/javascript" src="../../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/config/cocktail/mixins.coffee</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-keyword">do</span> <span class="hljs-function"><span class="hljs-params">(Backbone, Cocktail)</span> -&gt;</span>
+
+  Backbone.<span class="hljs-attribute">Model</span>:: = Backbone.<span class="hljs-attribute">AssociatedModel</span>::
+  Cocktail.patch(Backbone)
+
+  _.extend Backbone.actAs.Mementoable,
+    <span class="hljs-attribute">store</span>:<span class="hljs-function"> -&gt;</span> <span class="hljs-property">@storeMemento</span>.apply @, arguments
+    <span class="hljs-attribute">restore</span>:<span class="hljs-function"> -&gt;</span> <span class="hljs-property">@restoreMemento</span>.apply @, arguments
+
+  Selectable =
+    <span class="hljs-attribute">initialize</span>:<span class="hljs-function"> -&gt;</span>
+      _.extend @, <span class="hljs-keyword">new</span> Backbone.Picky.Selectable @
+
+  OneSelectable =
+    <span class="hljs-attribute">initialize</span>:<span class="hljs-function"> -&gt;</span>
+      _.extend @, <span class="hljs-keyword">new</span> Backbone.Picky.SingleSelectable @
+
+  ManySelectable =
+    <span class="hljs-attribute">initialize</span>:<span class="hljs-function"> -&gt;</span>
+      _.extend @, <span class="hljs-keyword">new</span> Backbone.Picky.MutliSelectable @
+
+  Cocktail.mixins =
+    <span class="hljs-attribute">associable</span>:       {}             <span class="hljs-comment"># Default</span>
+    <span class="hljs-attribute">selectable</span>:       Selectable     <span class="hljs-comment"># OK</span>
+    <span class="hljs-attribute">one_selectable</span>:   OneSelectable  <span class="hljs-comment"># OK</span>
+    <span class="hljs-attribute">many_selectable</span>:  ManySelectable <span class="hljs-comment"># OK</span>
+    <span class="hljs-attribute">storable</span>:         Backbone.actAs.Mementoable <span class="hljs-comment"># OK</span>
+    <span class="hljs-attribute">validable</span>:        Backbone.Validation.mixin  <span class="hljs-comment"># OK</span></div></div></div></div></body></html>

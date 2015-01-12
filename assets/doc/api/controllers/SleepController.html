@@ -1,0 +1,32 @@
+<!DOCTYPE html><html lang="en"><head><title>api/controllers/SleepController</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../"><meta name="groc-document-path" content="api/controllers/SleepController"><meta name="groc-project-path" content="api/controllers/SleepController.js"><link rel="stylesheet" type="text/css" media="all" href="../../assets/style.css"><script type="text/javascript" src="../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">api/controllers/SleepController.js</div></div><div id="document"><div class="segment"><div class="comments doc-section"><div class="wrapper"><p><span class='doc-section-header'>Module :: Controller docs :: <a href="http://sailsjs.org/#!documentation/controllers">http://sailsjs.org/#!documentation/controllers</a></span></p>
+<p>SleepController</p>
+<p>:: A set of functions called <code>actions</code>.</p>
+<pre><code>            Actions contain code telling Sails how to respond to a certain type of request.
+            (i.e. do stuff, then send some JSON, show an HTML page, or redirect to another URL)
+
+            You can configure the blueprint URLs which trigger these actions (`config/controllers.js`)
+            and/or override them with custom routes (`config/routes.js`)
+
+            NOTE: The code you write here supports both HTTP and Socket.io automatically.</code></pre></div></div><div class="code"><div class="wrapper">module.exports = {
+
+
+    find: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(req, res)</span> {</span>
+
+        res.send(<span class="hljs-string">"I'm your new explicit find action."</span>);
+    },
+
+    query: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(req, res)</span> {</span>
+
+        res.view();
+
+    },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Overrides for the settings in <code>config/controllers.js</code>
+(specific to SleepController)</p></div></div><div class="code"><div class="wrapper">    _config: {
+
+        blueprints: {
+            actions: <span class="hljs-literal">true</span>,
+            rest: <span class="hljs-literal">true</span>,
+            shortcuts: <span class="hljs-literal">true</span>
+        }
+    }
+
+};</div></div></div></div></body></html>

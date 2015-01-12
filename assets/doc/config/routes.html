@@ -1,0 +1,95 @@
+<!DOCTYPE html><html lang="en"><head><title>config/routes</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="config/routes"><meta name="groc-project-path" content="config/routes.js"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">config/routes.js</div></div><div id="document"><div class="segment"><div class="comments "><div class="wrapper"><p>Routes</p>
+<p>Sails uses a number of different strategies to route requests.
+Here they are top-to-bottom, in order of precedence.</p>
+<p>For more information on routes, check out:
+<a href="http://sailsjs.org/#documentation">http://sailsjs.org/#documentation</a></p></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>(1) Core middleware</p>
+<p>Middleware included with <code>app.use</code> is run first, before the router</p></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>(2) Static routes</p>
+<p>This object routes static URLs to handler functions--
+In most cases, these functions are actions inside of your controllers.
+For convenience, you can also connect routes directly to views or external URLs.</p></div></div><div class="code"><div class="wrapper">module.exports.routes = {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>By default, your root route (aka home page) points to a view
+located at <code>views/home/index.ejs</code>
+(This would also work if you had a file at: <code>/views/home.ejs</code>)</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-string">'/'</span>: {
+    view: <span class="hljs-string">'static/index'</span>
+  },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>All leftover routes to Marionette</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-string">'/*'</span> : {
+    view: <span class="hljs-string">'static/index'</span>, 
+    skipAssets: <span class="hljs-literal">true</span>, 
+    skipRegex: <span class="hljs-regexp">/^\/api\/.*$/</span>
+  }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>// But what if you want your home page to display
+// a signup form located at <code>views/user/signup.ejs</code>?
+&#39;/&#39;: {
+  view: &#39;user/signup&#39;
+}</p>
+<p>// Let&#39;s say you&#39;re building an email client, like Gmail
+// You might want your home route to serve an interface using custom logic.
+// In this scenario, you have a custom controller <code>MessageController</code>
+// with an <code>inbox</code> action.
+&#39;/&#39;: &#39;MessageController.inbox&#39;</p>
+<p>// Alternatively, you can use the more verbose syntax:
+&#39;/&#39;: {
+  controller: &#39;MessageController&#39;,
+  action: &#39;inbox&#39;
+}</p>
+<p>// If you decided to call your action <code>index</code> instead of <code>inbox</code>,
+// since the <code>index</code> action is the default, you can shortcut even further to:
+&#39;/&#39;: &#39;MessageController&#39;</p>
+<p>// Up until now, we haven&#39;t specified a specific HTTP method/verb
+// The routes above will apply to ALL verbs!
+// If you want to set up a route only for one in particular
+// (GET, POST, PUT, DELETE, etc.), just specify the verb before the path.
+// For example, if you have a <code>UserController</code> with a <code>signup</code> action,
+// and somewhere else, you&#39;re serving a signup form looks like: 
+//
+//        <form action="/signup">
+//            <input name="username" type="text"/>
+//            <input name="password" type="password"/>
+//            <input type="submit"/>
+//        </form></p>
+<p>// You would want to define the following route to handle your form:
+&#39;post /signup&#39;: &#39;UserController.signup&#39;</p>
+<p>// What about the ever-popular &quot;vanity URLs&quot; aka URL slugs?
+// (you might remember doing this with <code>mod_rewrite</code> in Apache)
+//
+// This is where you want to set up root-relative dynamic routes like:
+// <a href="http://yourwebsite.com/twinkletoez">http://yourwebsite.com/twinkletoez</a>
+//
+// NOTE:
+// You&#39;ll still want to allow requests through to the static assets,
+// so we need to set up this route to ignore URLs that have a trailing &quot;.&quot;:
+// (e.g. your javascript, CSS, and image files)
+&#39;get /<em>(^.</em>)&#39;: &#39;UserController.profile&#39;</p></div></div><div class="code"><div class="wrapper">};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>(3) Action blueprints
+These routes can be disabled by setting (in <code>config/controllers.js</code>):
+<code>module.exports.controllers.blueprints.actions = false</code></p>
+<p>All of your controllers &#39; actions are automatically bound to a route.  For example:</p>
+<ul>
+<li>If you have a controller, <code>FooController</code>:<ul>
+<li>its action <code>bar</code> is accessible at <code>/foo/bar</code></li>
+<li>its action <code>index</code> is accessible at <code>/foo/index</code>, and also <code>/foo</code></li>
+</ul>
+</li>
+</ul></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>(4) Shortcut CRUD blueprints</p>
+<p>These routes can be disabled by setting (in config/controllers.js)
+        <code>module.exports.controllers.blueprints.shortcuts = false</code></p>
+<p>If you have a model, <code>Foo</code>, and a controller, <code>FooController</code>,
+you can access CRUD operations for that model at:
+    /foo/find/:id?    -&gt;    search lampshades using specified criteria or with id=:id</p>
+<pre><code>/foo/create        -&gt;    create a lampshade using specified values
+
+/foo/update/:id    -&gt;    update the lampshade with id=:id
+
+/foo/destroy/:id    -&gt;    delete lampshade with id=:id</code></pre></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>(5) REST blueprints</p>
+<p>These routes can be disabled by setting (in config/controllers.js)
+    <code>module.exports.controllers.blueprints.rest = false</code></p>
+<p>If you have a model, <code>Foo</code>, and a controller, <code>FooController</code>,
+you can access CRUD operations for that model at:</p>
+<pre><code>get /foo/:id?    -&gt;    search lampshades using specified criteria or with id=:id
+
+post /foo        -&gt; create a lampshade using specified values
+
+put /foo/:id    -&gt;    update the lampshade with id=:id
+
+delete /foo/:id    -&gt;    delete lampshade with id=:id</code></pre></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>(6) Static assets</p>
+<p>Flat files in your <code>assets</code> directory- (these are sometimes referred to as &#39;public&#39;)
+If you have an image file at <code>/assets/images/foo.jpg</code>, it will be made available
+automatically via the route:  <code>/images/foo.jpg</code></p></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>(7) 404 (not found) handler</p>
+<p>Finally, if nothing else matched, the default 404 handler is triggered.
+See <code>config/404.js</code> to adjust your app&#39;s 404 logic.</p></div></div><div class="code"><div class="wrapper"> </div></div></div></div></body></html>

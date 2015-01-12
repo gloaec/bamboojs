@@ -1,0 +1,40 @@
+<!DOCTYPE html><html lang="en"><head><title>scripts/entities/scans</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../"><meta name="groc-document-path" content="scripts/entities/scans"><meta name="groc-project-path" content="assets/scripts/entities/scans.coffee"><link rel="stylesheet" type="text/css" media="all" href="../../assets/style.css"><script type="text/javascript" src="../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/entities/scans.coffee</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-property">@Bamboo</span>.<span class="hljs-built_in">module</span> <span class="hljs-string">"Entities"</span>, <span class="hljs-function"><span class="hljs-params">(Entities, App, Backbone, Marionette, $, _)</span> -&gt;</span>
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Entities</span>.<span class="hljs-title">Scan</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Entities</span>.<span class="hljs-title">Model</span></span>
+    <span class="hljs-attribute">defaults</span>:<span class="hljs-function"> -&gt;</span>
+      <span class="hljs-attribute">name</span>: <span class="hljs-string">"Scan <span class="hljs-subst">#{moment().format(<span class="hljs-string">'lll'</span>)}</span>"</span>
+      <span class="hljs-attribute">folder</span>: App.current_user.get(<span class="hljs-string">'scans_folder'</span>)
+
+    <span class="hljs-attribute">urlRoot</span>:<span class="hljs-function"> -&gt;</span>
+      <span class="hljs-keyword">if</span> <span class="hljs-property">@isNew</span>()
+        <span class="hljs-string">"/folders/<span class="hljs-subst">#{<span class="hljs-property">@get</span>(<span class="hljs-string">'folder'</span>).id}</span>/scans"</span>
+      <span class="hljs-keyword">else</span>
+        <span class="hljs-string">"/scans"</span>
+
+    <span class="hljs-attribute">relations</span>: [
+      <span class="hljs-attribute">type</span>: Backbone.One
+      <span class="hljs-attribute">key</span>: <span class="hljs-string">'folder'</span>
+      <span class="hljs-attribute">relatedModel</span>: <span class="hljs-string">'Bamboo.Entities.Folder'</span>
+    ]
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Entities</span>.<span class="hljs-title">ScansCollection</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Entities</span>.<span class="hljs-title">Collection</span></span>
+    <span class="hljs-attribute">model</span>: Entities.Scan
+
+  API =
+    <span class="hljs-attribute">getScans</span>: <span class="hljs-function"><span class="hljs-params">(params = {})</span> -&gt;</span>
+      _.defaults params, {}
+      scans = <span class="hljs-keyword">new</span> Entities.ScansCollection
+      scans.url = <span class="hljs-string">"/scans"</span>
+      scans.fetch
+        <span class="hljs-attribute">reset</span>: <span class="hljs-literal">true</span>
+        <span class="hljs-attribute">data</span>: params
+      scans
+    
+  App.reqres.setHandler <span class="hljs-string">"scan:entities"</span>,<span class="hljs-function"> -&gt;</span>
+    API.getScans()
+  
+  App.reqres.setHandler <span class="hljs-string">"dashboard:scan:entities"</span>,<span class="hljs-function"> -&gt;</span>
+    API.getScans <span class="hljs-attribute">limit</span>: <span class="hljs-number">5</span>
+
+  App.reqres.setHandler <span class="hljs-string">"header:scan:entities"</span>,<span class="hljs-function"> -&gt;</span>
+    API.getScans <span class="hljs-attribute">limit</span>: <span class="hljs-number">3</span></div></div></div></div></body></html>

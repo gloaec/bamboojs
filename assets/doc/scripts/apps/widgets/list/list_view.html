@@ -1,0 +1,296 @@
+<!DOCTYPE html><html lang="en"><head><title>scripts/apps/widgets/list/list_view</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../../../"><meta name="groc-document-path" content="scripts/apps/widgets/list/list_view"><meta name="groc-project-path" content="assets/scripts/apps/widgets/list/list_view.coffee"><link rel="stylesheet" type="text/css" media="all" href="../../../../assets/style.css"><script type="text/javascript" src="../../../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/apps/widgets/list/list_view.coffee</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-property">@Bamboo</span>.<span class="hljs-built_in">module</span> <span class="hljs-string">"WidgetsApp.List"</span>, <span class="hljs-function"><span class="hljs-params">(List, App, Backbone, Marionette, $, _, eco)</span> -&gt;</span>
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">List</span>.<span class="hljs-title">Empty</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">App</span>.<span class="hljs-title">Views</span>.<span class="hljs-title">ItemView</span></span>
+    <span class="hljs-attribute">template</span>: <span class="hljs-string">"widgets/list/_empty"</span>
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">List</span>.<span class="hljs-title">Widget</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">App</span>.<span class="hljs-title">Views</span>.<span class="hljs-title">Layout</span></span>
+    <span class="hljs-attribute">template</span>: <span class="hljs-string">"widgets/list/_widget"</span>
+
+    <span class="hljs-attribute">regions</span>:
+      <span class="hljs-attribute">widgetRegion</span>: <span class="hljs-string">'.widget-region'</span>
+      <span class="hljs-attribute">setttingsRegion</span>: <span class="hljs-string">'.settings-region'</span>
+
+    <span class="hljs-attribute">attributes</span>:<span class="hljs-function"> -&gt;</span>
+      <span class="hljs-class"><span class="hljs-keyword">class</span>: """</span>
+        widget
+        col-lg-<span class="hljs-comment">#{ if @model.get('state') is 'maximized' then '12' else if @model.get('force') is 'icon'  then '1'  else @model.get('collg') }</span>
+        col-md-<span class="hljs-comment">#{ if @model.get('state') is 'maximized' then '12' else if @model.get('force') is 'icon'  then '2'  else @model.get('colmd') }</span>
+        col-sm-<span class="hljs-comment">#{ if @model.get('state') is 'maximized' then '12' else if @model.get('force') is 'icon'  then '3'  else @model.get('colsm') }</span>
+        col-xs-<span class="hljs-comment">#{ if @model.get('state') is 'maximized' then '12' else if @model.get('force') is 'panel' then '12' else @model.get('colxs') }</span>
+        row-lg-<span class="hljs-comment">#{ if @model.get('state') is 'maximized' then '12' else if @model.get('force') is 'icon'  then '2'  else @model.get('rowlg') }</span>
+        row-md-<span class="hljs-comment">#{ if @model.get('state') is 'maximized' then '12' else if @model.get('force') is 'icon'  then '2'  else @model.get('rowmd') }</span>
+        row-sm-<span class="hljs-comment">#{ if @model.get('state') is 'maximized' then '12' else if @model.get('force') is 'icon'  then '2'  else @model.get('rowsm') }</span>
+        row-xs-<span class="hljs-comment">#{ if @model.get('state') is 'maximized' then '12' else if @model.get('force') is 'panel' then '6'  else @model.get('rowxs') }</span>
+      <span class="hljs-string">"""
+
+    ui:
+      link              : 'a'
+      appearance        : '.appearance'
+      name              : '.name'
+      inputName         : '.input-name'
+      widget            : '.widget'
+      icon              : '.icon-widget'
+      panel             : '.panel'
+      contextMenu       : '.context-menu'
+      iconRegion        : '.icon-region'
+      panelRegion       : '.panel-region'
+      sliders           : '.slider-control input'
+      panelColXsInput   : '.panel .input-colxs'
+      contextColXsInput : '.context-menu .input-colxs'
+      panelRowXsInput   : '.panel .input-rowxs'
+      contextRowXsInput : '.context-menu .input-rowxs'
+      panelColSmInput   : '.panel .input-colsm'
+      contextColSmInput : '.context-menu .input-colsm'
+      panelRowSmInput   : '.panel .input-rowsm'
+      contextRowSmInput : '.context-menu .input-rowsm'
+      panelColMdInput   : '.panel .input-colmd'
+      contextColMdInput : '.context-menu .input-colmd'
+      panelRowMdInput   : '.panel .input-rowmd'
+      contextRowMdInput : '.context-menu .input-rowmd'
+      panelColLgInput   : '.panel .input-collg'
+      contextColLgInput : '.context-menu .input-collg'
+      panelRowLgInput   : '.panel .input-rowlg'
+      contextRowLgInput : '.context-menu .input-rowlg'
+
+    bindings:
+      '.name' : 'name'
+      '.link' : 'link'
+      '.icon' :
+        observe: 'icon'
+        updateMethod: 'html'
+        onGet: (v) -&gt;
+          "&lt;i class='fa fa-fw <span class="hljs-subst">#{v}</span>'&gt;&lt;/i&gt;"
+      '.big-icon' :
+        observe: 'icon'
+        updateMethod: 'html'
+        onGet: (v) -&gt;
+          "&lt;i class='fa fa-fw fa-2x <span class="hljs-subst">#{v}</span>'&gt;&lt;/i&gt;"
+      '.badge':
+        observe: 'badge'
+        updateMethod: 'html'
+      '.panel .appearance':
+        observe: 'force'
+        update: ($el, val) -&gt;
+          $el.parent().removeClass('active')
+          $el.filter("[value='<span class="hljs-subst">#{val}</span>']").parent().addClass('active')
+      '.context-menu .appearance':
+        observe: 'force'
+        update: ($el, val) -&gt;
+          $el.parent().removeClass('active')
+          $el.filter("[value='<span class="hljs-subst">#{val}</span>']").parent().addClass('active')
+      '.panel .state-icon':
+        observe: 'state'
+        onGet: (v) -&gt;
+          icon = switch v
+            when 'maximized' then 'fa-compress'
+            else 'fa-expand'
+          "&lt;i class='fa fa-fw <span class="hljs-subst">#{icon}</span>'&gt;&lt;/i&gt;"
+        updateMethod: 'html'
+      '.panel .state-input':
+        observe: 'state'
+        onSet: (v) -&gt;
+          if v then 'maximized' else null
+        updateMethod: 'html'
+      '.context-menu .state-icon':
+        observe: 'state'
+        onGet: (v) -&gt;
+          icon = switch v
+            when 'maximized' then 'fa-compress'
+            else 'fa-expand'
+          "&lt;i class='fa fa-fw <span class="hljs-subst">#{icon}</span>'&gt;&lt;/i&gt;"
+        updateMethod: 'html'
+      '.context-menu .input-name': 'name'
+      '.panel        .input-name': 'name'
+      '.context-menu .input-link' : 'link'
+      '.panel        .input-link' : 'link'
+      '.context-menu .input-icon' : 'icon'
+      '.panel        .input-icon' : 'icon'
+      '.context-menu .input-command' : 'command'
+      '.panel        .input-command' : 'command'
+      '.context-menu .input-colxs':
+        observe: 'colxs'
+        onGet: (v) -&gt; @contextColXsSlider.slider('setValue', v); v
+        onSet: (v) -&gt; @contextColXsSlider.slider('getValue')
+      '.panel        .input-colxs':
+        observe: 'colxs'
+        onGet: (v) -&gt; @panelColXsSlider.slider('setValue', v); v
+        onSet: (v) -&gt; @panelColXsSlider.slider('getValue')
+      '.context-menu .input-rowxs':
+        observe: 'rowxs'
+        onGet: (v) -&gt; @contextRowXsSlider.slider('setValue', v); v
+        onSet: (v) -&gt; @contextRowXsSlider.slider('getValue')
+      '.panel        .input-rowxs':
+        observe: 'rowxs'
+        onGet: (v) -&gt; @panelRowXsSlider.slider('setValue', v); v
+        onSet: (v) -&gt; @panelRowXsSlider.slider('getValue')
+      '.context-menu .input-colsm':
+        observe: 'colsm'
+        onGet: (v) -&gt; @contextColSmSlider.slider('setValue', v); v
+        onSet: (v) -&gt; @contextColSmSlider.slider('getValue')
+      '.panel        .input-colsm':
+        observe: 'colsm'
+        onGet: (v) -&gt; @panelColSmSlider.slider('setValue', v); v
+        onSet: (v) -&gt; @panelColSmSlider.slider('getValue')
+      '.context-menu .input-rowsm':
+        observe: 'rowsm'
+        onGet: (v) -&gt; @contextRowSmSlider.slider('setValue', v); v
+        onSet: (v) -&gt; @contextRowSmSlider.slider('getValue')
+      '.panel        .input-rowsm':
+        observe: 'rowsm'
+        onGet: (v) -&gt; @panelRowSmSlider.slider('setValue', v); v
+        onSet: (v) -&gt; @panelRowSmSlider.slider('getValue')
+      '.context-menu .input-colmd':
+        observe: 'colmd'
+        onGet: (v) -&gt; @contextColMdSlider.slider('setValue', v); v
+        onSet: (v) -&gt; @contextColMdSlider.slider('getValue')
+      '.panel        .input-colmd':
+        observe: 'colmd'
+        onGet: (v) -&gt; @panelColMdSlider.slider('setValue', v); v
+        onSet: (v) -&gt; @panelColMdSlider.slider('getValue')
+      '.context-menu .input-rowmd':
+        observe: 'rowmd'
+        onGet: (v) -&gt; @contextRowMdSlider.slider('setValue', v); v
+        onSet: (v) -&gt; @contextRowMdSlider.slider('getValue')
+      '.panel        .input-rowmd':
+        observe: 'rowmd'
+        onGet: (v) -&gt; @panelRowMdSlider.slider('setValue', v); v
+        onSet: (v) -&gt; @panelRowMdSlider.slider('getValue')
+      '.context-menu .input-collg':
+        observe: 'collg'
+        onGet: (v) -&gt; @contextColLgSlider.slider('setValue', v); v
+        onSet: (v) -&gt; @contextColLgSlider.slider('getValue')
+      '.panel        .input-collg':
+        observe: 'collg'
+        onGet: (v) -&gt; @panelColLgSlider.slider('setValue', v); v
+        onSet: (v) -&gt; @panelColLgSlider.slider('getValue')
+      '.context-menu .input-rowlg':
+        observe: 'rowlg'
+        onGet: (v) -&gt; @contextRowLgSlider.slider('setValue', v); v
+        onSet: (v) -&gt; @contextRowLgSlider.slider('getValue')
+      '.panel        .input-rowlg':
+        observe: 'rowlg'
+        onGet: (v) -&gt; @panelRowLgSlider.slider('setValue', v); v
+        onSet: (v) -&gt; @panelRowLgSlider.slider('getValue')
+
+    events:
+      "click"         : -&gt; @trigger "widget:clicked", @model
+      "click .edit"   : -&gt; @trigger "edit:widget:clicked", @model
+      "click .delete" : -&gt; @trigger "delete:widget:clicked", @model
+      "dblclick .name": "onEditWidgetNameClicked"
+      #"blur .input-command": "onCommandBlur"
+
+    modelEvents:
+      "change:command": "onCommandChange"
+      "change:colxs": -&gt; @$el.attr @attributes()
+      "change:colsm": -&gt; @$el.attr @attributes()
+      "change:colmd": -&gt; @$el.attr @attributes()
+      "change:collg": -&gt; @$el.attr @attributes()
+      "change:rowxs": -&gt; @$el.attr @attributes()
+      "change:rowsm": -&gt; @$el.attr @attributes()
+      "change:rowmd": -&gt; @$el.attr @attributes()
+      "change:rowlg": -&gt; @$el.attr @attributes()
+      "change:state": -&gt; @$el.attr @attributes()
+
+      "change:force": -&gt;# "render"
+        @$el.attr @attributes()
+        switch @model.get 'force'
+          when 'auto'
+            @ui.iconRegion
+            .removeClass('hidden')
+            .addClass('visible-xs')
+            @ui.panelRegion
+            .removeClass('hidden')
+            .addClass('hidden-xs')
+          when 'panel'
+            @ui.iconRegion
+            .removeClass('visible-xs')
+            .addClass('hidden')
+            @ui.panelRegion
+            .removeClass('hidden')
+            .removeClass('hidden-xs')
+          when 'icon'
+            @ui.iconRegion
+            .removeClass('visible-xs')
+            .removeClass('hidden')
+            @ui.panelRegion
+            .removeClass('hidden-xs')
+            .addClass('hidden')
+        @onResize()
+
+    initialize: -&gt;
+      $(window).on 'resize', @onResize
+
+    onCommandChange:(e) =&gt;
+      if @model.get('command').startsWith '//' or
+          @model.get('command').startsWith 'http://' or
+          @model.get('command').startsWith 'https://'
+        App.execute "widget:default:show",
+          widget: @model
+          region: @widgetRegion
+      else
+        App.execute @model.get('command'),
+          widget: @model
+          region: @widgetRegion
+
+    onResize: (e) =&gt;
+      if @ui.widget.width() &lt; 300
+        @ui.panel.find('.hidden-xs').hide()
+        @ui.panel.find('.visible-xs').show()
+        @ui.contextMenu.children().find('.hidden-xs').hide()
+        @ui.contextMenu.children().find('.visible-xs').show()
+        @ui.icon.children().find('.hidden-xs').hide()
+        @ui.icon.children().find('.visible-xs').show()
+      else
+        @ui.panel.find('.hidden-xs').show()
+        @ui.panel.find('.visible-xs').hide()
+        @ui.contextMenu.children().find('.hidden-xs').show()
+        @ui.contextMenu.children().find('.visible-xs').hide()
+        @ui.icon.children().find('.hidden-xs').show()
+        @ui.icon.children().find('.visible-xs').hide()
+
+    onRender: -&gt;
+      @onResize()
+      @panelColXsSlider   = @ui.panelColXsInput.slider()
+      @contextColXsSlider = @ui.contextColXsInput.slider()
+      @panelRowXsSlider   = @ui.panelRowXsInput.slider()
+      @contextRowXsSlider = @ui.contextRowXsInput.slider()
+      @panelColSmSlider   = @ui.panelColSmInput.slider()
+      @contextColSmSlider = @ui.contextColSmInput.slider()
+      @panelRowSmSlider   = @ui.panelRowSmInput.slider()
+      @contextRowSmSlider = @ui.contextRowSmInput.slider()
+      @panelColMdSlider   = @ui.panelColMdInput.slider()
+      @contextColMdSlider = @ui.contextColMdInput.slider()
+      @panelRowMdSlider   = @ui.panelRowMdInput.slider()
+      @contextRowMdSlider = @ui.contextRowMdInput.slider()
+      @panelColLgSlider   = @ui.panelColLgInput.slider()
+      @contextColLgSlider = @ui.contextColLgInput.slider()
+      @panelRowLgSlider   = @ui.panelRowLgInput.slider()
+      @contextRowLgSlider = @ui.contextRowLgInput.slider()
+      @ui.icon.contextmenu
+        before: -&gt;
+          App.vent.trigger 'contextmenu'
+          App.vent.on 'contextmenu', =&gt;
+            @closemenu()
+        onItem: (context, e) -&gt;
+          e.stopPropagation()
+          if $(e.target).find('input:radio').length
+            $(e.target).button('toggle')
+            @closemenu()
+      @stickit()
+      @onCommandChange()
+
+
+  class List.Widgets extends App.Views.CompositeView
+    template: "widgets/list/widgets"
+    itemView: List.Widget
+    emptyView: List.Empty
+    itemViewContainer: "#widgets"
+
+    events:
+      'change .global-appearance': 'onAppearanceChange'
+
+    onAppearanceChange: (e) -&gt;
+      val = $(e.target).val()
+      @collection.each (widget) -&gt;
+        widget.set force: val unless widget.get('force') is val
+</span></div></div></div></div></body></html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html><html lang="en"><head><title>config/http</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="config/http"><meta name="groc-project-path" content="config/http.js"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">config/http.js</div></div><div id="document"><div class="segment"><div class="comments "><div class="wrapper"><p>HTTP Server Settings
+(sails.config.http)</p>
+<p>Configuration for the underlying HTTP server in Sails.
+Only applies to HTTP requests (not WebSockets)</p>
+<p>For more information on configuration, check out:
+<a href="http://sailsjs.org/#/documentation/reference/sails.config/sails.config.http.html">http://sailsjs.org/#/documentation/reference/sails.config/sails.config.http.html</a></p></div></div><div class="code"><div class="wrapper">module.exports.http = {
+
+  <span class="hljs-comment">/****************************************************************************
+  *                                                                           *
+  * Express middleware to use for every Sails request. To add custom          *
+  * middleware to the mix, add a function to the middleware config object and *
+  * add its key to the "order" array. The $custom key is reserved for         *
+  * backwards-compatibility with Sails v0.9.x apps that use the               *
+  * `customMiddleware` config option.                                         *
+  *                                                                           *
+  ****************************************************************************/</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>middleware: {</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-comment">/***************************************************************************
+  *                                                                          *
+  * The order in which middleware should be run for HTTP request. (the Sails *
+  * router is invoked by the "router" middleware below.)                     *
+  *                                                                          *
+  ***************************************************************************/</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>order: [
+  &#39;startRequestTimer&#39;,
+  &#39;cookieParser&#39;,
+  &#39;session&#39;,
+  &#39;myRequestLogger&#39;,
+  &#39;bodyParser&#39;,
+  &#39;handleBodyParserError&#39;,
+  &#39;compress&#39;,
+  &#39;methodOverride&#39;,
+  &#39;poweredBy&#39;,
+  &#39;$custom&#39;,
+  &#39;router&#39;,
+  &#39;www&#39;,
+  &#39;favicon&#39;,
+  &#39;404&#39;,
+  &#39;500&#39;
+],</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-comment">/****************************************************************************
+  *                                                                           *
+  * Example custom middleware; logs each request to the console.              *
+  *                                                                           *
+  ****************************************************************************/</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>myRequestLogger: function (req, res, next) {
+    console.log(&quot;Requested :: &quot;, req.method, req.url);
+    return next();</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-comment">// </span>
+
+
+  <span class="hljs-comment">/***************************************************************************
+  *                                                                          *
+  * The body parser that will handle incoming multipart HTTP requests. By    *
+  * default as of v0.10, Sails uses                                          *
+  * [skipper](http://github.com/balderdashy/skipper). See                    *
+  * http://www.senchalabs.org/connect/multipart.html for other options.      *
+  *                                                                          *
+  ***************************************************************************/</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>bodyParser: require(&#39;skipper&#39;)</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-comment">// ,</span>
+
+  <span class="hljs-comment">/***************************************************************************
+  *                                                                          *
+  * The number of seconds to cache flat files on disk being served by        *
+  * Express static middleware (by default, these files are in `.tmp/public`) *
+  *                                                                          *
+  * The HTTP static cache is only active in a 'production' environment,      *
+  * since that's the only time Express will cache flat-files.                *
+  *                                                                          *
+  ***************************************************************************/</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>cache: 31557600000</p></div></div><div class="code"><div class="wrapper">};</div></div></div></div></body></html>

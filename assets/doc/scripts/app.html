@@ -1,0 +1,49 @@
+<!DOCTYPE html><html lang="en"><head><title>scripts/app</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="scripts/app"><meta name="groc-project-path" content="assets/scripts/app.coffee"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/app.coffee</div></div><div id="document"><div class="segment"><div class="comments "><div class="wrapper"><p>bamboo.app</p></div></div><div class="code"><div class="wrapper"><span class="hljs-property">@Bamboo</span> = <span class="hljs-keyword">do</span> <span class="hljs-function"><span class="hljs-params">(Backbone, Marionette)</span> -&gt;</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Inform that the application is loading</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-built_in">console</span>.info <span class="hljs-string">'Loading application'</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Declare a new Marionette Application</p></div></div><div class="code"><div class="wrapper">  App = <span class="hljs-keyword">new</span> Marionette.Application</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Add regions to the application</p></div></div><div class="code"><div class="wrapper">  App.addRegions
+    </div></div></div><div class="segment"><div class="comments "><div class="wrapper"><ul>
+<li>Header region</li>
+</ul></div></div><div class="code"><div class="wrapper">    <span class="hljs-attribute">headerRegion</span>:       <span class="hljs-string">"#header-region"</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><ul>
+<li>Sidebar region</li>
+</ul></div></div><div class="code"><div class="wrapper">    <span class="hljs-attribute">sidebarRegion</span>:      <span class="hljs-string">"#sidebar-region"</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><ul>
+<li>Main region</li>
+</ul></div></div><div class="code"><div class="wrapper">    <span class="hljs-attribute">mainRegion</span>:         <span class="hljs-string">"#main-region"</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><ul>
+<li>Footer region</li>
+</ul></div></div><div class="code"><div class="wrapper">    <span class="hljs-attribute">footerRegion</span>:       <span class="hljs-string">"#footer-region"</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><ul>
+<li>Using the default
+<a href="components/flash/flash_controller.html">Region.Flashes</a>
+component</li>
+</ul></div></div><div class="code"><div class="wrapper">    <span class="hljs-attribute">flashRegion</span>:        Marionette.Region.Flashes.extend <span class="hljs-attribute">el</span>: <span class="hljs-string">".flash-region"</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><ul>
+<li>Using the default
+<a href="components/breadcrumbs/breadcrumbs_controller.html">Region.Breadcrumbs</a>
+component</li>
+</ul></div></div><div class="code"><div class="wrapper">    <span class="hljs-attribute">breadcrumbsRegion</span>:  Marionette.Region.Breadcrumbs.extend <span class="hljs-attribute">el</span>: <span class="hljs-string">"#breadcrumbs-region"</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><ul>
+<li>Using the default
+<a href="components/dialog/dialog_controller.html">Region.Dialog</a>
+component</li>
+</ul></div></div><div class="code"><div class="wrapper">    <span class="hljs-attribute">dialogRegion</span>:       Marionette.Region.Dialog.extend <span class="hljs-attribute">el</span>: <span class="hljs-string">"#dialog-region"</span>
+  </div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Set the default route to <code>dashboard</code></p></div></div><div class="code"><div class="wrapper">  App.rootRoute = <span class="hljs-string">"/dashboard"</span>
+
+  App.reqres.setHandler <span class="hljs-string">"default:region"</span>,<span class="hljs-function"> -&gt;</span>
+    App.mainRegion
+  App.reqres.setHandler <span class="hljs-string">"default:flash:region"</span>,<span class="hljs-function"> -&gt;</span>
+    App.flashRegion
+  App.reqres.setHandler <span class="hljs-string">"default:breadcrumbs:region"</span>,<span class="hljs-function"> -&gt;</span>
+    App.breadcrumbsRegion
+  App.reqres.setHandler <span class="hljs-string">"default:dialog:region"</span>,<span class="hljs-function"> -&gt;</span>
+    App.dialogRegion
+
+  App.addInitializer<span class="hljs-function"> -&gt;</span>
+    App.<span class="hljs-built_in">module</span>(<span class="hljs-string">"HeaderApp"</span>).start()
+    App.<span class="hljs-built_in">module</span>(<span class="hljs-string">"SidebarApp"</span>).start()
+    App.<span class="hljs-built_in">module</span>(<span class="hljs-string">"FooterApp"</span>).start()
+  
+  App.commands.setHandler <span class="hljs-string">"register:instance"</span>, <span class="hljs-function"><span class="hljs-params">(instance, id)</span> -&gt;</span>
+    App.register instance, id
+  
+  App.commands.setHandler <span class="hljs-string">"unregister:instance"</span>, <span class="hljs-function"><span class="hljs-params">(instance, id)</span> -&gt;</span>
+    App.unregister instance, id
+
+  App.<span class="hljs-literal">on</span> <span class="hljs-string">"initialize:after"</span>, <span class="hljs-function"><span class="hljs-params">(options)</span> -&gt;</span>
+    <span class="hljs-property">@startHistory</span>()
+    <span class="hljs-property">@navigate</span>(<span class="hljs-property">@rootRoute</span>, <span class="hljs-attribute">trigger</span>: <span class="hljs-literal">true</span>) <span class="hljs-keyword">unless</span> <span class="hljs-property">@getCurrentRoute</span>()
+
+  App</div></div></div></div></body></html>

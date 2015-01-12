@@ -1,0 +1,67 @@
+<!DOCTYPE html><html lang="en"><head><title>scripts/apps/users/new/new_controller</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../../../"><meta name="groc-document-path" content="scripts/apps/users/new/new_controller"><meta name="groc-project-path" content="assets/scripts/apps/users/new/new_controller.coffee"><link rel="stylesheet" type="text/css" media="all" href="../../../../assets/style.css"><script type="text/javascript" src="../../../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/apps/users/new/new_controller.coffee</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-property">@Bamboo</span>.<span class="hljs-built_in">module</span> <span class="hljs-string">"UsersApp.New"</span>, <span class="hljs-function"><span class="hljs-params">(New, App, Backbone, Marionette, $, _)</span> -&gt;</span>
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">New</span>.<span class="hljs-title">Controller</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">App</span>.<span class="hljs-title">Controllers</span>.<span class="hljs-title">Base</span></span>
+
+    <span class="hljs-attribute">initialize</span>: <span class="hljs-function"><span class="hljs-params">(options)</span> -&gt;</span>
+      users  = options.users  <span class="hljs-keyword">or</span>= App.request <span class="hljs-string">"user:entities"</span>
+      groups = options.groups <span class="hljs-keyword">or</span>= App.request <span class="hljs-string">"group:entities"</span>
+      user   = <span class="hljs-keyword">new</span> users.model()
+
+      <span class="hljs-property">@layout</span> = <span class="hljs-property">@getLayoutView</span> user, users
+
+      <span class="hljs-property">@listenTo</span> <span class="hljs-property">@layout</span>, <span class="hljs-string">"show"</span>,<span class="hljs-function"> =&gt;</span>
+        <span class="hljs-property">@userGroupsView</span> user, groups
+        <span class="hljs-property">@formView</span> user, users
+
+      <span class="hljs-property">@show</span> <span class="hljs-property">@layout</span>,
+        <span class="hljs-attribute">page</span>:
+          <span class="hljs-attribute">title</span>: <span class="hljs-string">'New User'</span>
+          <span class="hljs-attribute">breadcrumb</span>: user
+          <span class="hljs-attribute">toolbar</span>:
+            <span class="hljs-attribute">view</span>: <span class="hljs-property">@toolbarView</span> user, users
+        <span class="hljs-attribute">loading</span>:
+          <span class="hljs-attribute">entities</span>: user
+    
+    <span class="hljs-attribute">formView</span>: <span class="hljs-function"><span class="hljs-params">(user, users)</span> -&gt;</span>
+      formView = <span class="hljs-property">@getFormView</span> user, users
+
+      <span class="hljs-property">@layout</span>.<span class="hljs-literal">on</span> <span class="hljs-string">"form:submitted"</span>, <span class="hljs-function"><span class="hljs-params">(user)</span> =&gt;</span>
+        formView.trigger <span class="hljs-string">"form:submitted"</span>, user
+
+      <span class="hljs-property">@show</span> formView, <span class="hljs-attribute">region</span>: <span class="hljs-property">@layout</span>.formRegion
+
+    <span class="hljs-attribute">userGroupsView</span>: <span class="hljs-function"><span class="hljs-params">(user, groups)</span> -&gt;</span>
+      userGroupsView = <span class="hljs-property">@getUserGroupsView</span> user, groups
+
+      <span class="hljs-property">@show</span> userGroupsView,
+        <span class="hljs-attribute">region</span>: <span class="hljs-property">@layout</span>.groupsRegion
+        <span class="hljs-attribute">loading</span>:
+          <span class="hljs-attribute">entities</span>: groups
+
+    <span class="hljs-attribute">toolbarView</span>: <span class="hljs-function"><span class="hljs-params">(user, users)</span> -&gt;</span>
+      toolbarView = <span class="hljs-property">@getToolbarView</span> user, users
+
+      toolbarView.<span class="hljs-literal">on</span> <span class="hljs-string">"create:user:clicked"</span>, <span class="hljs-function"><span class="hljs-params">(user)</span> =&gt;</span>
+        <span class="hljs-property">@layout</span>.trigger <span class="hljs-string">"create:user:clicked"</span>, user
+
+      toolbarView
+
+    <span class="hljs-attribute">getFormView</span>: <span class="hljs-function"><span class="hljs-params">(user, users)</span> -&gt;</span>
+      <span class="hljs-keyword">new</span> New.Form
+        model      : user
+        collection : users
+
+    <span class="hljs-attribute">getUserGroupsView</span>: <span class="hljs-function"><span class="hljs-params">(user, groups)</span> -&gt;</span>
+      <span class="hljs-keyword">new</span> New.UserGroups
+        model      : user
+        collection : groups
+
+    <span class="hljs-attribute">getToolbarView</span>: <span class="hljs-function"><span class="hljs-params">(user, users)</span> -&gt;</span>
+      <span class="hljs-keyword">new</span> New.Toolbar
+        <span class="hljs-attribute">model</span>: user
+        <span class="hljs-attribute">collection</span>: users
+
+    <span class="hljs-attribute">getLayoutView</span>: <span class="hljs-function"><span class="hljs-params">(user, users)</span> -&gt;</span>
+      <span class="hljs-keyword">new</span> New.Layout
+        <span class="hljs-attribute">model</span>: user
+        <span class="hljs-attribute">collection</span>: users</div></div></div></div></body></html>

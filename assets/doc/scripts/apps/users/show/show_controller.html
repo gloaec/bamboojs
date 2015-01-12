@@ -1,0 +1,35 @@
+<!DOCTYPE html><html lang="en"><head><title>scripts/apps/users/show/show_controller</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../../../"><meta name="groc-document-path" content="scripts/apps/users/show/show_controller"><meta name="groc-project-path" content="assets/scripts/apps/users/show/show_controller.coffee"><link rel="stylesheet" type="text/css" media="all" href="../../../../assets/style.css"><script type="text/javascript" src="../../../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/apps/users/show/show_controller.coffee</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-property">@Bamboo</span>.<span class="hljs-built_in">module</span> <span class="hljs-string">"UsersApp.Show"</span>, <span class="hljs-function"><span class="hljs-params">(Show, App, Backbone, Marionette)</span> -&gt;</span>
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Show</span>.<span class="hljs-title">Controller</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">App</span>.<span class="hljs-title">Controllers</span>.<span class="hljs-title">Base</span></span>
+
+    <span class="hljs-attribute">initialize</span>: <span class="hljs-function"><span class="hljs-params">(options)</span> -&gt;</span>
+
+      <span class="hljs-keyword">if</span> options.user
+        user = options.user
+        user.fetch()
+      <span class="hljs-keyword">else</span>
+        user = App.request <span class="hljs-string">"user:entity"</span>, options.id
+
+      userView = <span class="hljs-property">@getUserView</span> user
+
+      <span class="hljs-property">@show</span> userView,
+        <span class="hljs-attribute">loading</span>: <span class="hljs-literal">true</span>
+        <span class="hljs-attribute">page</span>:
+          <span class="hljs-attribute">breadcrumb</span>: user
+          <span class="hljs-attribute">title</span>: <span class="hljs-string">'Loading...'</span>
+          <span class="hljs-attribute">title_attribute</span>: <span class="hljs-string">'name'</span>
+          <span class="hljs-attribute">toolbar</span>:
+            <span class="hljs-attribute">view</span>: <span class="hljs-property">@toolbarView</span> user
+            
+
+    <span class="hljs-attribute">toolbarView</span>: <span class="hljs-function"><span class="hljs-params">(user)</span> -&gt;</span>
+      toolbarView = <span class="hljs-property">@getToolbarView</span> user
+      toolbarView
+
+    <span class="hljs-attribute">getToolbarView</span>: <span class="hljs-function"><span class="hljs-params">(user)</span> -&gt;</span>
+      <span class="hljs-keyword">new</span> Show.Toolbar
+        <span class="hljs-attribute">model</span>: user
+
+    <span class="hljs-attribute">getUserView</span>: <span class="hljs-function"><span class="hljs-params">(user)</span> -&gt;</span>
+      <span class="hljs-keyword">new</span> Show.User
+        <span class="hljs-attribute">model</span>: user</div></div></div></div></body></html>

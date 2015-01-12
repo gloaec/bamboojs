@@ -12,6 +12,14 @@ With [node](http://nodejs.org/)
 
 Point your web browser at [http://localhost:1337](http://localhost:1337).
 
+## Demo
+
+Try it out: [http://bamboo.pwr.link/](http://bamboo.pwr.link)
+
+## Documentation
+
+Checkout the documentation: [http://bamboo.pwr.link/doc/](http://bamboo.pwr.link/doc/)
+
 ## Bamboo components
 
 Available components so far:

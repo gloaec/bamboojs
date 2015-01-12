@@ -1,0 +1,93 @@
+<!DOCTYPE html><html lang="en"><head><title>scripts/components/page/page_controller</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../../"><meta name="groc-document-path" content="scripts/components/page/page_controller"><meta name="groc-project-path" content="assets/scripts/components/page/page_controller.coffee"><link rel="stylesheet" type="text/css" media="all" href="../../../assets/style.css"><script type="text/javascript" src="../../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">assets/scripts/components/page/page_controller.coffee</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-property">@Bamboo</span>.<span class="hljs-built_in">module</span> <span class="hljs-string">"Components.Page"</span>, <span class="hljs-function"><span class="hljs-params">(Page, App, Backbone, Marionette, $, _)</span> -&gt;</span>
+ 
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Page</span>.<span class="hljs-title">TitleController</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">App</span>.<span class="hljs-title">Controllers</span>.<span class="hljs-title">Base</span></span>
+
+    <span class="hljs-attribute">initialize</span>: <span class="hljs-function"><span class="hljs-params">(options)</span> -&gt;</span>
+      <span class="hljs-property">@region</span> = options.region <span class="hljs-keyword">or</span>= App.request <span class="hljs-string">"default:title:region"</span>
+      <span class="hljs-keyword">if</span> options.breadcrumb <span class="hljs-keyword">instanceof</span> App.Entities.Model
+        <span class="hljs-property">@breadcrumb</span> = options.breadcrumb
+      <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> _.isObject options.breadcrumb
+        <span class="hljs-property">@breadcrumb</span> = <span class="hljs-keyword">new</span> App.Entities.Model options.breadcrumb
+
+      titleView = <span class="hljs-property">@getTitleView</span> options
+      
+      <span class="hljs-property">@show</span> titleView,
+        <span class="hljs-attribute">loading</span>: options.loading
+
+    <span class="hljs-attribute">getTitleView</span>: <span class="hljs-function"><span class="hljs-params">(options)</span> -&gt;</span>
+      <span class="hljs-keyword">new</span> Page.TitleView
+        <span class="hljs-attribute">title</span>: options.title
+        <span class="hljs-attribute">title_attribute</span>: options.title_attribute
+        <span class="hljs-attribute">subtitle</span>: options.subtitle
+        <span class="hljs-attribute">model</span>: <span class="hljs-property">@breadcrumb</span>
+
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Page</span>.<span class="hljs-title">PageController</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">App</span>.<span class="hljs-title">Controllers</span>.<span class="hljs-title">Base</span></span>
+    
+    <span class="hljs-attribute">initialize</span>: <span class="hljs-function"><span class="hljs-params">(options)</span> -&gt;</span>
+      { view, config, loading } = options
+      
+      config = <span class="hljs-keyword">if</span> _.isBoolean(config) <span class="hljs-keyword">then</span> {} <span class="hljs-keyword">else</span> config
+
+      _.defaults config,
+        <span class="hljs-attribute">title</span>: <span class="hljs-string">""</span>
+        <span class="hljs-attribute">title_attribute</span>: <span class="hljs-string">'name'</span>
+        <span class="hljs-attribute">subtitle</span>: <span class="hljs-string">""</span>
+        <span class="hljs-attribute">breadcrumb</span>: <span class="hljs-property">@getEntities</span>(view)
+        <span class="hljs-attribute">entities</span>: <span class="hljs-keyword">if</span> loading.entities? <span class="hljs-keyword">then</span> loading.entities <span class="hljs-keyword">else</span> <span class="hljs-property">@getEntities</span>(view)
+        <span class="hljs-attribute">debug</span>: <span class="hljs-literal">false</span>,
+        <span class="hljs-attribute">loading</span>: <span class="hljs-literal">true</span>
+        <span class="hljs-attribute">toolbar</span>: <span class="hljs-literal">false</span>
+
+
+      <span class="hljs-comment">## TODO sync Entities.Page(title,subtitle) with</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Entities.Breadcrumb(name,...)</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-comment">## FIXME Title sync problems: </span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Maybe try using &quot;show:loading&quot; for the whole Layout ?</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-property">@layout</span> = <span class="hljs-property">@getLayoutView</span> config
+      
+      <span class="hljs-comment">#App.flashRegion = @layout.flashRegion</span>
+
+      <span class="hljs-property">@listenTo</span> <span class="hljs-property">@layout</span>, <span class="hljs-string">"show"</span>,<span class="hljs-function"> =&gt;</span>
+        <span class="hljs-property">@getTitleView</span> config
+        <span class="hljs-property">@getBreadcrumbsView</span> config
+        <span class="hljs-property">@getToolbarView</span> config <span class="hljs-keyword">if</span> config.toolbar?
+        <span class="hljs-property">@getContentView</span> view, config
+
+      <span class="hljs-property">@show</span> <span class="hljs-property">@layout</span>,
+        <span class="hljs-attribute">loading</span>: <span class="hljs-keyword">if</span> loading? <span class="hljs-keyword">then</span> loading <span class="hljs-keyword">else</span> config.loading
+    
+    <span class="hljs-attribute">getEntities</span>: <span class="hljs-function"><span class="hljs-params">(view)</span> -&gt;</span>
+      <span class="hljs-comment">## return the entities manually set during configuration, or just pull </span>
+      <span class="hljs-comment">## off the model and collection from the view (if they exist)</span>
+      _.chain(view).pick(<span class="hljs-string">"model"</span>, <span class="hljs-string">"collection"</span>).toArray().compact().value()
+    
+    <span class="hljs-attribute">getTitleView</span>: <span class="hljs-function"><span class="hljs-params">(config)</span> -&gt;</span>
+      toolbarView = App.execute <span class="hljs-string">"show:title"</span>,
+        <span class="hljs-attribute">title</span>: config.title
+        <span class="hljs-attribute">title_attribute</span>: config.title_attribute
+        <span class="hljs-attribute">subtitle</span>: config.subtitle
+        <span class="hljs-attribute">breadcrumb</span>: config.breadcrumb
+        <span class="hljs-attribute">region</span>: <span class="hljs-property">@layout</span>.titleRegion
+
+    <span class="hljs-attribute">getBreadcrumbsView</span>: <span class="hljs-function"><span class="hljs-params">(config)</span> -&gt;</span>
+      breadcrumbsView = App.execute <span class="hljs-string">"show:breadcrumbs"</span>,
+        <span class="hljs-attribute">breadcrumb</span>: config.breadcrumb
+        <span class="hljs-attribute">region</span>: <span class="hljs-property">@layout</span>.breadcrumbsRegion
+
+    <span class="hljs-attribute">getToolbarView</span>: <span class="hljs-function"><span class="hljs-params">(config)</span> -&gt;</span>
+      toolbarView = App.execute <span class="hljs-string">"show:toolbar"</span>,
+        <span class="hljs-attribute">toolbar</span>: config.toolbar
+        <span class="hljs-attribute">region</span>: <span class="hljs-property">@layout</span>.toolbarRegion
+
+    <span class="hljs-attribute">getContentView</span>: <span class="hljs-function"><span class="hljs-params">(view, config)</span> -&gt;</span>
+      config.region = <span class="hljs-property">@layout</span>.contentRegion
+      App.execute <span class="hljs-string">"show:loading"</span>, view, config
+
+    <span class="hljs-attribute">getLayoutView</span>: <span class="hljs-function"><span class="hljs-params">(config)</span> -&gt;</span>
+      <span class="hljs-keyword">new</span> Page.LayoutView
+  
+  App.commands.setHandler <span class="hljs-string">"show:title"</span>, <span class="hljs-function"><span class="hljs-params">(options)</span> -&gt;</span>
+    <span class="hljs-keyword">new</span> Page.TitleController options
+
+  App.commands.setHandler <span class="hljs-string">"show:page"</span>, <span class="hljs-function"><span class="hljs-params">(view, options)</span> -&gt;</span>
+    <span class="hljs-keyword">new</span> Page.PageController
+      <span class="hljs-attribute">view</span>: view
+      <span class="hljs-attribute">region</span>: options.region
+      <span class="hljs-attribute">loading</span>: options.loading
+      <span class="hljs-attribute">config</span>: options.page</div></div></div></div></body></html>
