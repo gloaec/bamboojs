@@ -18,7 +18,7 @@ Try it out: [http://bamboo.pwr.link/](http://bamboo.pwr.link)
 
 ## Documentation
 
-Checkout the documentation: [http://bamboo.pwr.link/doc/](http://bamboo.pwr.link/doc/)
+Checkout the documentation: [http://bamboo.pwr.link/doc/index.html](http://bamboo.pwr.link/doc/index.html)
 
 ## Bamboo components
 
