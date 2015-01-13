@@ -5,6 +5,23 @@
     initialize: ->
       widgets = App.request "widget:entities"
 
+      @layout = @getLayoutView()
+      
+      @listenTo @layout, "show", =>
+        @widgetsView widgets
+
+      @show @layout,
+        page:
+          title: 'Widgets'
+          subtitle: 'Overview'
+          titleToolbar:
+            view: @titleToolbarView widgets
+          breadcrumbs:
+            view: @breadcrumbsView widgets
+          breadcrumbsToolbar:
+            view: @breadcrumbsToolbarView widgets
+
+    widgetsView: (widgets) ->
       widgetsView = @getWidgetsView widgets
 
       widgetsView.on "childview:edit:widget:clicked", (iv, widget) ->
@@ -18,7 +35,35 @@
 
       @show widgetsView,
         loading: true
+        region: @layout.widgetsRegion
+
+    breadcrumbsView: (widgets) ->
+      breadcrumbsView = @getBreadcrumbsView widgets
+      breadcrumbsView
+
+    titleToolbarView: (widgets) ->
+      titleToolbarView = @getTitleToolbarView widgets
+      titleToolbarView
+
+    breadcrumbsToolbarView: (widgets) ->
+      breadcrumbsToolbarView = @getBreadcrumbsToolbarView widgets
+      breadcrumbsToolbarView
 
     getWidgetsView: (widgets) ->
       new List.Widgets
         collection: widgets
+
+    getBreadcrumbsView: (widgets) ->
+      new List.Breadcrumbs
+        collection: widgets
+
+    getTitleToolbarView: (widgets) ->
+      new List.TitleToolbar
+        collection: widgets
+
+    getBreadcrumbsToolbarView: (widgets) ->
+      new List.BreadcrumbsToolbar
+        collection: widgets
+
+    getLayoutView: ->
+      new List.Layout

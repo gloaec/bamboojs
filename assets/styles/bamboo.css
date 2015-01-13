@@ -343,19 +343,45 @@ ol.list-group > li {
     left: 9.09091%;
     line-height: 20px;
 }
-.page-header .btn-group {
+.page .breadcrumb {
+    margin-top: -6px;
+    padding: 0;
 }
+.breadcrumb .breadcrumb {
+    margin: 0;
+    border: 0;
+    padding: 8px 15px;
+}
+.breadcrumb .btn-group {
+    margin: 1px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+.breadcrumb .btn-group .btn-group { 
+    margin: 0;
+}
+.page-header .btn-group {
+    margin-bottom: -9px
+}
+.page-header .btn-group .btn-group { 
+    margin: 0;
+}
+/*.breadcrumb .btn-group .btn,*/
 .page-header .btn-group .btn {
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;
 }
+/*.breadcrumb .btn-default,*/
 .page-header .btn-default {
     background: inherit;
     color: inherit;
 }
+/*.breadcrumb .btn-default:hover,
+.breadcrumb .btn-default:focus,
+.breadcrumb .btn-default.focus,*/
 .page-header .btn-default:hover,
-.page-header .btn-default:focus
+.page-header .btn-default:focus,
 .page-header .btn-default.focus {
     background: #f8f5f0;
     color: #555;
-}
+}*/

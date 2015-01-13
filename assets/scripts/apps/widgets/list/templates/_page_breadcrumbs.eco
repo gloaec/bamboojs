@@ -1,0 +1,13 @@
+<ul class="breadcrumb">
+  <li>
+    <a href="/">
+      <i class="fa fa-dashboard"></i>
+      Dashboard
+    </a>
+  </li>
+  <li class="active">
+      <i class="fa fa-puzzle-piece"></i>
+      Widgets
+    </a>
+  </li>
+</ul>

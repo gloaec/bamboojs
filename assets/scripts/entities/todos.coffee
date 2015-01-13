@@ -4,8 +4,8 @@
 
   class Entities.Todo extends Entities.Model
 
-    localStorage: localStorage
-    url: false
+      #localStorage: localStorage
+    urlRoot: "/api/todo"
 
     defaults:
       done: false
@@ -20,7 +20,8 @@
 
     model: Entities.Todo
 
-    localStorage: localStorage
+    #localStorage: localStorage
+    url: "/api/todo"
 
     _filter: 'all'
     getFilter: -> @_filter

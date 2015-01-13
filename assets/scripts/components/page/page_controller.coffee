@@ -50,8 +50,9 @@
 
       @listenTo @layout, "show", =>
         @getTitleView config
+        @getTitleToolbarView config if config.breadcrumbsToolbar?
         @getBreadcrumbsView config
-        @getToolbarView config if config.toolbar?
+        @getBreadcrumbsToolbarView config if config.titleToolbar?
         @getContentView view, config
 
       @show @layout,
@@ -67,18 +68,23 @@
         title: config.title
         title_attribute: config.title_attribute
         subtitle: config.subtitle
-        breadcrumb: config.breadcrumb
+        breadcrumbs: config.breadcrumbs
         region: @layout.titleRegion
 
     getBreadcrumbsView: (config) ->
       breadcrumbsView = App.execute "show:breadcrumbs",
-        breadcrumb: config.breadcrumb
+        breadcrumbs: config.breadcrumbs
         region: @layout.breadcrumbsRegion
 
-    getToolbarView: (config) ->
-      toolbarView = App.execute "show:toolbar",
-        toolbar: config.toolbar
-        region: @layout.toolbarRegion
+    getTitleToolbarView: (config) ->
+      breadcrumbsToolbarView = App.execute "show:toolbar",
+        toolbar: config.titleToolbar
+        region: @layout.titleToolbarRegion
+
+    getBreadcrumbsToolbarView: (config) ->
+      breadcrumbsToolbarView = App.execute "show:toolbar",
+        toolbar: config.breadcrumbsToolbar
+        region: @layout.breadcrumbsToolbarRegion
 
     getContentView: (view, config) ->
       config.region = @layout.contentRegion

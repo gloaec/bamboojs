@@ -280,11 +280,19 @@
       @onCommandChange()
 
 
-  class List.Widgets extends App.Views.CompositeView
-    template: "widgets/list/widgets"
+  class List.Widgets extends App.Views.CollectionView
     itemView: List.Widget
     emptyView: List.Empty
-    itemViewContainer: "#widgets"
+    className: "row"
+
+  class List.Breadcrumbs extends App.Views.ItemView
+    template: "widgets/list/_page_breadcrumbs"
+
+  class List.BreadcrumbsToolbar extends App.Views.ItemView
+    template: "widgets/list/_page_breadcrumbs_toolbar"
+
+  class List.TitleToolbar extends App.Views.ItemView
+    template: "widgets/list/_page_title_toolbar"
 
     events:
       'change .global-appearance': 'onAppearanceChange'
@@ -293,3 +301,20 @@
       val = $(e.target).val()
       @collection.each (widget) ->
         widget.set force: val unless widget.get('force') is val
+
+  class List.Toolbar extends App.Views.ItemView
+    template: "widgets/list/_toolbar"
+
+    events:
+      'change .global-appearance': 'onAppearanceChange'
+
+    onAppearanceChange: (e) ->
+      val = $(e.target).val()
+      @collection.each (widget) ->
+        widget.set force: val unless widget.get('force') is val
+
+  class List.Layout extends App.Views.Layout
+    template: "widgets/list/list_layout"
+
+    regions:
+      widgetsRegion:      "#widgets-region"

@@ -1,10 +1,12 @@
-<div id="page-title-region"></div>
+<h3 class="page-header clearfix">
+  <div id="page-title-region" class="pull-left"-></div>
+  <div id="page-title-toolbar-region" class="pull-right"></div>
+</h3>
 
-<div class="page-bar">
-    <div id="page-breadcrumbs-region" class="pull-left"></div>
-    <div id="page-toolbar-region" class="pull-right"></div>
+<div class="breadcrumb clearfix">
+  <div id="page-breadcrumbs-region" class="pull-left"-></div>
+  <div id="page-breadcrumbs-toolbar-region" class="pull-right"></div>
 </div>
-
 <!--div class="flash-region"></div-->
 
 <div id="page-content-region"></div>

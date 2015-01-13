@@ -8,6 +8,8 @@
 
 module.exports = {
 
+  seedData: [],
+
   attributes: {
     name: 'string',
     icon: 'string',

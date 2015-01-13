@@ -5,10 +5,9 @@
     initialize: (options) ->
 	    #Backbone.history.on 'route', @updateBreadcrumbs
 
-      @breadcrumbs = options.breadcrumbs or= App.request "breadcrumb:entities"
+      @breadcrumbs = options.entities or= App.request "breadcrumb:entities"
       @breadcrumb = options.breadcrumb# or= new @breadcrumbs.model
       @region = options.region or= App.request "default:breadcrumbs:region"
-
 
       if @breadcrumb instanceof App.Entities.Model
         App.execute "when:fetched", @breadcrumb, =>
@@ -16,7 +15,7 @@
       else
         @generateBreadcrumbs @breadcrumb
 
-      breadcrumbsView =  @getBreadcrumbsView @breadcrumbs
+      breadcrumbsView = options.breadcrumbs?.view or= @getBreadcrumbsView @breadcrumbs
       @show breadcrumbsView
 
     getBreadcrumbsView: (breadcrumbs) ->
@@ -87,15 +86,15 @@
         breadcrumb.set url:    '/dashboard'
       @recBreadcrumbs(folder.get('parent')).concat [breadcrumb]
 
-  App.addInitializer ->
-    @breadcrumbsController = new Breadcrumbs.BreadcrumbsController
+      #App.addInitializer ->
+      #  @breadcrumbsController = new Breadcrumbs.BreadcrumbsController
 
-  App.commands.setHandler "breadcrumbs", (entity) ->
-    if entity instanceof App.Entities.Model
-      App.execute "when:fetched", entity, =>
-        App.breadcrumbsController.generateBreadcrumbs entity
-    else
-      App.breadcrumbsController.generateBreadcrumbs entity
+      #App.commands.setHandler "breadcrumbs", (entity) ->
+      #  if entity instanceof App.Entities.Model
+      #    App.execute "when:fetched", entity, =>
+      #      App.breadcrumbsController.generateBreadcrumbs entity
+      #  else
+      #    App.breadcrumbsController.generateBreadcrumbs entity
 
   App.commands.setHandler "show:breadcrumbs", (options) ->
     new Breadcrumbs.BreadcrumbsController options
