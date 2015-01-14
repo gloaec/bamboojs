@@ -47,6 +47,11 @@
 
     breadcrumbsToolbarView: (widgets) ->
       breadcrumbsToolbarView = @getBreadcrumbsToolbarView widgets
+      breadcrumbsToolbarView.on "new:widget:clicked", (widgets) ->
+        alert 'coucou'
+        widgets.add(new widgets.model())
+        App.vent.trigger "new:widget:clicked", widgets
+
       breadcrumbsToolbarView
 
     getWidgetsView: (widgets) ->
